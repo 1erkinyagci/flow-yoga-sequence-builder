@@ -1,4 +1,4 @@
-# FLOW Yoga Sequence Builder - Project Summary
+# FLOW Yoga Sequence Builder - Project Summary...
 
 ## Overview
 
