@@ -24,9 +24,10 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     const variantStyles = {
       default: 'bg-white border border-neutral-100 shadow-sm',
       glass: cn(
-        'bg-white/70 backdrop-blur-xl',
-        'border border-white/60',
-        'shadow-[0_4px_24px_rgba(0,0,0,0.06)]'
+        'bg-white/40 backdrop-blur-2xl',
+        'border border-white/50',
+        'shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.6)]',
+        'ring-1 ring-white/20'
       ),
       elevated: 'bg-white shadow-lg',
       outline: 'bg-transparent border border-neutral-200',
@@ -40,7 +41,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     };
 
     const hoverStyles = hover
-      ? 'transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer'
+      ? 'transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.8)] hover:-translate-y-1 hover:bg-white/60 cursor-pointer'
       : '';
 
     return (

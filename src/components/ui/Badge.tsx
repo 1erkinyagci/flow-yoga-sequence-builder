@@ -1,6 +1,6 @@
 import { type HTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils/cn';
-import type { Difficulty, PoseType } from '@/types';
+import type { PoseDifficulty, PoseType } from '@/types/pose';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info';
@@ -47,17 +47,17 @@ Badge.displayName = 'Badge';
 
 // Specialized badge for difficulty levels
 interface DifficultyBadgeProps extends Omit<BadgeProps, 'variant'> {
-  difficulty: Difficulty;
+  difficulty: PoseDifficulty;
 }
 
 function DifficultyBadge({ difficulty, className, ...props }: DifficultyBadgeProps) {
-  const variantMap: Record<Difficulty, BadgeProps['variant']> = {
+  const variantMap: Record<PoseDifficulty, BadgeProps['variant']> = {
     beginner: 'success',
     intermediate: 'warning',
     advanced: 'error',
   };
 
-  const labelMap: Record<Difficulty, string> = {
+  const labelMap: Record<PoseDifficulty, string> = {
     beginner: 'Beginner',
     intermediate: 'Intermediate',
     advanced: 'Advanced',
@@ -89,9 +89,10 @@ const poseTypeColors: Record<PoseType, string> = {
   twist: 'bg-teal-100 text-teal-700',
   backbend: 'bg-pink-100 text-pink-700',
   forward_fold: 'bg-purple-100 text-purple-700',
-  hip_opener: 'bg-cyan-100 text-cyan-700',
-  balance: 'bg-indigo-100 text-indigo-700',
+  hip_opening: 'bg-cyan-100 text-cyan-700',
+  balancing: 'bg-indigo-100 text-indigo-700',
   restorative: 'bg-slate-100 text-slate-700',
+  kneeling: 'bg-lime-100 text-lime-700',
 };
 
 const poseTypeLabels: Record<PoseType, string> = {
@@ -104,9 +105,10 @@ const poseTypeLabels: Record<PoseType, string> = {
   twist: 'Twist',
   backbend: 'Backbend',
   forward_fold: 'Forward Fold',
-  hip_opener: 'Hip Opener',
-  balance: 'Balance',
+  hip_opening: 'Hip Opening',
+  balancing: 'Balancing',
   restorative: 'Restorative',
+  kneeling: 'Kneeling',
 };
 
 function PoseTypeBadge({ poseType, className, ...props }: PoseTypeBadgeProps) {

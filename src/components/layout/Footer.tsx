@@ -37,8 +37,6 @@ const footerLinks = {
 };
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-neutral-50 border-t border-neutral-100">
       <Container size="xl">
@@ -84,8 +82,8 @@ export function Footer() {
           {/* Bottom */}
           <div className="mt-12 pt-8 border-t border-neutral-200">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-sm text-neutral-500">
-                &copy; {currentYear} FLOW Yoga Sequence Builder. All rights reserved.
+              <p className="text-sm text-neutral-500" suppressHydrationWarning>
+                &copy; {new Date().getFullYear()} FLOW Yoga Sequence Builder. All rights reserved.
               </p>
               <div className="flex items-center gap-6">
                 <a
