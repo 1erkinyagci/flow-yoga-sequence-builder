@@ -17,6 +17,11 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.yoga-sequencing.com'),
+  icons: {
+    icon: '/images/yoga_sequencing_logo_transparent.jpg',
+    shortcut: '/images/yoga_sequencing_logo_transparent.jpg',
+    apple: '/images/yoga_sequencing_logo_transparent.jpg',
+  },
   title: {
     default: 'FLOW - Professional Yoga Sequence Builder',
     template: '%s | FLOW Yoga Sequence Builder',

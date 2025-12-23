@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
@@ -38,13 +39,15 @@ export function Header({ user, profile }: HeaderProps) {
         <Container size="xl">
           <nav className="flex h-14 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-primary-500/40 transition-shadow">
-                <span className="text-white font-bold text-base">F</span>
-              </div>
-              <span className="font-bold text-lg text-neutral-900 hidden sm:block">
-                FLOW
-              </span>
+            <Link href="/" className="flex items-center relative z-10">
+              <Image
+                src="/images/yoga_sequencing_logo_transparent.jpg"
+                alt="FLOW Yoga Sequence Builder"
+                width={200}
+                height={80}
+                className="h-20 md:h-24 w-auto object-contain contrast-150 saturate-150 brightness-75 -my-3 md:-my-5"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}
