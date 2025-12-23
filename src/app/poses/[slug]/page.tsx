@@ -122,7 +122,7 @@ export default async function PosePage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <main className="flex-1 py-8 md:py-12">
+      <main className="flex-1 pt-24 md:pt-28 pb-8 md:pb-12">
         <Container size="lg">
           {/* Breadcrumb */}
           <nav className="mb-6">

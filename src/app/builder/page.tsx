@@ -180,9 +180,9 @@ export default function BuilderPage() {
     <div className="min-h-screen flex flex-col bg-neutral-50">
       <Header />
 
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col pt-24 md:pt-28">
         {/* Toolbar */}
-        <div className="glass-strong border-b border-neutral-100 sticky top-16 z-40">
+        <div className="glass-strong border-b border-neutral-100 sticky top-24 md:top-28 z-40">
           <Container size="xl">
             <div className="py-3 flex flex-col md:flex-row md:items-center gap-4">
               {/* Flow Title */}

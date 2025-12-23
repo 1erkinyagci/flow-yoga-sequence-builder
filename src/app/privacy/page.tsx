@@ -17,7 +17,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-neutral-50 to-stone-100">
       <Header />
 
-      <main className="flex-1 py-12 md:py-16">
+      <main className="flex-1 pt-24 md:pt-28 pb-12 md:pb-16">
         <Container size="lg">
           <div className="bg-white rounded-3xl shadow-lg p-8 md:p-12">
             <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">

@@ -85,11 +85,11 @@ export default function PricingPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1">
+      <main className="flex-1 pt-24 md:pt-28">
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-transparent to-accent-50/30" />
-          <Container size="lg" className="relative py-16 md:py-24">
+          <Container size="lg" className="relative py-8 md:py-16">
             <div className="text-center max-w-2xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
                 Simple, transparent pricing

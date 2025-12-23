@@ -29,7 +29,7 @@ export default function BlogPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-neutral-50 to-stone-100">
       <Header />
 
-      <main className="flex-1 py-12 md:py-16">
+      <main className="flex-1 pt-24 md:pt-28 pb-12 md:pb-16">
         <Container size="xl">
           {/* Page Header */}
           <div className="text-center mb-12">
