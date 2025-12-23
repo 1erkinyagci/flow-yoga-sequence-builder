@@ -1,0 +1,63 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.25);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" />
+    </linearGradient>
+    <filter id="blur1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="60" />
+    </filter>
+    <filter id="blur2" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="40" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+
+  <!-- Decorative blurred circles -->
+  <circle cx="200" cy="150" r="200" fill="#a855f7" filter="url(#blur1)" opacity="0.5"/>
+  <circle cx="1000" cy="500" r="250" fill="#ec4899" filter="url(#blur1)" opacity="0.4"/>
+  <circle cx="600" cy="300" r="180" fill="#8b5cf6" filter="url(#blur2)" opacity="0.3"/>
+
+  <!-- Glass card background -->
+  <rect x="100" y="150" width="1000" height="330" rx="32" fill="url(#cardGradient)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+
+  <!-- Yoga pose silhouettes -->
+  <g opacity="0.15" fill="white">
+    <!-- Tree pose -->
+    <path d="M280 420 C280 420 275 380 280 350 C285 320 290 300 290 280 C290 260 280 250 280 250 C280 250 270 260 270 280 C270 300 260 320 260 350 C260 380 255 420 255 420" stroke="white" stroke-width="3" fill="none"/>
+    <circle cx="280" cy="235" r="20" fill="white"/>
+    <path d="M265 340 L230 320 M295 340 L330 320" stroke="white" stroke-width="3" fill="none"/>
+    <path d="M305 300 L340 280" stroke="white" stroke-width="3" fill="none"/>
+
+    <!-- Warrior pose -->
+    <path d="M900 420 L870 350 L870 300 L900 260 L930 300 L930 350 L960 420" stroke="white" stroke-width="3" fill="none"/>
+    <circle cx="900" cy="245" r="20" fill="white"/>
+    <path d="M830 300 L870 300 M930 300 L970 300" stroke="white" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- Main text -->
+  <text x="600" y="280" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700">
+    Best Yoga Sequencing Platforms
+  </text>
+  <text x="600" y="340" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700">
+    2026
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="400" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="400">
+    Complete Comparison Guide for Yoga Teachers
+  </text>
+
+  <!-- FLOW badge -->
+  <rect x="520" y="440" width="160" height="44" rx="22" fill="white"/>
+  <text x="600" y="470" text-anchor="middle" fill="#7c3aed" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700">
+    FLOW Guide
+  </text>
+</svg>
