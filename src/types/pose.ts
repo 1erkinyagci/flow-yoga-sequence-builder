@@ -62,6 +62,7 @@ export interface Pose {
   // Classification
   difficulty: PoseDifficulty;
   pose_type: PoseType | null;
+  secondary_pose_type: PoseType | null;
   primary_focus: BodyFocus | null;
   secondary_focus: BodyFocus[] | null;
 
@@ -122,6 +123,7 @@ export interface PoseFormData {
   breath_cue: string;
   difficulty: PoseDifficulty;
   pose_type: PoseType | '';
+  secondary_pose_type: PoseType | '';
   primary_focus: BodyFocus | '';
   secondary_focus: BodyFocus[];
   tags: string[];
@@ -146,6 +148,7 @@ export interface PoseListItem {
   sanskrit_name: string | null;
   difficulty: PoseDifficulty;
   pose_type: PoseType | null;
+  secondary_pose_type: PoseType | null;
   status: PoseStatus;
   image_url: string | null;
   created_at: string;

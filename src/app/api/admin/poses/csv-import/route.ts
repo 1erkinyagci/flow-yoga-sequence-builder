@@ -106,6 +106,7 @@ const csvRowSchema = z.object({
   // Classification
   difficulty: z.string().optional(),
   pose_type: z.string().optional(),
+  secondary_pose_type: z.string().optional(),
   primary_focus: z.string().optional(),
 
   // Timing
@@ -204,6 +205,15 @@ export async function POST(request: Request) {
           continue;
         }
 
+        if (row.secondary_pose_type && !VALID_POSE_TYPES.includes(row.secondary_pose_type.toLowerCase() as typeof VALID_POSE_TYPES[number])) {
+          result.failed++;
+          result.errors.push({
+            row: row.rowNumber,
+            error: `Invalid secondary_pose_type: ${row.secondary_pose_type}. Valid: ${VALID_POSE_TYPES.join(', ')}`,
+          });
+          continue;
+        }
+
         if (row.primary_focus && !VALID_BODY_FOCUS.includes(row.primary_focus.toLowerCase() as typeof VALID_BODY_FOCUS[number])) {
           result.failed++;
           result.errors.push({
@@ -296,6 +306,9 @@ export async function POST(request: Request) {
         }
         if (row.pose_type) {
           updateData.pose_type = row.pose_type.toLowerCase();
+        }
+        if (row.secondary_pose_type) {
+          updateData.secondary_pose_type = row.secondary_pose_type.toLowerCase();
         }
         if (row.primary_focus) {
           updateData.primary_focus = row.primary_focus.toLowerCase();

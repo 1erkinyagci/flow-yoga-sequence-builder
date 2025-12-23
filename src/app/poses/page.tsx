@@ -52,6 +52,7 @@ interface PoseListItem {
   short_description: string | null;
   difficulty: PoseDifficulty;
   pose_type: PoseType | null;
+  secondary_pose_type: PoseType | null;
   image_url: string | null;
 }
 
@@ -68,9 +69,10 @@ async function getPoses(filters: { search?: string; type?: string; difficulty?: 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
 
+  // Try to fetch with secondary_pose_type, fallback to without if column doesn't exist
   let query = db
     .from('poses')
-    .select('slug, english_name, sanskrit_name, short_description, difficulty, pose_type, image_url')
+    .select('slug, english_name, sanskrit_name, short_description, difficulty, pose_type, secondary_pose_type, image_url')
     .eq('status', 'published')
     .order('english_name', { ascending: true });
 
@@ -86,11 +88,43 @@ async function getPoses(filters: { search?: string; type?: string; difficulty?: 
     query = query.eq('difficulty', filters.difficulty);
   }
 
-  const { data, error } = await query;
+  let { data, error } = await query;
 
+  // If error (possibly due to missing column), try without secondary_pose_type
   if (error) {
-    console.error('Error fetching poses:', error);
-    return [];
+    console.warn('Trying query without secondary_pose_type...');
+    query = db
+      .from('poses')
+      .select('slug, english_name, sanskrit_name, short_description, difficulty, pose_type, image_url')
+      .eq('status', 'published')
+      .order('english_name', { ascending: true });
+
+    if (filters.search) {
+      query = query.or(`english_name.ilike.%${filters.search}%,sanskrit_name.ilike.%${filters.search}%`);
+    }
+
+    if (filters.type) {
+      query = query.eq('pose_type', filters.type);
+    }
+
+    if (filters.difficulty) {
+      query = query.eq('difficulty', filters.difficulty);
+    }
+
+    const result = await query;
+    data = result.data;
+    error = result.error;
+
+    if (error) {
+      console.error('Error fetching poses:', error);
+      return [];
+    }
+
+    // Add null secondary_pose_type to each item
+    return (data || []).map((pose: PoseListItem) => ({
+      ...pose,
+      secondary_pose_type: null,
+    })) as PoseListItem[];
   }
 
   return (data || []) as PoseListItem[];
@@ -134,84 +168,75 @@ export default async function PosesPage({ searchParams }: PageProps) {
 
       <Header />
 
-      <main className="flex-1 py-8 md:py-12 relative z-10">
+      <main className="flex-1 py-4 md:py-6 relative z-10">
         <Container size="xl">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="relative inline-block mb-4">
+          {/* Page Header - Compact */}
+          <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="relative inline-block">
               {/* Glow effect behind text */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-indigo-500/20 blur-2xl rounded-full" />
+              <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-indigo-500/20 blur-xl rounded-full" />
 
               {/* 3D Glass Title */}
-              <h1 className="relative text-4xl md:text-5xl lg:text-6xl font-bold">
-                {/* Background text layer for depth */}
-                <span className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent bg-clip-text text-transparent blur-[2px] translate-y-[2px]">
+              <h1 className="relative text-2xl md:text-3xl font-bold">
+                <span className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent bg-clip-text text-transparent blur-[1px] translate-y-[1px]">
                   Yoga Pose Library
                 </span>
-
-                {/* Main gradient text */}
-                <span className="relative bg-gradient-to-b from-white via-white/90 to-white/50 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                  Yoga Pose Library
-                </span>
-
-                {/* Top shine reflection */}
-                <span className="absolute inset-0 bg-gradient-to-b from-white via-transparent to-transparent bg-clip-text text-transparent opacity-50" style={{ WebkitBackgroundClip: 'text' }}>
+                <span className="relative bg-gradient-to-b from-white via-white/90 to-white/50 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
                   Yoga Pose Library
                 </span>
               </h1>
             </div>
-            <p className="text-lg text-white/60 max-w-2xl">
-              Explore our collection of {totalPoses}+ yoga poses. Each pose includes
-              detailed instructions, benefits, modifications, and alignment cues.
+            <p className="text-sm text-white/50">
+              {totalPoses}+ poses with instructions & benefits
             </p>
           </div>
 
-          {/* Filters - Glass Panel */}
-          <div className="relative rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] p-5 mb-8">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
-            <form className="flex flex-col md:flex-row gap-4 relative">
+          {/* Filters - Compact Glass Panel */}
+          <div className="relative rounded-xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] p-3 mb-4">
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
+            <form className="flex flex-col md:flex-row gap-2 md:gap-3 relative">
               <div className="flex-1">
                 <Input
                   name="search"
-                  placeholder="Search poses by name..."
+                  placeholder="Search poses..."
                   defaultValue={params.search}
                   leftIcon={<Search className="w-4 h-4" />}
                 />
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 <Select
                   name="type"
                   options={poseTypeOptions}
                   defaultValue={params.type || ''}
-                  className="w-40"
+                  className="w-32 md:w-36"
                 />
                 <Select
                   name="difficulty"
                   options={difficultyOptions}
                   defaultValue={params.difficulty || ''}
-                  className="w-40"
+                  className="w-28 md:w-32"
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all duration-300 flex items-center gap-2 border border-white/10 hover:border-white/20"
+                  className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-all duration-300 flex items-center gap-1.5 border border-white/10 hover:border-white/20"
                 >
-                  <Filter className="w-4 h-4" />
+                  <Filter className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Filter</span>
                 </button>
               </div>
             </form>
           </div>
 
-          {/* Results count */}
-          <div className="mb-6">
-            <p className="text-sm text-white/40">
+          {/* Results count - inline */}
+          <div className="mb-3">
+            <p className="text-xs text-white/40">
               Showing {poses.length} of {totalPoses} poses
             </p>
           </div>
 
           {/* Pose Grid - Apple Glass Cards */}
           <Suspense fallback={<PoseGridSkeleton />}>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 px-2 md:px-4">
               {poses.map((pose) => (
                 <Link key={pose.slug} href={`/poses/${pose.slug}`}>
                   <div className="group h-full relative rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02]">
@@ -264,14 +289,19 @@ export default async function PosesPage({ searchParams }: PageProps) {
                           </p>
                         )}
 
-                        {/* Tags at bottom - centered, uniform size */}
-                        <div className="flex items-center justify-center gap-1.5 mt-2 pt-2 border-t border-white/[0.08]">
-                          <span className="inline-flex items-center justify-center min-w-[70px] h-6 px-2 text-[10px] font-medium rounded-full bg-white/[0.08] text-white/70 border border-white/[0.1]">
+                        {/* Tags at bottom - up to 3 tags, centered */}
+                        <div className="flex items-center justify-center gap-1 mt-2 pt-2 border-t border-white/[0.08]">
+                          <span className="inline-flex items-center justify-center h-5 px-2 text-[9px] font-medium rounded-full bg-white/[0.08] text-white/70 border border-white/[0.1] whitespace-nowrap">
                             {pose.difficulty.charAt(0).toUpperCase() + pose.difficulty.slice(1)}
                           </span>
                           {pose.pose_type && (
-                            <span className="inline-flex items-center justify-center min-w-[70px] h-6 px-2 text-[10px] font-medium rounded-full bg-white/[0.08] text-white/70 border border-white/[0.1]">
+                            <span className="inline-flex items-center justify-center h-5 px-2 text-[9px] font-medium rounded-full bg-white/[0.08] text-white/70 border border-white/[0.1] whitespace-nowrap">
                               {pose.pose_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </span>
+                          )}
+                          {pose.secondary_pose_type && (
+                            <span className="inline-flex items-center justify-center h-5 px-2 text-[9px] font-medium rounded-full bg-white/[0.08] text-white/70 border border-white/[0.1] whitespace-nowrap">
+                              {pose.secondary_pose_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                             </span>
                           )}
                         </div>
@@ -313,7 +343,7 @@ export default async function PosesPage({ searchParams }: PageProps) {
 
 function PoseGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 px-2 md:px-4">
       {Array.from({ length: 10 }).map((_, i) => (
         <div key={i} className="relative rounded-3xl overflow-hidden animate-pulse">
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.12] to-white/[0.04] backdrop-blur-2xl" />
@@ -323,9 +353,10 @@ function PoseGridSkeleton() {
             <div className="p-3 md:p-4 pt-2 flex flex-col">
               <div className="h-4 bg-white/[0.1] rounded w-full mb-1" />
               <div className="h-3 bg-white/[0.08] rounded w-2/3 mb-auto" />
-              <div className="flex justify-center gap-1.5 mt-2 pt-2 border-t border-white/[0.08]">
-                <div className="h-6 bg-white/[0.08] rounded-full min-w-[70px]" />
-                <div className="h-6 bg-white/[0.08] rounded-full min-w-[70px]" />
+              <div className="flex justify-center gap-1 mt-2 pt-2 border-t border-white/[0.08]">
+                <div className="h-5 bg-white/[0.08] rounded-full w-14" />
+                <div className="h-5 bg-white/[0.08] rounded-full w-14" />
+                <div className="h-5 bg-white/[0.08] rounded-full w-14" />
               </div>
             </div>
           </div>
