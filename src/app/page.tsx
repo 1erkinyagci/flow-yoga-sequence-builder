@@ -49,13 +49,13 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Hero Section - Full Width */}
         {/* Mobile Hero - Text on image, buttons below */}
-        <section className="relative w-full min-h-[100svh] md:hidden flex flex-col bg-white">
+        <section className="relative w-full md:hidden flex flex-col bg-white">
           {/* Image Section with Overlaid Text */}
-          <div className="relative flex-1 min-h-[65vh]">
+          <div className="relative min-h-[460px]">
             {/* Hero Image - From top */}
             <div className="absolute inset-0">
               <Image
-                src="/images/hero-mobile.png"
+                src="/images/FLOW_yoga_sequence_builder_hero_image_mobil.png"
                 alt="Yoga teacher in wide-legged forward fold pose"
                 fill
                 className="object-contain object-top"
@@ -65,45 +65,39 @@ export default function HomePage() {
             </div>
 
             {/* Gradient for text readability - top portion for h1 */}
-            <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-white via-white/50 to-transparent z-[1]" />
-
-            {/* Gradient for text readability - bottom portion for subtitle */}
-            <div className="absolute inset-x-0 bottom-0 h-[calc(35%+100px)] bg-gradient-to-t from-white via-white/60 to-transparent z-[1]" />
+            <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-white via-white/40 to-transparent z-[1]" />
 
             {/* Main Heading - Top of image */}
-            <div className="absolute inset-x-0 top-60 z-10 px-5">
+            <div className="absolute inset-x-0 top-[280px] z-10 px-5">
               <h1 className="text-2xl font-bold text-neutral-900 leading-tight tracking-tight text-3d text-center">
                 Design Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700">Perfect Flow</span>
               </h1>
             </div>
 
             {/* Subtitle - Below heading */}
-            <div className="absolute inset-x-0 top-[280px] z-10 px-5">
+            <div className="absolute inset-x-0 top-80 z-10 px-5">
               <p className="text-[13px] text-neutral-600 max-w-[280px] mx-auto leading-relaxed text-center">
                 The professional yoga sequence builder for teachers who value creativity and safety.
               </p>
             </div>
-          </div>
 
-          {/* Buttons Section - Below image */}
-          <div className="flex-shrink-0 px-5 pt-4 pb-8 bg-white">
-            <div className="flex flex-col items-center gap-2 mb-3">
-              <Link href="/builder" className="w-full max-w-[260px]">
-                <button className="group w-full px-4 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold text-sm rounded-xl btn-3d flex items-center justify-center gap-1.5 transition-all">
-                  <Play className="w-3.5 h-3.5" />
+            {/* Buttons - On image layer */}
+            <div className="absolute inset-x-0 top-[380px] z-10 px-4 flex flex-row items-center justify-center gap-2">
+              <Link href="/builder" className="w-[160px]">
+                <button className="group w-full py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold text-xs rounded-xl btn-3d flex items-center justify-center gap-1 transition-all">
+                  <Play className="w-3 h-3" />
                   Start Building Free
-                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </Link>
-              <Link href="/poses" className="w-full max-w-[260px]">
-                <button className="w-full px-4 py-2.5 bg-white/90 backdrop-blur-sm text-neutral-800 font-semibold text-sm rounded-xl border border-neutral-200 transition-all shadow-sm">
+              <Link href="/poses" className="w-[160px]">
+                <button className="group w-full py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold text-xs rounded-xl btn-3d flex items-center justify-center gap-1 transition-all">
                   Explore Pose Library
                 </button>
               </Link>
             </div>
 
-            {/* Trust Badge - 11px */}
-            <p className="text-[11px] text-neutral-500 flex items-center justify-center gap-1.5">
+            {/* Trust Badge - On image layer */}
+            <p className="absolute inset-x-0 top-[430px] z-10 text-[11px] text-neutral-500 flex items-center justify-center gap-1.5">
               <Check className="w-3 h-3 text-primary-500" />
               No credit card required
             </p>
@@ -125,7 +119,7 @@ export default function HomePage() {
           </div>
 
           {/* Gradient overlay for text readability - Desktop */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-transparent z-[1]" style={{ height: '50%' }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/15 to-transparent z-[1]" style={{ height: '50%' }} />
           <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-neutral-50/60 to-transparent z-[1]" />
 
           {/* Hero Content - Text positioned */}
@@ -179,34 +173,34 @@ export default function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-24 bg-gradient-to-b from-white to-neutral-50">
+        <section className="py-12 md:py-24 bg-gradient-to-b from-white to-neutral-50">
           <Container size="xl">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 text-3d">
+            <div className="text-center mb-8 md:mb-16">
+              <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-3 md:mb-6 text-3d">
                 Everything you need to
                 <br />
                 <span className="text-primary-600">plan great classes</span>
               </h2>
-              <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              <p className="text-sm md:text-xl text-neutral-600 max-w-2xl mx-auto px-4 md:px-0">
                 Built by yoga practitioners, for yoga teachers. We understand what you
                 need to create safe, effective, and inspiring sequences.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 px-4 md:px-0">
               {features.map((feature, index) => (
                 <div
                   key={feature.title}
-                  className="group p-8 rounded-3xl hero-glass card-3d card-3d-shadow"
+                  className="group p-5 md:p-8 rounded-2xl md:rounded-3xl hero-glass card-3d card-3d-shadow"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
-                    <feature.icon className="w-7 h-7 text-white" />
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <feature.icon className="w-5 h-5 md:w-7 md:h-7 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-neutral-900 mb-3">
+                  <h3 className="text-base md:text-xl font-bold text-neutral-900 mb-2 md:mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-neutral-600 leading-relaxed">
+                  <p className="text-sm md:text-base text-neutral-600 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -216,25 +210,25 @@ export default function HomePage() {
         </section>
 
         {/* Pose Library Preview */}
-        <section className="py-24 bg-neutral-50">
+        <section className="py-12 md:py-24 bg-neutral-50">
           <Container size="xl">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center px-4 md:px-0">
               <div>
-                <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 text-3d">
+                <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-3 md:mb-6 text-3d">
                   Comprehensive
                   <br />
                   <span className="text-primary-600">pose library</span>
                 </h2>
-                <p className="text-xl text-neutral-600 mb-8 leading-relaxed">
+                <p className="text-sm md:text-xl text-neutral-600 mb-4 md:mb-8 leading-relaxed">
                   Access our curated library of 100+ yoga poses with detailed
                   instructions, benefits, contraindications, and alignment cues.
                 </p>
 
-                <div className="flex flex-wrap gap-3 mb-10">
+                <div className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-10">
                   {poseCategories.map((cat) => (
                     <span
                       key={cat.name}
-                      className={`px-4 py-2 rounded-xl text-sm font-semibold ${cat.color} shadow-sm`}
+                      className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-semibold ${cat.color} shadow-sm`}
                     >
                       {cat.name} ({cat.count})
                     </span>
@@ -242,28 +236,28 @@ export default function HomePage() {
                 </div>
 
                 <Link href="/poses">
-                  <button className="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold text-lg rounded-2xl btn-3d flex items-center gap-3">
+                  <button className="px-5 py-2.5 md:px-8 md:py-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold text-sm md:text-lg rounded-xl md:rounded-2xl btn-3d flex items-center gap-2 md:gap-3">
                     Explore All Poses
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                   </button>
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-3 md:gap-6">
                 {['Downward Dog', 'Warrior I', 'Tree Pose', 'Cobra'].map((pose, i) => (
                   <div
                     key={pose}
-                    className={`aspect-square rounded-3xl hero-glass card-3d card-3d-shadow flex items-center justify-center ${
-                      i === 1 ? 'translate-y-6' : i === 2 ? '-translate-y-6' : ''
+                    className={`aspect-square rounded-2xl md:rounded-3xl hero-glass card-3d card-3d-shadow flex items-center justify-center ${
+                      i === 1 ? 'md:translate-y-6' : i === 2 ? 'md:-translate-y-6' : ''
                     }`}
                   >
-                    <div className="text-center p-6">
-                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-200 to-primary-300 mx-auto mb-4 flex items-center justify-center shadow-inner">
-                        <span className="text-3xl font-bold text-primary-700">
+                    <div className="text-center p-4 md:p-6">
+                      <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary-200 to-primary-300 mx-auto mb-2 md:mb-4 flex items-center justify-center shadow-inner">
+                        <span className="text-xl md:text-3xl font-bold text-primary-700">
                           {pose.charAt(0)}
                         </span>
                       </div>
-                      <p className="text-lg font-semibold text-neutral-800">{pose}</p>
+                      <p className="text-sm md:text-lg font-semibold text-neutral-800">{pose}</p>
                     </div>
                   </div>
                 ))}
@@ -273,30 +267,30 @@ export default function HomePage() {
         </section>
 
         {/* Pricing Preview */}
-        <section className="py-24 bg-gradient-to-b from-neutral-50 to-white">
+        <section className="py-12 md:py-24 bg-gradient-to-b from-neutral-50 to-white">
           <Container size="lg">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 text-3d">
+            <div className="text-center mb-8 md:mb-16 px-4 md:px-0">
+              <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-3 md:mb-6 text-3d">
                 Simple, transparent
                 <br />
                 <span className="text-primary-600">pricing</span>
               </h2>
-              <p className="text-xl text-neutral-600 max-w-xl mx-auto">
+              <p className="text-sm md:text-xl text-neutral-600 max-w-xl mx-auto">
                 Start free, upgrade when you need more. No surprises, no hidden fees.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-8 max-w-4xl mx-auto px-4 md:px-0">
               {/* Free Tier */}
-              <div className="p-8 rounded-3xl hero-glass card-3d-shadow">
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-neutral-900 mb-3">Free</h3>
-                  <div className="text-5xl font-bold text-neutral-900">
+              <div className="p-5 md:p-8 rounded-2xl md:rounded-3xl hero-glass card-3d-shadow">
+                <div className="text-center mb-5 md:mb-8">
+                  <h3 className="text-xl md:text-2xl font-bold text-neutral-900 mb-2 md:mb-3">Free</h3>
+                  <div className="text-3xl md:text-5xl font-bold text-neutral-900">
                     $0
-                    <span className="text-xl font-normal text-neutral-500">/month</span>
+                    <span className="text-base md:text-xl font-normal text-neutral-500">/month</span>
                   </div>
                 </div>
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-3 md:space-y-4 mb-5 md:mb-8">
                   {[
                     'Up to 5 saved flows',
                     '15 poses per flow',
@@ -304,36 +298,36 @@ export default function HomePage() {
                     'Basic AI suggestions (3/day)',
                     'Save and edit flows',
                   ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-4 h-4 text-primary-600" />
+                    <li key={item} className="flex items-start gap-2 md:gap-3">
+                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 md:w-4 md:h-4 text-primary-600" />
                       </div>
-                      <span className="text-neutral-700">{item}</span>
+                      <span className="text-sm md:text-base text-neutral-700">{item}</span>
                     </li>
                   ))}
                 </ul>
                 <Link href="/signup" className="block">
-                  <button className="w-full py-4 bg-white text-neutral-800 font-semibold text-lg rounded-2xl border-2 border-neutral-200 hover:border-primary-300 transition-all">
+                  <button className="w-full py-3 md:py-4 bg-white text-neutral-800 font-semibold text-sm md:text-lg rounded-xl md:rounded-2xl border-2 border-neutral-200 hover:border-primary-300 transition-all">
                     Get Started
                   </button>
                 </Link>
               </div>
 
               {/* Pro Tier */}
-              <div className="p-8 rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-white relative card-3d-shadow">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-5 py-2 bg-white text-primary-600 text-sm font-bold rounded-full shadow-lg">
+              <div className="p-5 md:p-8 rounded-2xl md:rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-white relative card-3d-shadow">
+                <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-4 py-1.5 md:px-5 md:py-2 bg-white text-primary-600 text-xs md:text-sm font-bold rounded-full shadow-lg">
                     Most Popular
                   </span>
                 </div>
-                <div className="text-center mb-8 mt-4">
-                  <h3 className="text-2xl font-bold mb-3">Pro</h3>
-                  <div className="text-5xl font-bold">
+                <div className="text-center mb-5 md:mb-8 mt-3 md:mt-4">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3">Pro</h3>
+                  <div className="text-3xl md:text-5xl font-bold">
                     $4.99
-                    <span className="text-xl font-normal text-primary-200">/month</span>
+                    <span className="text-base md:text-xl font-normal text-primary-200">/month</span>
                   </div>
                 </div>
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-3 md:space-y-4 mb-5 md:mb-8">
                   {[
                     'Unlimited flows',
                     'Unlimited poses per flow',
@@ -343,16 +337,16 @@ export default function HomePage() {
                     'Shareable links',
                     'Priority support',
                   ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="w-4 h-4 text-white" />
+                    <li key={item} className="flex items-start gap-2 md:gap-3">
+                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 md:w-4 md:h-4 text-white" />
                       </div>
-                      <span className="text-primary-50">{item}</span>
+                      <span className="text-sm md:text-base text-primary-50">{item}</span>
                     </li>
                   ))}
                 </ul>
                 <Link href="/signup?plan=pro" className="block">
-                  <button className="w-full py-4 bg-white text-primary-600 font-bold text-lg rounded-2xl hover:bg-primary-50 transition-all shadow-lg">
+                  <button className="w-full py-3 md:py-4 bg-white text-primary-600 font-bold text-sm md:text-lg rounded-xl md:rounded-2xl hover:bg-primary-50 transition-all shadow-lg">
                     Start Free Trial
                   </button>
                 </Link>
@@ -362,27 +356,27 @@ export default function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24">
+        <section className="py-12 md:py-24 px-4 md:px-0">
           <Container size="lg">
-            <div className="relative rounded-[2.5rem] overflow-hidden">
+            <div className="relative rounded-2xl md:rounded-[2.5rem] overflow-hidden">
               {/* Background with gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700" />
               <div className="absolute inset-0 bg-[url('/images/hero.png')] bg-cover bg-center opacity-10" />
 
-              <div className="relative p-12 md:p-20 text-center">
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 text-3d-dark">
+              <div className="relative p-8 md:p-20 text-center">
+                <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 text-3d-dark">
                   Ready to transform your
                   <br />
                   class planning?
                 </h2>
-                <p className="text-xl text-primary-100 mb-10 max-w-xl mx-auto">
+                <p className="text-sm md:text-xl text-primary-100 mb-6 md:mb-10 max-w-xl mx-auto">
                   Join thousands of yoga teachers who save hours every week with FLOW.
                 </p>
                 <Link href="/builder">
-                  <button className="px-10 py-5 bg-white text-primary-600 font-bold text-lg rounded-2xl hover:bg-primary-50 transition-all shadow-xl flex items-center gap-3 mx-auto">
-                    <Play className="w-6 h-6" />
+                  <button className="px-6 py-3 md:px-10 md:py-5 bg-white text-primary-600 font-bold text-sm md:text-lg rounded-xl md:rounded-2xl hover:bg-primary-50 transition-all shadow-xl flex items-center gap-2 md:gap-3 mx-auto">
+                    <Play className="w-4 h-4 md:w-6 md:h-6" />
                     Start Building Now
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                   </button>
                 </Link>
               </div>
