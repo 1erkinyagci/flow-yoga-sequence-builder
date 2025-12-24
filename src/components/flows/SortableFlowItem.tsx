@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, X, Clock, Minus, Plus } from 'lucide-react';
@@ -10,6 +11,7 @@ interface SortableFlowItemProps {
   id: string;
   index: number;
   poseName: string;
+  poseImage?: string | null;
   durationSeconds: number;
   side: PoseSide;
   notes: string;
@@ -32,6 +34,7 @@ export function SortableFlowItem({
   id,
   index,
   poseName,
+  poseImage,
   durationSeconds,
   side,
   notes,
@@ -69,11 +72,20 @@ export function SortableFlowItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'bg-white rounded-xl border border-neutral-100 shadow-sm',
+        'bg-white rounded-xl border border-neutral-100 shadow-sm relative',
         'transition-shadow duration-200',
         isDragging && 'shadow-lg ring-2 ring-primary-500/20 z-10'
       )}
     >
+      {/* Delete button in top-right corner */}
+      <button
+        onClick={onRemove}
+        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-md transition-colors z-10"
+        aria-label="Remove pose"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+
       <div className="flex items-center gap-3 p-3">
         {/* Drag Handle */}
         <button
@@ -86,8 +98,25 @@ export function SortableFlowItem({
         </button>
 
         {/* Index */}
-        <div className="w-7 h-7 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-sm font-medium">
+        <div className="w-7 h-7 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-sm font-medium flex-shrink-0">
           {index + 1}
+        </div>
+
+        {/* Pose Image */}
+        <div className="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+          {poseImage ? (
+            <Image
+              src={poseImage}
+              alt={poseName}
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-neutral-400 font-light text-lg">
+              {poseName.charAt(0)}
+            </span>
+          )}
         </div>
 
         {/* Pose Info */}
@@ -132,15 +161,6 @@ export function SortableFlowItem({
             <Plus className="w-4 h-4" />
           </button>
         </div>
-
-        {/* Remove Button */}
-        <button
-          onClick={onRemove}
-          className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-          aria-label="Remove pose"
-        >
-          <X className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Notes (expandable) */}
