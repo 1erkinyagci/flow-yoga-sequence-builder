@@ -23,6 +23,7 @@ import {
   Search,
   Plus,
   Save,
+  Share2,
   Clock,
   Trash2,
   AlertCircle,
@@ -43,6 +44,7 @@ import {
 import { Header } from '@/components/layout/Header';
 import { Container, Card, Input, Button, Select } from '@/components/ui';
 import { VisualFlowItem } from '@/components/flows/VisualFlowItem';
+import { ShareFlowModal } from '@/components/flows/ShareFlowModal';
 import { createClient } from '@/lib/supabase/client';
 import type { FlowStyle, Difficulty, PoseType, PoseSide, Flow, Profile } from '@/types';
 
@@ -186,6 +188,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showLoadModal, setShowLoadModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -1056,6 +1059,17 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                         <span>{currentFlowId ? 'Update' : 'Save'}</span>
                       </button>
 
+                      {/* Share Button */}
+                      <button
+                        onClick={() => setShowShareModal(true)}
+                        disabled={!currentFlowId}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title={!currentFlowId ? 'Save your flow first to share it' : 'Share flow'}
+                      >
+                        <Share2 className="w-4 h-4" />
+                        <span>Share</span>
+                      </button>
+
                       {/* Divider */}
                       <div className="w-px h-6 bg-neutral-200 mx-1" />
 
@@ -1618,6 +1632,15 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
           </Card>
         </div>
       )}
+
+      {/* Share Modal */}
+      <ShareFlowModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        flowId={currentFlowId || ''}
+        flowTitle={flowTitle}
+        isProUser={isProUser}
+      />
     </div>
   );
 }

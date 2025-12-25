@@ -311,6 +311,17 @@ body {
 
 /* Print Styles */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 10mm;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .no-print {
     display: none !important;
   }
@@ -320,5 +331,33 @@ body {
     backdrop-filter: none;
     box-shadow: none;
     border: 1px solid #E8E4DF;
+  }
+
+  /* Flow Print Layout */
+  .flow-print-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .flow-print-header {
+    page-break-after: avoid;
+  }
+
+  .flow-print-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4mm !important;
+  }
+
+  .flow-print-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border: 1px solid #E8E4DF !important;
+    background: #FAFAFA !important;
+  }
+
+  .flow-print-footer {
+    page-break-before: avoid;
+    margin-top: 6mm;
   }
 }
