@@ -7,8 +7,9 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Input, Select } from '@/components/ui';
 import { DifficultyBadge, PoseTypeBadge } from '@/components/ui/Badge';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient, getUser, getUserProfile } from '@/lib/supabase/server';
 import type { PoseDifficulty, PoseType } from '@/types/pose';
+import type { Profile } from '@/types';
 
 export const metadata: Metadata = {
   title: 'Yoga Pose Library - 100+ Poses with Instructions',
@@ -151,10 +152,15 @@ export default async function PosesPage({ searchParams }: PageProps) {
     difficulty: params.difficulty,
   };
 
-  const [poses, totalPoses] = await Promise.all([
+  // Fetch auth state and data in parallel
+  const [poses, totalPoses, user] = await Promise.all([
     getPoses(filters),
     getTotalPublishedCount(),
+    getUser(),
   ]);
+
+  const profile = user ? await getUserProfile() as Profile | null : null;
+  const initialUser = user ? { id: user.id, email: user.email || '' } : null;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#1a1a2e] relative overflow-hidden">
@@ -166,7 +172,7 @@ export default async function PosesPage({ searchParams }: PageProps) {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[150px]" />
       </div>
 
-      <Header />
+      <Header user={initialUser} profile={profile} />
 
       <main className="flex-1 pt-24 md:pt-28 pb-4 md:pb-6 relative z-10">
         <Container size="xl">

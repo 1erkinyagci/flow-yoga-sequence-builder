@@ -4,6 +4,8 @@ import { Check, X, Sparkles, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
+import { getUser, getUserProfile } from '@/lib/supabase/server';
+import type { Profile } from '@/types';
 
 export const metadata: Metadata = {
   title: 'Pricing - Simple Plans for Every Teacher',
@@ -18,10 +20,10 @@ const plans = [
     period: 'forever',
     description: 'Perfect for trying out FLOW',
     features: [
-      { included: true, text: 'Up to 5 saved flows' },
-      { included: true, text: '15 poses per flow' },
+      { included: true, text: 'Up to 3 saved flows' },
+      { included: true, text: '8 poses per flow' },
       { included: true, text: 'Full pose library access' },
-      { included: true, text: 'Basic AI suggestions (3/day)' },
+      { included: true, text: 'Basic AI suggestions (3/day)', comingSoon: true },
       { included: true, text: 'Save and edit flows' },
       { included: false, text: 'PDF export' },
       { included: false, text: 'Shareable links' },
@@ -40,7 +42,7 @@ const plans = [
       { included: true, text: 'Unlimited flows' },
       { included: true, text: 'Unlimited poses per flow' },
       { included: true, text: 'Full pose library access' },
-      { included: true, text: 'Unlimited AI suggestions' },
+      { included: true, text: 'Unlimited AI suggestions', comingSoon: true },
       { included: true, text: 'Save and edit flows' },
       { included: true, text: 'PDF export' },
       { included: true, text: 'Shareable links' },
@@ -71,7 +73,7 @@ const faqs = [
   {
     question: 'What happens to my flows if I downgrade?',
     answer:
-      "Your flows are never deleted. If you exceed the Free plan limits, you won't be able to create new flows until you upgrade or delete some existing ones.",
+      "Your flows are never deleted. If you exceed the Free plan limits (3 flows, 8 poses per flow), you won't be able to create new flows until you upgrade or delete some existing ones.",
   },
   {
     question: 'Do you offer team or studio plans?',
@@ -80,10 +82,19 @@ const faqs = [
   },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  // Fetch auth state server-side
+  const user = await getUser();
+  const profile = user ? await getUserProfile() as Profile | null : null;
+
+  const initialUser = user ? {
+    id: user.id,
+    email: user.email || '',
+  } : null;
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header user={initialUser} profile={profile} />
 
       <main className="flex-1 pt-24 md:pt-28">
         {/* Hero */}
@@ -154,6 +165,11 @@ export default function PricingPage() {
                           }
                         >
                           {feature.text}
+                          {feature.comingSoon && (
+                            <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-700 rounded">
+                              Coming Soon
+                            </span>
+                          )}
                         </span>
                       </li>
                     ))}
@@ -203,14 +219,14 @@ export default function PricingPage() {
                 <tbody className="divide-y divide-neutral-100">
                   <tr>
                     <td className="py-4 text-neutral-700">Saved flows</td>
-                    <td className="py-4 text-center text-neutral-700">5</td>
+                    <td className="py-4 text-center text-neutral-700">3</td>
                     <td className="py-4 text-center text-neutral-700">
                       Unlimited
                     </td>
                   </tr>
                   <tr>
                     <td className="py-4 text-neutral-700">Poses per flow</td>
-                    <td className="py-4 text-center text-neutral-700">15</td>
+                    <td className="py-4 text-center text-neutral-700">8</td>
                     <td className="py-4 text-center text-neutral-700">
                       Unlimited
                     </td>
@@ -225,7 +241,12 @@ export default function PricingPage() {
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-4 text-neutral-700">AI suggestions</td>
+                    <td className="py-4 text-neutral-700">
+                      AI suggestions
+                      <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-700 rounded">
+                        Coming Soon
+                      </span>
+                    </td>
                     <td className="py-4 text-center text-neutral-700">3/day</td>
                     <td className="py-4 text-center text-neutral-700">
                       Unlimited

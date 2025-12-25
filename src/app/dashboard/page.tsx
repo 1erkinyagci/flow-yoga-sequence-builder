@@ -1,11 +1,31 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, FileText, Settings, CreditCard, Sparkles, ArrowRight } from 'lucide-react';
+import { Plus, FileText, Settings, CreditCard, Sparkles, ArrowRight, Clock } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
-import { getUser, getUserProfile } from '@/lib/supabase/server';
+import { getUser, getUserProfile, createServerSupabaseClient } from '@/lib/supabase/server';
 import type { Profile } from '@/types';
+
+interface DashboardFlow {
+  id: string;
+  title: string;
+  style: string;
+  level: string;
+  duration_minutes: number;
+  updated_at: string;
+  flow_items: { id: string }[];
+}
+
+interface RecentFlow {
+  id: string;
+  title: string;
+  style: string;
+  level: string;
+  poseCount: number;
+  duration: number;
+  updatedAt: string;
+}
 
 export default async function DashboardPage() {
   const user = await getUser();
@@ -16,14 +36,40 @@ export default async function DashboardPage() {
 
   const profile = await getUserProfile() as Profile | null;
   const isPro = profile?.subscription_tier === 'paid';
-  const flowCount = profile?.flows_created || 0;
   const maxFlows = isPro ? Infinity : 5;
 
-  // Placeholder flows for demo
-  const recentFlows = [
-    { id: '1', title: 'Morning Vinyasa Flow', poseCount: 12, updatedAt: '2024-01-15' },
-    { id: '2', title: 'Gentle Evening Practice', poseCount: 8, updatedAt: '2024-01-14' },
-  ];
+  // Fetch real flows from database
+  const supabase = await createServerSupabaseClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
+
+  const { data: flowsData } = await db
+    .from('flows')
+    .select(`
+      id,
+      title,
+      style,
+      level,
+      duration_minutes,
+      updated_at,
+      flow_items (id)
+    `)
+    .eq('user_id', user.id)
+    .eq('is_archived', false)
+    .order('updated_at', { ascending: false })
+    .limit(5);
+
+  const recentFlows: RecentFlow[] = (flowsData || []).map((flow: DashboardFlow) => ({
+    id: flow.id,
+    title: flow.title,
+    style: flow.style,
+    level: flow.level,
+    poseCount: flow.flow_items?.length || 0,
+    duration: flow.duration_minutes,
+    updatedAt: new Date(flow.updated_at).toLocaleDateString(),
+  }));
+
+  const flowCount = recentFlows.length;
 
   const userForHeader = {
     id: user.id,
@@ -119,18 +165,25 @@ export default async function DashboardPage() {
                     {recentFlows.map((flow) => (
                       <Link
                         key={flow.id}
-                        href={`/builder?id=${flow.id}`}
+                        href={`/builder?load=${flow.id}`}
                         className="flex items-center justify-between p-3 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-100 transition-colors group"
                       >
-                        <div>
-                          <p className="font-medium text-neutral-900 group-hover:text-primary-600">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-neutral-900 group-hover:text-primary-600 truncate">
                             {flow.title}
                           </p>
-                          <p className="text-sm text-neutral-500">
-                            {flow.poseCount} poses - Updated {flow.updatedAt}
+                          <div className="flex items-center gap-3 text-sm text-neutral-500 mt-0.5">
+                            <span>{flow.poseCount} poses</span>
+                            <span className="text-neutral-300">•</span>
+                            <span className="capitalize">{flow.style}</span>
+                            <span className="text-neutral-300">•</span>
+                            <span className="capitalize">{flow.level}</span>
+                          </div>
+                          <p className="text-xs text-neutral-400 mt-1">
+                            Updated {flow.updatedAt}
                           </p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-neutral-400 group-hover:text-primary-500" />
+                        <ArrowRight className="w-4 h-4 text-neutral-400 group-hover:text-primary-500 flex-shrink-0 ml-3" />
                       </Link>
                     ))}
                   </div>
@@ -146,7 +199,7 @@ export default async function DashboardPage() {
 
                 {recentFlows.length > 0 && (
                   <Link
-                    href="/dashboard/flows"
+                    href="/builder?tab=my-flows"
                     className="block text-center text-sm text-primary-600 hover:text-primary-700 font-medium mt-4"
                   >
                     View all flows

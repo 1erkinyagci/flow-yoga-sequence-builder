@@ -19,6 +19,7 @@ export async function GET(request: Request, { params }: RouteParams) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
 
+  // Get flow with flow_items (without nested poses)
   const { data, error } = await db
     .from('flows')
     .select(`
@@ -29,16 +30,7 @@ export async function GET(request: Request, { params }: RouteParams) {
         position,
         duration_seconds,
         side,
-        notes,
-        poses (
-          id,
-          slug,
-          english_name,
-          sanskrit_name,
-          pose_type,
-          difficulty,
-          image_url
-        )
+        notes
       )
     `)
     .eq('id', id)
@@ -50,12 +42,33 @@ export async function GET(request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: 'Flow not found' }, { status: 404 });
   }
 
+  // Get all pose IDs from flow items
+  const poseIds = (data.flow_items || [])
+    .map((item: FlowItem) => item.pose_id)
+    .filter(Boolean);
+
+  // Fetch poses separately
+  let posesMap: Record<string, Pose> = {};
+  if (poseIds.length > 0) {
+    const { data: posesData } = await db
+      .from('poses')
+      .select('id, slug, english_name, sanskrit_name, pose_type, difficulty, image_url')
+      .in('id', poseIds);
+
+    if (posesData) {
+      posesMap = posesData.reduce((acc: Record<string, Pose>, pose: Pose) => {
+        acc[pose.id] = pose;
+        return acc;
+      }, {});
+    }
+  }
+
   // Transform items to include pose data properly
   const items = (data.flow_items || [])
     .sort((a: FlowItem, b: FlowItem) => a.position - b.position)
-    .map((item: FlowItem & { poses: Pose }) => ({
+    .map((item: FlowItem) => ({
       ...item,
-      pose: item.poses,
+      pose: posesMap[item.pose_id] || null,
     }));
 
   return NextResponse.json({
@@ -146,7 +159,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     }
 
     // Fetch and return updated flow
-    const { data: updatedFlow } = await db
+    const { data: updatedFlow, error: fetchError } = await db
       .from('flows')
       .select(`
         *,
@@ -156,26 +169,43 @@ export async function PUT(request: Request, { params }: RouteParams) {
           position,
           duration_seconds,
           side,
-          notes,
-          poses (
-            id,
-            slug,
-            english_name,
-            sanskrit_name,
-            pose_type,
-            difficulty,
-            image_url
-          )
+          notes
         )
       `)
       .eq('id', id)
       .single();
 
+    if (fetchError || !updatedFlow) {
+      console.error('Error fetching updated flow:', fetchError);
+      // Return basic success response if fetch fails
+      return NextResponse.json({ id, ...updateData }, { status: 200 });
+    }
+
+    // Fetch poses separately
+    const poseIds = (updatedFlow.flow_items || [])
+      .map((item: FlowItem) => item.pose_id)
+      .filter(Boolean);
+
+    let posesMap: Record<string, Pose> = {};
+    if (poseIds.length > 0) {
+      const { data: posesData } = await db
+        .from('poses')
+        .select('id, slug, english_name, sanskrit_name, pose_type, difficulty, image_url')
+        .in('id', poseIds);
+
+      if (posesData) {
+        posesMap = posesData.reduce((acc: Record<string, Pose>, pose: Pose) => {
+          acc[pose.id] = pose;
+          return acc;
+        }, {});
+      }
+    }
+
     const items = (updatedFlow.flow_items || [])
       .sort((a: FlowItem, b: FlowItem) => a.position - b.position)
-      .map((item: FlowItem & { poses: Pose }) => ({
+      .map((item: FlowItem) => ({
         ...item,
-        pose: item.poses,
+        pose: posesMap[item.pose_id] || null,
       }));
 
     return NextResponse.json({
@@ -185,8 +215,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
       total_duration_seconds: items.reduce((acc: number, item: FlowItem) => acc + (item.duration_seconds || 0), 0),
     });
   } catch (err) {
-    console.error('Error parsing request:', err);
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    console.error('Error in PUT /api/flows/[id]:', err);
+    const errorMessage = err instanceof Error ? err.message : 'Invalid request';
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 }
 

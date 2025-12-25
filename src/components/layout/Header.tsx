@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { Button, Container } from '@/components/ui';
+import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types';
 
 interface HeaderProps {
@@ -17,19 +18,77 @@ interface HeaderProps {
   profile?: Profile | null;
 }
 
-const navigation = [
+const baseNavigation = [
   { name: 'Poses', href: '/poses' },
   { name: 'Flow Builder', href: '/builder' },
   { name: 'Pricing', href: '/pricing' },
 ];
 
-export function Header({ user, profile }: HeaderProps) {
+export function Header({ user: initialUser, profile: initialProfile }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // Pages with dark backgrounds that need light text
-  const isDarkBackground = pathname.startsWith('/poses');
+  // Client-side auth state
+  const [user, setUser] = useState(initialUser);
+  const [profile, setProfile] = useState(initialProfile);
+
+  // Pages with dark backgrounds - use transparent header with light text
+  const isTransparent = pathname.startsWith('/poses');
+
+  // Sync with initial props when they change (for navigation between pages)
+  useEffect(() => {
+    if (initialUser !== undefined) {
+      setUser(initialUser);
+    }
+    if (initialProfile !== undefined) {
+      setProfile(initialProfile);
+    }
+  }, [initialUser, initialProfile]);
+
+  // Listen for auth state changes (for sign in/out events)
+  useEffect(() => {
+    const supabase = createClient();
+    let isMounted = true;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
+
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setProfile(null);
+        return;
+      }
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        setUser({ id: session.user.id, email: session.user.email || '' });
+
+        // Fetch profile on sign in
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileData && isMounted) {
+          setProfile(profileData as Profile);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Build navigation - add Dashboard for logged-in users
+  const navigation = user
+    ? [
+        { name: 'Dashboard', href: '/dashboard' },
+        ...baseNavigation,
+      ]
+    : baseNavigation;
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -37,7 +96,10 @@ export function Header({ user, profile }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full">
+    <header className={cn(
+      'fixed top-0 left-0 right-0 z-50 w-full',
+      isTransparent ? '' : 'bg-white/95 backdrop-blur-md shadow-sm'
+    )}>
       {/* Mobile Header - Logo and Hamburger only */}
       <div className="md:hidden flex items-center justify-between px-4 pt-4">
         <Link href="/" className="flex items-center relative z-10">
@@ -46,7 +108,10 @@ export function Header({ user, profile }: HeaderProps) {
             alt="FLOW Yoga Sequence Builder"
             width={200}
             height={80}
-            className="h-20 w-auto object-contain contrast-150 saturate-150 brightness-75"
+            className={cn(
+              'h-20 w-auto object-contain',
+              isTransparent ? 'brightness-150' : 'contrast-150 saturate-150 brightness-75'
+            )}
             priority
           />
         </Link>
@@ -54,21 +119,21 @@ export function Header({ user, profile }: HeaderProps) {
           type="button"
           className={cn(
             'p-2 rounded-xl transition-colors',
-            isDarkBackground
+            isTransparent
               ? 'bg-white/10 hover:bg-white/20'
               : 'bg-primary-500/10 hover:bg-primary-500/20'
           )}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? (
-            <X className={cn('h-6 w-6', isDarkBackground ? 'text-white' : 'text-primary-600')} />
+            <X className={cn('h-6 w-6', isTransparent ? 'text-white' : 'text-primary-600')} />
           ) : (
-            <Menu className={cn('h-6 w-6', isDarkBackground ? 'text-white' : 'text-primary-600')} />
+            <Menu className={cn('h-6 w-6', isTransparent ? 'text-white' : 'text-primary-600')} />
           )}
         </button>
       </div>
 
-      {/* Desktop Header - Transparent */}
+      {/* Desktop Header */}
       <div className="hidden md:block px-6 pt-4">
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
@@ -78,7 +143,10 @@ export function Header({ user, profile }: HeaderProps) {
               alt="FLOW Yoga Sequence Builder"
               width={200}
               height={80}
-              className="h-20 w-auto object-contain contrast-150 saturate-150 brightness-75"
+              className={cn(
+                'h-20 w-auto object-contain',
+                isTransparent ? 'brightness-150' : 'contrast-150 saturate-150 brightness-75'
+              )}
               priority
             />
           </Link>
@@ -90,13 +158,13 @@ export function Header({ user, profile }: HeaderProps) {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'relative px-1 py-2 text-sm font-bold transition-all duration-200',
-                  isDarkBackground
-                    ? 'bg-gradient-to-b from-white via-white/90 to-white/50 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:from-white hover:via-white hover:to-white/70'
-                    : 'text-primary-700 hover:text-primary-900 [text-shadow:_0_1px_2px_rgba(255,255,255,0.8)]',
-                  isActive(item.href) && (isDarkBackground
-                    ? 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white/70 after:rounded-full'
-                    : 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-600 after:rounded-full')
+                  'relative px-1 py-2 text-sm font-semibold transition-all duration-200',
+                  isTransparent
+                    ? 'text-white/80 hover:text-white'
+                    : 'text-neutral-700 hover:text-primary-600',
+                  isActive(item.href) && (isTransparent
+                    ? 'text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full'
+                    : 'text-primary-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-500 after:rounded-full')
                 )}
               >
                 {item.name}
@@ -112,25 +180,24 @@ export function Header({ user, profile }: HeaderProps) {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className={cn(
                     'flex items-center gap-2 px-3 py-2 rounded-xl',
-                    'text-sm font-bold transition-colors',
-                    isDarkBackground
-                      ? 'bg-gradient-to-b from-white via-white/90 to-white/50 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                      : 'text-primary-700 hover:text-primary-900 [text-shadow:_0_1px_2px_rgba(255,255,255,0.8)]',
-                    userMenuOpen && !isDarkBackground && 'text-primary-900'
+                    'text-sm font-semibold transition-colors',
+                    isTransparent
+                      ? 'text-white/80 hover:text-white'
+                      : 'text-neutral-700 hover:text-primary-600',
+                    userMenuOpen && (isTransparent ? 'text-white' : 'text-primary-600')
                   )}
                 >
                   <div className={cn(
                     'w-7 h-7 rounded-full flex items-center justify-center',
-                    isDarkBackground ? 'bg-white/20' : 'bg-primary-500/20'
+                    isTransparent ? 'bg-white/20' : 'bg-primary-500/20'
                   )}>
-                    <User className={cn('w-4 h-4', isDarkBackground ? 'text-white' : 'text-primary-600')} />
+                    <User className={cn('w-4 h-4', isTransparent ? 'text-white' : 'text-primary-600')} />
                   </div>
                   <span className="max-w-[120px] truncate">
                     {profile?.full_name || user.email?.split('@')[0]}
                   </span>
                   <ChevronDown className={cn(
                     'w-4 h-4 transition-transform',
-                    isDarkBackground ? 'text-white' : '',
                     userMenuOpen && 'rotate-180'
                   )} />
                 </button>
@@ -193,10 +260,10 @@ export function Header({ user, profile }: HeaderProps) {
               <>
                 <Link href="/login">
                   <button className={cn(
-                    'px-4 py-2 text-sm font-bold transition-colors',
-                    isDarkBackground
-                      ? 'bg-gradient-to-b from-white via-white/90 to-white/50 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                      : 'text-primary-700 hover:text-primary-900 [text-shadow:_0_1px_2px_rgba(255,255,255,0.8)]'
+                    'px-4 py-2 text-sm font-semibold transition-colors',
+                    isTransparent
+                      ? 'text-white/80 hover:text-white'
+                      : 'text-neutral-700 hover:text-primary-600'
                   )}>
                     Sign in
                   </button>
@@ -204,8 +271,8 @@ export function Header({ user, profile }: HeaderProps) {
                 <Link href="/signup">
                   <button className={cn(
                     'px-5 py-2 text-sm font-semibold rounded-xl transition-all',
-                    isDarkBackground
-                      ? 'text-white bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20'
+                    isTransparent
+                      ? 'text-white bg-white/10 hover:bg-white/20 border border-white/20'
                       : 'text-white bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-md shadow-primary-500/25 hover:shadow-primary-500/40'
                   )}>
                     Get Started
