@@ -4,6 +4,7 @@ import { Check, X, Sparkles, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
+import { cn } from '@/lib/utils/cn';
 import { getUser, getUserProfile } from '@/lib/supabase/server';
 import type { Profile } from '@/types';
 
@@ -96,16 +97,16 @@ export default async function PricingPage() {
     <div className="min-h-screen flex flex-col">
       <Header user={initialUser} profile={profile} />
 
-      <main className="flex-1 pt-24 md:pt-28">
+      <main className="flex-1 pt-20 md:pt-24">
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-transparent to-accent-50/30" />
-          <Container size="lg" className="relative py-8 md:py-16">
+          <Container size="lg" className="relative py-4 md:py-8">
             <div className="text-center max-w-2xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-2">
                 Simple, transparent pricing
               </h1>
-              <p className="text-lg text-neutral-600">
+              <p className="text-sm text-neutral-600">
                 Start free, upgrade when you need more. No hidden fees, no surprises.
               </p>
             </div>
@@ -113,14 +114,14 @@ export default async function PricingPage() {
         </section>
 
         {/* Pricing Cards */}
-        <section className="py-12">
+        <section className="py-6">
           <Container size="lg">
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
               {plans.map((plan) => (
                 <Card
                   key={plan.name}
                   variant={plan.highlighted ? 'default' : 'glass'}
-                  padding="lg"
+                  padding="md"
                   className={
                     plan.highlighted
                       ? 'border-2 border-primary-500 relative'
@@ -128,45 +129,46 @@ export default async function PricingPage() {
                   }
                 >
                   {plan.highlighted && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="px-3 py-1 bg-primary-500 text-white text-xs font-medium rounded-full inline-flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" />
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                      <span className="px-2 py-0.5 bg-primary-500 text-white text-[10px] font-medium rounded-full inline-flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5" />
                         Most Popular
                       </span>
                     </div>
                   )}
 
-                  <div className="text-center mb-8">
-                    <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+                  <div className="text-center mb-4">
+                    <h2 className="text-base font-semibold text-neutral-900 mb-1">
                       {plan.name}
                     </h2>
-                    <div className="text-4xl font-bold text-neutral-900">
+                    <div className="text-2xl font-bold text-neutral-900">
                       {plan.price}
-                      <span className="text-lg font-normal text-neutral-500">
+                      <span className="text-sm font-normal text-neutral-500">
                         {plan.period}
                       </span>
                     </div>
-                    <p className="text-neutral-600 mt-2">{plan.description}</p>
+                    <p className="text-xs text-neutral-600 mt-1">{plan.description}</p>
                   </div>
 
-                  <ul className="space-y-4 mb-8">
+                  <ul className="space-y-2 mb-4">
                     {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
+                      <li key={index} className="flex items-start gap-2">
                         {feature.included ? (
-                          <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                          <Check className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
                         ) : (
-                          <X className="w-5 h-5 text-neutral-300 flex-shrink-0 mt-0.5" />
+                          <X className="w-4 h-4 text-neutral-300 flex-shrink-0 mt-0.5" />
                         )}
                         <span
-                          className={
+                          className={cn(
+                            'text-sm',
                             feature.included
                               ? 'text-neutral-700'
                               : 'text-neutral-400'
-                          }
+                          )}
                         >
                           {feature.text}
                           {feature.comingSoon && (
-                            <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-700 rounded">
+                            <span className="ml-1.5 px-1 py-0.5 text-[9px] font-medium bg-amber-100 text-amber-700 rounded">
                               Coming Soon
                             </span>
                           )}
@@ -178,8 +180,9 @@ export default async function PricingPage() {
                   <Link href={plan.ctaLink}>
                     <Button
                       variant={plan.highlighted ? 'primary' : 'outline'}
+                      size="sm"
                       className="w-full"
-                      rightIcon={<ArrowRight className="w-4 h-4" />}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
                     >
                       {plan.cta}
                     </Button>
@@ -188,95 +191,89 @@ export default async function PricingPage() {
               ))}
             </div>
 
-            <p className="text-center text-sm text-neutral-500 mt-8">
+            <p className="text-center text-xs text-neutral-500 mt-4">
               All prices in USD. Cancel anytime.
             </p>
           </Container>
         </section>
 
         {/* Feature Comparison */}
-        <section className="py-16 bg-neutral-50/50">
+        <section className="py-8 bg-neutral-50/50">
           <Container size="lg">
-            <h2 className="text-2xl font-bold text-neutral-900 text-center mb-12">
+            <h2 className="text-lg font-bold text-neutral-900 text-center mb-6">
               Compare Plans
             </h2>
 
             <div className="overflow-x-auto">
-              <table className="w-full max-w-3xl mx-auto">
+              <table className="w-full max-w-2xl mx-auto text-sm">
                 <thead>
                   <tr className="border-b border-neutral-200">
-                    <th className="text-left py-4 font-medium text-neutral-900">
+                    <th className="text-left py-2 font-medium text-neutral-900">
                       Feature
                     </th>
-                    <th className="text-center py-4 font-medium text-neutral-900 px-8">
+                    <th className="text-center py-2 font-medium text-neutral-900 px-4">
                       Free
                     </th>
-                    <th className="text-center py-4 font-medium text-neutral-900 px-8">
+                    <th className="text-center py-2 font-medium text-neutral-900 px-4">
                       Pro
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
                   <tr>
-                    <td className="py-4 text-neutral-700">Saved flows</td>
-                    <td className="py-4 text-center text-neutral-700">3</td>
-                    <td className="py-4 text-center text-neutral-700">
-                      Unlimited
+                    <td className="py-2 text-neutral-700">Saved flows</td>
+                    <td className="py-2 text-center text-neutral-700">3</td>
+                    <td className="py-2 text-center text-neutral-700">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-neutral-700">Poses per flow</td>
+                    <td className="py-2 text-center text-neutral-700">8</td>
+                    <td className="py-2 text-center text-neutral-700">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-neutral-700">Pose library</td>
+                    <td className="py-2 text-center">
+                      <Check className="w-4 h-4 text-success mx-auto" />
+                    </td>
+                    <td className="py-2 text-center">
+                      <Check className="w-4 h-4 text-success mx-auto" />
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-4 text-neutral-700">Poses per flow</td>
-                    <td className="py-4 text-center text-neutral-700">8</td>
-                    <td className="py-4 text-center text-neutral-700">
-                      Unlimited
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 text-neutral-700">Pose library</td>
-                    <td className="py-4 text-center">
-                      <Check className="w-5 h-5 text-success mx-auto" />
-                    </td>
-                    <td className="py-4 text-center">
-                      <Check className="w-5 h-5 text-success mx-auto" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 text-neutral-700">
+                    <td className="py-2 text-neutral-700">
                       AI suggestions
-                      <span className="ml-2 px-1.5 py-0.5 text-[10px] font-medium bg-amber-100 text-amber-700 rounded">
-                        Coming Soon
+                      <span className="ml-1 px-1 py-0.5 text-[9px] font-medium bg-amber-100 text-amber-700 rounded">
+                        Soon
                       </span>
                     </td>
-                    <td className="py-4 text-center text-neutral-700">3/day</td>
-                    <td className="py-4 text-center text-neutral-700">
-                      Unlimited
+                    <td className="py-2 text-center text-neutral-700">3/day</td>
+                    <td className="py-2 text-center text-neutral-700">Unlimited</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 text-neutral-700">PDF export</td>
+                    <td className="py-2 text-center">
+                      <X className="w-4 h-4 text-neutral-300 mx-auto" />
+                    </td>
+                    <td className="py-2 text-center">
+                      <Check className="w-4 h-4 text-success mx-auto" />
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-4 text-neutral-700">PDF export</td>
-                    <td className="py-4 text-center">
-                      <X className="w-5 h-5 text-neutral-300 mx-auto" />
+                    <td className="py-2 text-neutral-700">Shareable links</td>
+                    <td className="py-2 text-center">
+                      <X className="w-4 h-4 text-neutral-300 mx-auto" />
                     </td>
-                    <td className="py-4 text-center">
-                      <Check className="w-5 h-5 text-success mx-auto" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 text-neutral-700">Shareable links</td>
-                    <td className="py-4 text-center">
-                      <X className="w-5 h-5 text-neutral-300 mx-auto" />
-                    </td>
-                    <td className="py-4 text-center">
-                      <Check className="w-5 h-5 text-success mx-auto" />
+                    <td className="py-2 text-center">
+                      <Check className="w-4 h-4 text-success mx-auto" />
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-4 text-neutral-700">Priority support</td>
-                    <td className="py-4 text-center">
-                      <X className="w-5 h-5 text-neutral-300 mx-auto" />
+                    <td className="py-2 text-neutral-700">Priority support</td>
+                    <td className="py-2 text-center">
+                      <X className="w-4 h-4 text-neutral-300 mx-auto" />
                     </td>
-                    <td className="py-4 text-center">
-                      <Check className="w-5 h-5 text-success mx-auto" />
+                    <td className="py-2 text-center">
+                      <Check className="w-4 h-4 text-success mx-auto" />
                     </td>
                   </tr>
                 </tbody>
@@ -286,19 +283,19 @@ export default async function PricingPage() {
         </section>
 
         {/* FAQ */}
-        <section className="py-16">
+        <section className="py-8">
           <Container size="md">
-            <h2 className="text-2xl font-bold text-neutral-900 text-center mb-12">
+            <h2 className="text-lg font-bold text-neutral-900 text-center mb-6">
               Frequently Asked Questions
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {faqs.map((faq, index) => (
-                <Card key={index} variant="glass" padding="md">
-                  <h3 className="font-semibold text-neutral-900 mb-2">
+                <Card key={index} variant="glass" padding="sm">
+                  <h3 className="font-semibold text-sm text-neutral-900 mb-1">
                     {faq.question}
                   </h3>
-                  <p className="text-neutral-600">{faq.answer}</p>
+                  <p className="text-sm text-neutral-600">{faq.answer}</p>
                 </Card>
               ))}
             </div>
@@ -306,17 +303,17 @@ export default async function PricingPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-16 bg-neutral-50/50">
+        <section className="py-8 bg-neutral-50/50">
           <Container size="md">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-neutral-900 mb-4">
+              <h2 className="text-lg font-bold text-neutral-900 mb-2">
                 Ready to start building?
               </h2>
-              <p className="text-neutral-600 mb-8">
+              <p className="text-sm text-neutral-600 mb-4">
                 Join thousands of yoga teachers who save hours every week with FLOW.
               </p>
               <Link href="/builder">
-                <Button size="lg" rightIcon={<ArrowRight className="w-4 h-4" />}>
+                <Button size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
                   Try Flow Builder Free
                 </Button>
               </Link>
