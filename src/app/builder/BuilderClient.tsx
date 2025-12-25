@@ -46,7 +46,7 @@ import { VisualFlowItem } from '@/components/flows/VisualFlowItem';
 import { createClient } from '@/lib/supabase/client';
 import type { FlowStyle, Difficulty, PoseType, PoseSide, Flow, Profile } from '@/types';
 
-const ZOOM_LEVELS = [50, 75, 100, 150, 200] as const;
+const ZOOM_LEVELS = [50, 75, 100, 125, 150, 200] as const;
 type ZoomPercent = typeof ZOOM_LEVELS[number];
 
 interface PoseFromDB {
@@ -215,6 +215,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
       case 50: return 'grid-cols-4 xl:grid-cols-6';
       case 75: return 'grid-cols-3 xl:grid-cols-5';
       case 100: return 'grid-cols-2 xl:grid-cols-4';
+      case 125: return 'grid-cols-2 xl:grid-cols-3';
       case 150: return 'grid-cols-2 xl:grid-cols-3';
       case 200: return 'grid-cols-1 xl:grid-cols-2';
       default: return 'grid-cols-2 xl:grid-cols-3';
@@ -222,10 +223,11 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   };
 
   // Get zoom level for component
-  const getZoomLevel = (): 'small' | 'medium' | 'large' => {
+  const getZoomLevel = (): 'small' | 'medium' | 'large' | 'xlarge' => {
     if (zoomPercent <= 75) return 'small';
-    if (zoomPercent >= 150) return 'large';
-    return 'medium';
+    if (zoomPercent <= 100) return 'medium';
+    if (zoomPercent <= 125) return 'large';
+    return 'xlarge';
   };
 
   // Tier limits based on auth
