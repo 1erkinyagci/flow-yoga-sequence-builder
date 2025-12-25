@@ -111,9 +111,10 @@ const poseTypeFilterOptions = [
   { value: 'twist', label: 'Twist' },
   { value: 'backbend', label: 'Backbend' },
   { value: 'forward_fold', label: 'Forward Fold' },
-  { value: 'hip_opener', label: 'Hip Opener' },
-  { value: 'balance', label: 'Balance' },
+  { value: 'hip_opening', label: 'Hip Opening' },
+  { value: 'balancing', label: 'Balancing' },
   { value: 'restorative', label: 'Restorative' },
+  { value: 'kneeling', label: 'Kneeling' },
 ];
 
 // Props from server component
