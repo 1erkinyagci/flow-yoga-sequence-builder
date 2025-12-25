@@ -925,20 +925,20 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                           key={pose.slug}
                           onClick={() => addPoseToFlow(pose)}
                           disabled={isOverPoseLimit}
-                          className="w-full p-3 rounded-xl bg-white hover:bg-neutral-50 border border-neutral-100 hover:border-primary-200 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full p-[5px] rounded-xl bg-white/80 backdrop-blur-xl border border-white/50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_-5px_rgba(0,0,0,0.1)] transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <div className="flex items-start gap-3">
-                            <div className="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          <div className="flex items-center gap-2">
+                            <div className="w-14 h-14 rounded-lg bg-neutral-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {pose.image_url ? (
                                 <Image
                                   src={pose.image_url}
                                   alt={pose.english_name}
-                                  width={48}
-                                  height={48}
-                                  className="w-full h-full object-cover"
+                                  width={56}
+                                  height={56}
+                                  className="w-full h-full object-contain"
                                 />
                               ) : (
-                                <span className="text-neutral-400 font-light text-lg">
+                                <span className="text-neutral-400 font-light text-xl">
                                   {pose.english_name.charAt(0)}
                                 </span>
                               )}
