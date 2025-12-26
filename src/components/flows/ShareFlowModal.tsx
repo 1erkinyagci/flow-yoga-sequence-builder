@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Link2, Check, Copy, ExternalLink, Printer, Lock, Loader2 } from 'lucide-react';
+import { X, Link2, Check, Copy, ExternalLink, Lock, Loader2, FileDown } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { Button } from '@/components/ui';
 
@@ -125,9 +125,15 @@ export function ShareFlowModal({
     }
   };
 
-  const handlePrint = () => {
+  const handleOpenLink = () => {
     if (shareState.shareUrl) {
       window.open(shareState.shareUrl, '_blank');
+    }
+  };
+
+  const handleDownloadPdf = () => {
+    if (shareState.shareUrl) {
+      window.open(`${shareState.shareUrl}?download=pdf`, '_blank');
     }
   };
 
@@ -211,16 +217,27 @@ export function ShareFlowModal({
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={handlePrint}
-                  leftIcon={<ExternalLink className="w-4 h-4" />}
-                >
-                  Open Link
-                </Button>
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={handleOpenLink}
+                    leftIcon={<ExternalLink className="w-4 h-4" />}
+                  >
+                    Open Link
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="flex-1 bg-green-500 hover:bg-green-600"
+                    onClick={handleDownloadPdf}
+                    leftIcon={<FileDown className="w-4 h-4" />}
+                  >
+                    Download PDF
+                  </Button>
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"

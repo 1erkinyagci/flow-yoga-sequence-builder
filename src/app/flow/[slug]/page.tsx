@@ -1,12 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft } from 'lucide-react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { FlowPrintPreview } from '@/components/flows/FlowPrintPreview';
-import { PrintButton } from '@/components/flows/PrintButton';
-import { Container, Button } from '@/components/ui';
+import { FlowPageClient } from '@/components/flows/FlowPageClient';
 import type { Flow, FlowItem, Pose, Profile } from '@/types';
 
 interface PageProps {
@@ -100,62 +95,6 @@ export default async function PublicFlowPage({ params }: PageProps) {
   }
 
   const { flow, items } = data;
-  const creatorName = flow.profiles?.full_name || undefined;
 
-  return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Header - hidden on print */}
-      <header className="no-print sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-200">
-        <Container size="xl" className="py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/images/yoga_sequencing_logo_transparent.jpg"
-                alt="FLOW"
-                width={120}
-                height={48}
-                className="h-10 w-auto object-contain contrast-150 saturate-150 brightness-75"
-              />
-            </Link>
-
-            <div className="flex items-center gap-3">
-              <Link href="/builder">
-                <Button variant="outline" size="sm" leftIcon={<ArrowLeft className="w-4 h-4" />}>
-                  Create Your Own
-                </Button>
-              </Link>
-              <PrintButton />
-            </div>
-          </div>
-        </Container>
-      </header>
-
-      {/* Main content */}
-      <main className="py-8 print:py-0">
-        <Container size="lg" className="print:max-w-none print:px-0">
-          <FlowPrintPreview
-            flow={flow}
-            items={items}
-            creatorName={creatorName}
-          />
-        </Container>
-      </main>
-
-      {/* Footer - hidden on print */}
-      <footer className="no-print py-8 border-t border-neutral-200 bg-white">
-        <Container size="lg">
-          <div className="text-center">
-            <p className="text-sm text-neutral-600 mb-4">
-              Create your own yoga sequences with FLOW
-            </p>
-            <Link href="/signup">
-              <Button variant="primary" size="sm">
-                Get Started Free
-              </Button>
-            </Link>
-          </div>
-        </Container>
-      </footer>
-    </div>
-  );
+  return <FlowPageClient flow={flow} items={items} />;
 }
