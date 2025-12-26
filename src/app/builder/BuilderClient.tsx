@@ -194,6 +194,19 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [zoomPercent, setZoomPercent] = useState<ZoomPercent>(100);
   const [activeTab, setActiveTab] = useState<'build' | 'my-flows'>('build');
+  const [showMobilePoseLibrary, setShowMobilePoseLibrary] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [addedPoseToast, setAddedPoseToast] = useState<string | null>(null);
+
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Zoom helpers
   const canZoomOut = zoomPercent > ZOOM_LEVELS[0];
@@ -213,8 +226,21 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
     }
   };
 
-  // Get grid columns based on zoom
+  // Get grid columns based on zoom and screen size
   const getGridCols = () => {
+    // Mobile grid based on zoom
+    if (isMobile) {
+      switch (zoomPercent) {
+        case 50: return 'grid-cols-5';
+        case 75: return 'grid-cols-4';
+        case 100: return 'grid-cols-3';
+        case 125: return 'grid-cols-3';
+        case 150: return 'grid-cols-2';
+        case 200: return 'grid-cols-2';
+        default: return 'grid-cols-3';
+      }
+    }
+    // Desktop grid based on zoom
     switch (zoomPercent) {
       case 50: return 'grid-cols-4 xl:grid-cols-6';
       case 75: return 'grid-cols-3 xl:grid-cols-5';
@@ -464,6 +490,12 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
     };
     setItems([...items, newItem]);
     setIsDirty(true);
+
+    // Show toast on mobile
+    if (isMobile) {
+      setAddedPoseToast(pose.english_name);
+      setTimeout(() => setAddedPoseToast(null), 1500);
+    }
   };
 
   const updateItem = (id: string, updates: Partial<FlowItem>) => {
@@ -897,8 +929,8 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
             {/* Build Tab Content */}
             {activeTab === 'build' && (
               <div className="grid lg:grid-cols-3 gap-6 h-full">
-                {/* Pose Picker */}
-                <div className="lg:col-span-1">
+                {/* Pose Picker - Hidden on mobile, shown on desktop */}
+                <div className="hidden lg:block lg:col-span-1">
                 <Card variant="glass" padding="md" className="sticky top-44">
                   <h2 className="font-semibold text-neutral-900 mb-4">Pose Library</h2>
 
@@ -929,9 +961,13 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                           key={pose.slug}
                           onClick={() => addPoseToFlow(pose)}
                           disabled={isOverPoseLimit}
-                          className="w-full p-[5px] rounded-xl bg-white/80 backdrop-blur-xl border border-white/50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_-5px_rgba(0,0,0,0.1)] transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="relative w-full p-[5px] rounded-xl bg-white/80 backdrop-blur-xl border border-white/50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_-5px_rgba(0,0,0,0.1)] transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <div className="flex items-center gap-2">
+                          {/* Green + badge - right edge, vertically centered */}
+                          <div className="absolute top-1/2 -translate-y-1/2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-sm z-10">
+                            <Plus className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                          </div>
+                          <div className="flex items-center gap-2 pr-8">
                             <div className="w-14 h-14 rounded-lg bg-neutral-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {pose.image_url ? (
                                 <Image
@@ -951,6 +987,11 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                               <p className="font-medium text-neutral-900 text-sm truncate group-hover:text-primary-600">
                                 {pose.english_name}
                               </p>
+                              {pose.sanskrit_name && (
+                                <p className="text-xs text-neutral-500 truncate italic">
+                                  {pose.sanskrit_name}
+                                </p>
+                              )}
                               <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                                 <span className="px-1.5 py-0.5 text-[10px] font-medium bg-primary-50 text-primary-600 rounded capitalize">
                                   {pose.pose_type?.replace('_', ' ')}
@@ -966,7 +1007,6 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                                 </span>
                               </div>
                             </div>
-                            <Plus className="w-4 h-4 text-neutral-400 group-hover:text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                           </div>
                         </button>
                       ))}
@@ -982,11 +1022,67 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                 </Card>
               </div>
 
-              {/* Flow Preview */}
-              <div className="lg:col-span-2">
-                <Card variant="glass" padding="md">
-                  {/* Flow Preview Header - stylish info display */}
-                  <div className="flex items-center justify-between mb-5 pb-3 border-b border-neutral-100">
+              {/* Flow Preview - Full width on mobile */}
+              <div className="col-span-full lg:col-span-2">
+                <Card variant="glass" padding="sm" className="lg:p-6">
+                  {/* Mobile Flow Header - Compact iOS style */}
+                  <div className="lg:hidden mb-3 pb-2 border-b border-neutral-100">
+                    <div className="flex items-center justify-between">
+                      {/* Stats - iOS pill style */}
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-neutral-100 rounded-full">
+                          <span className="text-[11px] font-semibold text-neutral-700">{items.length}</span>
+                          <span className="text-[11px] text-neutral-500">poses</span>
+                        </div>
+                        <div className="flex items-center gap-1 px-2 py-1 bg-neutral-100 rounded-full">
+                          <Clock className="w-3 h-3 text-neutral-500" />
+                          <span className="text-[11px] font-semibold text-neutral-700">{formatDuration(totalSeconds)}</span>
+                        </div>
+                      </div>
+                      {/* Zoom Controls + Actions */}
+                      <div className="flex items-center gap-1">
+                        {/* Zoom Controls - iOS segmented style */}
+                        <div className="flex items-center bg-neutral-100 rounded-full p-0.5">
+                          <button
+                            onClick={zoomOut}
+                            disabled={!canZoomOut}
+                            className={`p-1.5 rounded-full transition-colors ${
+                              canZoomOut
+                                ? 'text-neutral-600 active:bg-white'
+                                : 'text-neutral-300'
+                            }`}
+                          >
+                            <ZoomOut className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="text-[10px] font-semibold text-neutral-600 w-7 text-center">
+                            {zoomPercent}%
+                          </span>
+                          <button
+                            onClick={zoomIn}
+                            disabled={!canZoomIn}
+                            className={`p-1.5 rounded-full transition-colors ${
+                              canZoomIn
+                                ? 'text-neutral-600 active:bg-white'
+                                : 'text-neutral-300'
+                            }`}
+                          >
+                            <ZoomIn className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        {currentFlowId && (
+                          <button
+                            onClick={() => setShowShareModal(true)}
+                            className="p-2 text-neutral-500 active:text-neutral-700 rounded-full"
+                          >
+                            <Share2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Desktop Flow Preview Header - hidden on mobile */}
+                  <div className="hidden lg:flex items-center justify-between mb-5 pb-3 border-b border-neutral-100">
                     {/* Flow Info */}
                     <div className="flex items-center gap-3">
                       {/* Flow Name */}
@@ -1126,18 +1222,30 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
                   {/* Empty State */}
                   {items.length === 0 && (
-                    <div className="border-2 border-dashed border-neutral-200 rounded-2xl p-16 text-center">
-                      <div className="w-20 h-20 rounded-full bg-neutral-100 mx-auto mb-6 flex items-center justify-center">
-                        <Plus className="w-10 h-10 text-neutral-400" />
+                    <>
+                      {/* Desktop Empty State */}
+                      <div className="hidden lg:block border-2 border-dashed border-neutral-200 rounded-2xl p-16 text-center">
+                        <div className="w-20 h-20 rounded-full bg-neutral-100 mx-auto mb-6 flex items-center justify-center">
+                          <Plus className="w-10 h-10 text-neutral-400" />
+                        </div>
+                        <h3 className="text-xl font-medium text-neutral-900 mb-2">
+                          Start building your flow
+                        </h3>
+                        <p className="text-neutral-600 max-w-md mx-auto">
+                          Select poses from the library on the left to add them to your sequence.
+                          Drag cards to reorder.
+                        </p>
                       </div>
-                      <h3 className="text-xl font-medium text-neutral-900 mb-2">
-                        Start building your flow
-                      </h3>
-                      <p className="text-neutral-600 max-w-md mx-auto">
-                        Select poses from the library on the left to add them to your sequence.
-                        Drag cards to reorder.
-                      </p>
-                    </div>
+                      {/* Mobile Empty State - Minimal */}
+                      <button
+                        onClick={() => setShowMobilePoseLibrary(true)}
+                        className="lg:hidden w-full py-10 border-2 border-dashed border-neutral-200 rounded-xl active:bg-neutral-50 transition-colors"
+                      >
+                        <p className="text-sm text-neutral-500 mb-4">Start creating your own yoga flow</p>
+                        <Plus className="w-12 h-12 text-neutral-300 mx-auto mb-2" strokeWidth={1.5} />
+                        <p className="text-sm text-neutral-400">Tap to Add Yoga Pose</p>
+                      </button>
+                    </>
                   )}
 
                   {/* Visual Grid */}
@@ -1151,7 +1259,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                         items={items.map((item) => item.id)}
                         strategy={rectSortingStrategy}
                       >
-                        <div className={`grid gap-4 ${getGridCols()}`}>
+                        <div className={`grid ${isMobile ? 'gap-2' : 'gap-4'} ${getGridCols()}`}>
                           {items.map((item, index) => (
                             <VisualFlowItem
                               key={item.id}
@@ -1163,6 +1271,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                               side={item.side}
                               notes={item.notes}
                               zoomLevel={getZoomLevel()}
+                              isMobile={isMobile}
                               onUpdate={(updates) => updateItem(item.id, updates)}
                               onRemove={() => removeItem(item.id)}
                             />
@@ -1641,6 +1750,173 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
         flowTitle={flowTitle}
         isProUser={isProUser}
       />
+
+      {/* Mobile Floating Action Button - Add Poses */}
+      {activeTab === 'build' && items.length > 0 && (
+        <button
+          onClick={() => setShowMobilePoseLibrary(true)}
+          disabled={isOverPoseLimit}
+          className="lg:hidden fixed bottom-6 right-6 z-40 w-14 h-14 bg-primary-500 text-white rounded-full shadow-xl shadow-primary-500/30 flex items-center justify-center active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Add poses"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Mobile Pose Library Bottom Sheet */}
+      {showMobilePoseLibrary && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowMobilePoseLibrary(false)}
+          />
+
+          {/* Bottom Sheet - iOS style */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[85vh] flex flex-col animate-slide-up">
+            {/* Handle bar */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pb-3 border-b border-neutral-100">
+              <h2 className="text-lg font-semibold text-neutral-900">Add Poses</h2>
+              <button
+                onClick={() => setShowMobilePoseLibrary(false)}
+                className="p-2 -mr-2 text-neutral-400 hover:text-neutral-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search and Filter */}
+            <div className="px-4 py-3 space-y-2 border-b border-neutral-100 bg-neutral-50/50">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search poses..."
+                  className="w-full h-10 pl-9 pr-4 bg-white border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                />
+              </div>
+              {/* Type filter pills - horizontal scroll */}
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
+                <button
+                  onClick={() => setTypeFilter('')}
+                  className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+                    typeFilter === ''
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-white text-neutral-600 border border-neutral-200'
+                  }`}
+                >
+                  All
+                </button>
+                {poseTypeFilterOptions.slice(1).map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setTypeFilter(opt.value as PoseType)}
+                    className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+                      typeFilter === opt.value
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-white text-neutral-600 border border-neutral-200'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pose limit indicator */}
+            {tierLimits.maxPoses !== Infinity && (
+              <div className="px-4 py-2 bg-neutral-50 border-b border-neutral-100">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-neutral-500">Poses in flow</span>
+                  <span className={`font-semibold ${isOverPoseLimit ? 'text-red-500' : 'text-neutral-700'}`}>
+                    {items.length} / {tierLimits.maxPoses}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Toast notification */}
+            {addedPoseToast && (
+              <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+                <div className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-full shadow-lg">
+                  <Check className="w-4 h-4 text-green-400" />
+                  <span>Added to flow</span>
+                </div>
+              </div>
+            )}
+
+            {/* Pose List */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              {isPosesLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+                </div>
+              ) : filteredPoses.length === 0 ? (
+                <div className="text-center py-12 text-neutral-500">
+                  <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No poses found</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2 p-4">
+                  {filteredPoses.map((pose) => (
+                    <button
+                      key={pose.slug}
+                      onClick={() => {
+                        addPoseToFlow(pose);
+                        // Don't close immediately so user can add multiple
+                      }}
+                      disabled={isOverPoseLimit}
+                      className="relative flex flex-col items-center p-2 rounded-xl bg-white border border-neutral-100 shadow-sm active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {/* Green + badge */}
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+                        <Plus className="w-3 h-3 text-white" strokeWidth={3} />
+                      </div>
+                      <div className="w-full aspect-square rounded-lg bg-neutral-50 mb-1.5 overflow-hidden">
+                        {pose.image_url ? (
+                          <Image
+                            src={pose.image_url}
+                            alt={pose.english_name}
+                            width={100}
+                            height={100}
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-2xl text-neutral-300 font-light">
+                              {pose.english_name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-[10px] font-medium text-neutral-700 text-center leading-tight line-clamp-2">
+                        {pose.english_name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Bottom safe area with done button */}
+            <div className="px-4 py-4 border-t border-neutral-100 bg-white">
+              <button
+                onClick={() => setShowMobilePoseLibrary(false)}
+                className="w-full py-3 bg-neutral-900 text-white font-medium rounded-xl active:scale-[0.98] transition-transform"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
