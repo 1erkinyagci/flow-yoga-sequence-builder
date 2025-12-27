@@ -345,14 +345,29 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   // Handle URL parameters (load flow, switch tab)
   // Track if we've already processed the load param
   const [loadParamProcessed, setLoadParamProcessed] = useState(false);
+  const [fromParamProcessed, setFromParamProcessed] = useState(false);
+
+  // Determine user's max poses based on tier
+  const getUserMaxPoses = useCallback(() => {
+    if (!user) return 8; // anonymous: 8 poses
+    if (isProUser) return Infinity; // paid: unlimited
+    return 15; // free: 15 poses
+  }, [user, isProUser]);
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     const loadParam = searchParams.get('load');
+    const fromParam = searchParams.get('from');
 
     // Switch to My Flows tab if requested
     if (tabParam === 'my-flows') {
       setActiveTab('my-flows');
+    }
+
+    // Load a public flow by slug (from shared page)
+    if (fromParam && !fromParamProcessed) {
+      fetchPublicFlowBySlug(fromParam);
+      return;
     }
 
     // Load a specific flow if requested
@@ -373,7 +388,108 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
         fetchAndLoadFlow(loadParam);
       }
     }
-  }, [searchParams, savedFlows, isFlowsLoading, loadParamProcessed]);
+  }, [searchParams, savedFlows, isFlowsLoading, loadParamProcessed, fromParamProcessed]);
+
+  // Fetch a public flow by slug and load it into builder (with tier limits)
+  const fetchPublicFlowBySlug = async (slug: string) => {
+    try {
+      const response = await fetch(`/api/flows/public/${slug}`);
+      if (response.ok) {
+        const flowData = await response.json();
+
+        // Apply tier limits - limit number of poses
+        const maxPoses = getUserMaxPoses();
+        const limitedItems = flowData.items?.slice(0, maxPoses) || [];
+
+        const newTitle = flowData.title ? `${flowData.title} (Copy)` : 'Copied Flow';
+
+        const loadedItems: FlowItem[] = limitedItems
+          .sort((a: { position: number }, b: { position: number }) => a.position - b.position)
+          .map((item: { pose?: { slug?: string; english_name?: string; image_url?: string | null }; pose_id: string; duration_seconds: number; side: PoseSide; notes?: string | null }) => ({
+            id: `${item.pose?.slug || item.pose_id}-${Date.now()}-${Math.random()}`,
+            poseId: item.pose_id,
+            poseSlug: item.pose?.slug || '',
+            poseName: item.pose?.english_name || 'Unknown Pose',
+            poseImage: item.pose?.image_url || null,
+            durationSeconds: item.duration_seconds,
+            side: item.side,
+            notes: item.notes || '',
+          }));
+
+        // Set UI state
+        setFlowTitle(newTitle);
+        setFlowStyle(flowData.style);
+        setFlowLevel(flowData.level);
+        setTargetDuration(flowData.duration_minutes);
+        setItems(loadedItems);
+        setActiveTab('build');
+        setFromParamProcessed(true);
+        window.history.replaceState({}, '', '/builder');
+
+        // Auto-save if user is logged in
+        if (user) {
+          try {
+            const totalSecs = loadedItems.reduce((acc, item) => acc + item.durationSeconds, 0);
+            const saveResponse = await fetch('/api/flows', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: newTitle,
+                style: flowData.style,
+                level: flowData.level,
+                duration_minutes: Math.ceil(totalSecs / 60),
+                items: loadedItems.map((item, index) => ({
+                  pose_id: item.poseId,
+                  position: index,
+                  duration_seconds: item.durationSeconds,
+                  side: item.side,
+                  notes: item.notes,
+                })),
+              }),
+              credentials: 'include',
+            });
+
+            if (saveResponse.ok) {
+              const savedFlow = await saveResponse.json();
+              setCurrentFlowId(savedFlow.id);
+              setIsDirty(false);
+
+              // Refresh saved flows list
+              const flowsResponse = await fetch('/api/flows', { credentials: 'include' });
+              if (flowsResponse.ok) {
+                const flows = await flowsResponse.json();
+                setSavedFlows(flows);
+              }
+            }
+          } catch (saveError) {
+            console.error('Error auto-saving flow:', saveError);
+            // Flow is still loaded, just not saved
+            setIsDirty(true);
+          }
+        } else {
+          setIsDirty(true);
+        }
+
+        // Show info message if poses were limited
+        if (flowData.items && flowData.items.length > maxPoses) {
+          alert(`This flow has ${flowData.items.length} poses. Your account allows up to ${maxPoses} poses per flow, so only the first ${maxPoses} poses were loaded.`);
+        }
+      } else if (response.status === 410) {
+        // Link expired
+        alert('This share link has expired.');
+        setFromParamProcessed(true);
+        window.history.replaceState({}, '', '/builder');
+      } else {
+        // Flow not found or other error
+        setFromParamProcessed(true);
+        window.history.replaceState({}, '', '/builder');
+      }
+    } catch (error) {
+      console.error('Error fetching public flow:', error);
+      setFromParamProcessed(true);
+      window.history.replaceState({}, '', '/builder');
+    }
+  };
 
   // Helper to load flow data into builder state
   const loadFlowIntoBuilder = (flow: SavedFlow) => {
@@ -1105,13 +1221,14 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                           <button
                             onClick={createAndOpenShare}
                             disabled={isCreatingShare}
-                            className="p-2 text-[#34C759] active:text-[#2DB84D] rounded-full disabled:opacity-50"
+                            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-white bg-[#34C759] active:bg-[#2DB84D] rounded-lg disabled:opacity-50"
                           >
                             {isCreatingShare ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             ) : (
-                              <Share2 className="w-4 h-4" />
+                              <Share2 className="w-3.5 h-3.5" />
                             )}
+                            <span>CREATE</span>
                           </button>
                         )}
                       </div>

@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Share2, X, Copy, Check } from 'lucide-react';
+import { Edit3, Share2, X, Copy, Check } from 'lucide-react';
 import { FlowPrintPreview } from '@/components/flows/FlowPrintPreview';
 import { PrintButton } from '@/components/flows/PrintButton';
 import { Container, Button } from '@/components/ui';
@@ -117,10 +117,10 @@ export function FlowPageClient({ flow, items }: FlowPageClientProps) {
             </Link>
 
             <div className="flex items-center gap-2">
-              <Link href="/builder">
-                <Button variant="outline" size="sm" leftIcon={<ArrowLeft className="w-4 h-4" />}>
-                  <span className="hidden sm:inline">Create Your Own</span>
-                  <span className="sm:hidden">Create</span>
+              <Link href={`/builder?from=${flow.public_slug}`}>
+                <Button variant="outline" size="sm" leftIcon={<Edit3 className="w-4 h-4" />}>
+                  <span className="hidden sm:inline">Edit Flow</span>
+                  <span className="sm:hidden">Edit</span>
                 </Button>
               </Link>
               <Button
