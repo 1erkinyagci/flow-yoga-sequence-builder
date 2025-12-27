@@ -189,6 +189,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   const [showLoadModal, setShowLoadModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isCreatingShare, setIsCreatingShare] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -592,6 +593,37 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
       setIsSaving(false);
     }
   }, [user, flowTitle, flowStyle, flowLevel, totalSeconds, items, currentFlowId]);
+
+  // Create share link and open in new tab
+  const createAndOpenShare = useCallback(async () => {
+    if (!currentFlowId) return;
+    if (!isProUser) {
+      setShowShareModal(true); // Show upgrade prompt
+      return;
+    }
+
+    setIsCreatingShare(true);
+    try {
+      const response = await fetch(`/api/flows/${currentFlowId}/share`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create share link');
+      }
+
+      const data = await response.json();
+      if (data.share_url) {
+        window.open(data.share_url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating share link:', error);
+      alert('Failed to create share link. Please try again.');
+    } finally {
+      setIsCreatingShare(false);
+    }
+  }, [currentFlowId, isProUser]);
 
   // Load flow
   const loadFlow = (flow: SavedFlow) => {
@@ -1071,10 +1103,15 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                         </div>
                         {currentFlowId && (
                           <button
-                            onClick={() => setShowShareModal(true)}
-                            className="p-2 text-neutral-500 active:text-neutral-700 rounded-full"
+                            onClick={createAndOpenShare}
+                            disabled={isCreatingShare}
+                            className="p-2 text-[#34C759] active:text-[#2DB84D] rounded-full disabled:opacity-50"
                           >
-                            <Share2 className="w-4 h-4" />
+                            {isCreatingShare ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Share2 className="w-4 h-4" />
+                            )}
                           </button>
                         )}
                       </div>
@@ -1155,15 +1192,19 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                         <span>{currentFlowId ? 'Update' : 'Save'}</span>
                       </button>
 
-                      {/* Share Button */}
+                      {/* Create/Share Button */}
                       <button
-                        onClick={() => setShowShareModal(true)}
-                        disabled={!currentFlowId}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title={!currentFlowId ? 'Save your flow first to share it' : 'Share flow'}
+                        onClick={createAndOpenShare}
+                        disabled={!currentFlowId || isCreatingShare}
+                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#34C759] hover:bg-[#2DB84D] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title={!currentFlowId ? 'Save your flow first' : 'Create shareable page'}
                       >
-                        <Share2 className="w-4 h-4" />
-                        <span>Share</span>
+                        {isCreatingShare ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Share2 className="w-4 h-4" />
+                        )}
+                        <span>{isCreatingShare ? 'Creating...' : 'CREATE'}</span>
                       </button>
 
                       {/* Divider */}

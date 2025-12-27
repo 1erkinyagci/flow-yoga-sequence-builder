@@ -40,20 +40,35 @@ export async function POST(request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: 'Flow not found' }, { status: 404 });
   }
 
-  // If already public, return existing slug
+  // Calculate expiration time (24 hours from now)
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 24);
+
+  // If already public, reset the expiration and return existing slug
   if (existingFlow.is_public && existingFlow.public_slug) {
+    // Reset the expiration time
+    await db
+      .from('flows')
+      .update({
+        share_expires_at: expiresAt.toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id);
+
     return NextResponse.json({
       is_public: true,
       public_slug: existingFlow.public_slug,
       share_url: `${process.env.NEXT_PUBLIC_APP_URL || ''}/flow/${existingFlow.public_slug}`,
+      expires_at: expiresAt.toISOString(),
     });
   }
 
-  // Set is_public to true - the database trigger will generate the public_slug
+  // Set is_public to true and expiration - the database trigger will generate the public_slug
   const { error: updateError } = await db
     .from('flows')
     .update({
       is_public: true,
+      share_expires_at: expiresAt.toISOString(),
       updated_at: new Date().toISOString(),
     })
     .eq('id', id);
@@ -79,6 +94,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     is_public: true,
     public_slug: updatedFlow.public_slug,
     share_url: `${process.env.NEXT_PUBLIC_APP_URL || ''}/flow/${updatedFlow.public_slug}`,
+    expires_at: expiresAt.toISOString(),
   });
 }
 

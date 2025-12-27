@@ -7,6 +7,7 @@ interface ExportPdfOptions {
   filename?: string;
   quality?: number;
   scale?: number;
+  skipSavePicker?: boolean; // Skip the "Save As" dialog and download directly
 }
 
 export async function exportElementToPdf(
@@ -17,26 +18,49 @@ export async function exportElementToPdf(
     filename = 'yoga-flow.pdf',
     quality = 0.95,
     scale = 2,
+    skipSavePicker = false,
   } = options;
 
   try {
-    // Capture the element as canvas
+    console.log('[PDF] Starting PDF generation...');
+    console.log('[PDF] Element dimensions:', element.offsetWidth, 'x', element.offsetHeight);
+
+    // Capture the element directly with html2canvas
+    console.log('[PDF] Capturing canvas...');
+
     const canvas = await html2canvas(element, {
       scale,
       useCORS: true,
       allowTaint: true,
-      backgroundColor: '#ffffff',
+      backgroundColor: '#f5f5f7', // Match the page background
       logging: false,
+      imageTimeout: 10000,
+      onclone: (clonedDoc) => {
+        // Fix images in cloned document
+        const images = clonedDoc.querySelectorAll('img');
+        images.forEach((img) => {
+          // Remove Next.js image attributes that might cause issues
+          img.removeAttribute('srcset');
+          img.removeAttribute('sizes');
+          img.style.objectFit = 'contain';
+        });
+        console.log('[PDF] Cloned document prepared');
+      }
     });
 
+    console.log('[PDF] Canvas captured:', canvas.width, 'x', canvas.height);
+
     const imgData = canvas.toDataURL('image/jpeg', quality);
+    console.log('[PDF] Image data length:', imgData.length);
 
     // Calculate dimensions for A4
+    console.log('[PDF] Creating jsPDF document...');
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
+    console.log('[PDF] jsPDF document created');
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -95,9 +119,45 @@ export async function exportElementToPdf(
     }
 
     // Save the PDF
+    console.log('[PDF] Preparing to save PDF...');
+
+    // Try to use the File System Access API for "Save As" dialog (only if not skipped)
+    if (!skipSavePicker && 'showSaveFilePicker' in window) {
+      try {
+        const pdfBlob = pdf.output('blob');
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: filename,
+          types: [
+            {
+              description: 'PDF Document',
+              accept: { 'application/pdf': ['.pdf'] },
+            },
+          ],
+        });
+
+        const writable = await handle.createWritable();
+        await writable.write(pdfBlob);
+        await writable.close();
+
+        console.log('[PDF] PDF saved via File System Access API!');
+        return;
+      } catch (err: any) {
+        // User cancelled the save dialog
+        if (err.name === 'AbortError') {
+          console.log('[PDF] User cancelled save dialog');
+          return;
+        }
+        // Fall through to regular download if API fails
+        console.warn('[PDF] File System Access API failed, falling back to download:', err);
+      }
+    }
+
+    // Direct download
+    console.log('[PDF] Saving PDF directly...');
     pdf.save(filename);
+    console.log('[PDF] PDF saved successfully!');
   } catch (error) {
-    console.error('Error generating PDF:', error);
+    console.error('[PDF] Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
   }
 }

@@ -23,17 +23,32 @@ export function PdfDownloadButton({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleDownload = useCallback(async () => {
-    if (!targetRef.current || isGenerating) return;
+    console.log('[PDF Button] Clicked!');
+    console.log('[PDF Button] targetRef.current:', targetRef.current);
+    console.log('[PDF Button] isGenerating:', isGenerating);
+
+    if (!targetRef.current) {
+      console.error('[PDF Button] No target element found!');
+      alert('PDF target element not found. Please refresh and try again.');
+      return;
+    }
+
+    if (isGenerating) {
+      console.log('[PDF Button] Already generating, skipping...');
+      return;
+    }
 
     setIsGenerating(true);
     try {
+      console.log('[PDF Button] Starting PDF generation...');
       await exportElementToPdf(targetRef.current, {
         filename: `${sanitizeFilename(filename)}.pdf`,
         quality: 0.95,
         scale: 2,
       });
+      console.log('[PDF Button] PDF generation complete!');
     } catch (error) {
-      console.error('Failed to generate PDF:', error);
+      console.error('[PDF Button] Failed to generate PDF:', error);
       alert('Failed to generate PDF. Please try again.');
     } finally {
       setIsGenerating(false);

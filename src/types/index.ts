@@ -126,6 +126,7 @@ export interface Flow {
   duration_minutes: number;
   is_public: boolean;
   public_slug: string | null;
+  share_expires_at: string | null;
   is_archived: boolean;
   created_at: string;
   updated_at: string;
