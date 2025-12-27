@@ -104,14 +104,11 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
       <div className="md:hidden flex items-center justify-between px-4 pt-4">
         <Link href="/" className="flex items-center relative z-10">
           <Image
-            src="/images/yoga_sequencing_logo_transparent.jpg"
+            src="/images/flow-logo.png"
             alt="FLOW Yoga Sequence Builder"
             width={200}
             height={80}
-            className={cn(
-              'h-20 w-auto object-contain',
-              isTransparent ? 'brightness-150' : 'contrast-150 saturate-150 brightness-75'
-            )}
+            className="h-16 w-auto object-contain"
             priority
           />
         </Link>
@@ -139,14 +136,11 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
           {/* Logo */}
           <Link href="/" className="flex items-center relative z-10">
             <Image
-              src="/images/yoga_sequencing_logo_transparent.jpg"
+              src="/images/flow-logo.png"
               alt="FLOW Yoga Sequence Builder"
               width={200}
               height={80}
-              className={cn(
-                'h-20 w-auto object-contain',
-                isTransparent ? 'brightness-150' : 'contrast-150 saturate-150 brightness-75'
-              )}
+              className="h-16 w-auto object-contain"
               priority
             />
           </Link>

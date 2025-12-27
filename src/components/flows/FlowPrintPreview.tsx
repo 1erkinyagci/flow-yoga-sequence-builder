@@ -140,12 +140,12 @@ export function FlowPrintPreview({
                   </div>
                 )}
                 {/* FLOW Logo Watermark - Responsive size */}
-                <div className="absolute top-0.5 right-0.5 md:top-1.5 md:right-1.5 z-10 w-5 h-5 md:w-12 md:h-12">
+                <div className="absolute top-0.5 right-0.5 md:top-1.5 md:right-1.5 z-10 w-5 h-5 md:w-10 md:h-10">
                   <Image
-                    src="/images/yoga_sequencing_logo_transparent.jpg"
+                    src="/images/flow-logo.png"
                     alt="FLOW"
-                    width={48}
-                    height={48}
+                    width={40}
+                    height={40}
                     className="w-full h-full object-contain"
                   />
                 </div>

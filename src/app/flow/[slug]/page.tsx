@@ -138,11 +138,11 @@ function ExpiredLinkPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/images/yoga_sequencing_logo_transparent.jpg"
+                src="/images/flow-logo.png"
                 alt="FLOW"
                 width={120}
                 height={48}
-                className="h-10 w-auto object-contain contrast-150 saturate-150 brightness-75"
+                className="h-10 w-auto object-contain"
               />
             </Link>
           </div>
