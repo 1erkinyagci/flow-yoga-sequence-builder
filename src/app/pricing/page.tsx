@@ -58,7 +58,7 @@ export default async function PricingPage() {
     <div className="min-h-screen flex flex-col">
       <Header user={initialUser} profile={profile} />
 
-      <main className="flex-1 pt-20 md:pt-24">
+      <main className="flex-1 pt-16 md:pt-20">
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-transparent to-accent-50/30" />

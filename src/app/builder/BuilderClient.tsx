@@ -134,7 +134,7 @@ function BuilderLoading() {
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50">
       <Header />
-      <main className="flex-1 flex items-center justify-center pt-24">
+      <main className="flex-1 flex items-center justify-center pt-14 md:pt-16">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto mb-4" />
           <p className="text-neutral-600">Loading builder...</p>
@@ -189,6 +189,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   const [showLoadModal, setShowLoadModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSaveFirstWarning, setShowSaveFirstWarning] = useState(false);
   const [isCreatingShare, setIsCreatingShare] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -712,7 +713,10 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
   // Create share link and open in new tab
   const createAndOpenShare = useCallback(async () => {
-    if (!currentFlowId) return;
+    if (!currentFlowId) {
+      setShowSaveFirstWarning(true);
+      return;
+    }
     if (!isProUser) {
       setShowShareModal(true); // Show upgrade prompt
       return;
@@ -794,177 +798,133 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
     <div className="min-h-screen flex flex-col bg-neutral-50">
       <Header user={user} profile={initialProfile} />
 
-      <main className="flex-1 flex flex-col pt-24 md:pt-28">
+      <main className="flex-1 flex flex-col pt-14 md:pt-16">
         {/* Toolbar */}
-        <div className="glass-strong border-b border-neutral-100 sticky top-24 md:top-28 z-40">
+        <div className="glass-strong border-b border-neutral-100 sticky top-14 md:top-16 z-40">
           <Container size="xl">
-            <div className="py-2.5 hidden lg:flex items-center gap-6">
-              {/* Tab Navigation */}
-              <div className="flex items-center bg-neutral-100 rounded-lg p-0.5">
-                <button
-                  onClick={() => setActiveTab('build')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === 'build'
-                      ? 'bg-white text-neutral-900 shadow-sm'
-                      : 'text-neutral-600 hover:text-neutral-900'
-                  }`}
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                  Build
-                </button>
-                <button
-                  onClick={() => setActiveTab('my-flows')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === 'my-flows'
-                      ? 'bg-white text-neutral-900 shadow-sm'
-                      : 'text-neutral-600 hover:text-neutral-900'
-                  }`}
-                >
-                  <List className="w-4 h-4" />
-                  My Flows
-                  {user && savedFlows.length > 0 && (
-                    <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary-100 text-primary-700 rounded-full">
-                      {savedFlows.length}
-                    </span>
-                  )}
-                </button>
+            <div className="py-2 hidden lg:flex items-center gap-3">
+              {/* Flow Title */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={flowTitle}
+                  onChange={(e) => {
+                    setFlowTitle(e.target.value);
+                    setIsDirty(true);
+                  }}
+                  className="h-9 w-52 px-3 rounded-lg bg-white border border-neutral-200 text-sm text-neutral-900 font-medium transition-all hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 placeholder:text-neutral-400 placeholder:font-normal"
+                  placeholder="Flow name..."
+                />
+                {isDirty && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full" title="Unsaved changes" />
+                )}
+                {saveSuccess && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
               </div>
 
-              {/* Build Tab - Toolbar Content */}
-              {activeTab === 'build' && (
-                <>
-                  {/* Divider */}
-                  <div className="w-px h-6 bg-neutral-200" />
-                  {/* Flow Title */}
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={flowTitle}
-                      onChange={(e) => {
-                        setFlowTitle(e.target.value);
-                        setIsDirty(true);
-                      }}
-                      className="h-9 w-48 px-3 rounded-lg bg-white border border-neutral-200 text-sm text-neutral-900 font-medium transition-all hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 placeholder:text-neutral-400 placeholder:font-normal"
-                      placeholder="Flow name..."
-                    />
-                    {isDirty && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full" title="Unsaved changes" />
-                    )}
-                    {saveSuccess && (
-                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                        <Check className="w-2.5 h-2.5 text-white" />
-                      </span>
-                    )}
-                  </div>
+              {/* Divider */}
+              <div className="w-px h-5 bg-neutral-200" />
 
-                  {/* Minimal Selects */}
-                  <div className="flex items-center gap-4">
-                    {/* Style */}
-                    <div className="relative">
-                      <select
-                        value={flowStyle}
-                        onChange={(e) => {
-                          setFlowStyle(e.target.value as FlowStyle);
-                          setIsDirty(true);
-                        }}
-                        className="appearance-none bg-transparent text-sm text-neutral-700 font-medium pr-5 cursor-pointer hover:text-neutral-900 focus:outline-none"
-                      >
-                        {flowStyleOptions.map((opt) => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400 pointer-events-none" />
-                    </div>
+              {/* Style Dropdown */}
+              <select
+                value={flowStyle}
+                onChange={(e) => {
+                  setFlowStyle(e.target.value as FlowStyle);
+                  setIsDirty(true);
+                }}
+                className="h-9 px-3 text-sm rounded-lg bg-white border border-neutral-200 text-neutral-700 focus:outline-none focus:ring-1 focus:ring-primary-500/20 focus:border-primary-500"
+              >
+                {flowStyleOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
 
-                    {/* Level */}
-                    <div className="relative">
-                      <select
-                        value={flowLevel}
-                        onChange={(e) => {
-                          setFlowLevel(e.target.value as Difficulty);
-                          setIsDirty(true);
-                        }}
-                        className="appearance-none bg-transparent text-sm text-neutral-700 font-medium pr-5 cursor-pointer hover:text-neutral-900 focus:outline-none"
-                      >
-                        {difficultyOptions.map((opt) => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400 pointer-events-none" />
-                    </div>
+              {/* Level Dropdown */}
+              <select
+                value={flowLevel}
+                onChange={(e) => {
+                  setFlowLevel(e.target.value as Difficulty);
+                  setIsDirty(true);
+                }}
+                className="h-9 px-3 text-sm rounded-lg bg-white border border-neutral-200 text-neutral-700 focus:outline-none focus:ring-1 focus:ring-primary-500/20 focus:border-primary-500"
+              >
+                {difficultyOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
 
-                    {/* Duration */}
-                    <div className="flex items-center gap-1.5 text-sm text-neutral-600">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span className="font-medium">{formatDuration(totalSeconds)}</span>
-                    </div>
+              {/* Divider */}
+              <div className="w-px h-5 bg-neutral-200" />
 
-                    {/* Poses Count */}
-                    <div className="text-sm text-neutral-600">
-                      <span className="font-medium">{items.length}</span> poses
-                    </div>
-                  </div>
-
-                  {/* Actions - with more spacing */}
-                  <div className="flex items-center gap-2 ml-auto">
-                    {user && savedFlows.length > 0 && (
-                      <button
-                        onClick={() => setShowLoadModal(true)}
-                        className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-                      >
-                        <FolderOpen className="w-4 h-4" />
-                        Load
-                      </button>
-                    )}
-                    <button
-                      onClick={clearFlow}
-                      disabled={items.length === 0}
-                      className="p-2 text-neutral-400 hover:text-red-500 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => {
-                        if (!user) {
-                          setShowLoginModal(true);
-                        } else {
-                          setShowSaveModal(true);
-                        }
-                      }}
-                      disabled={items.length === 0 || isSaving}
-                    >
-                      {isSaving ? (
-                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                      ) : (
-                        <Save className="w-4 h-4 mr-1" />
-                      )}
-                      {currentFlowId ? 'Update' : 'Save'}
-                    </Button>
-                  </div>
-                </>
-              )}
-
-              {/* My Flows Tab - Toolbar Content */}
-              {activeTab === 'my-flows' && (
-                <div className="flex items-center gap-3 ml-auto">
-                  <span className="text-sm text-neutral-500">
-                    {savedFlows.length} {savedFlows.length === 1 ? 'flow' : 'flows'} saved
-                  </span>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => {
-                      clearFlow();
-                      setActiveTab('build');
-                    }}
-                  >
-                    <Plus className="w-4 h-4 mr-1" />
-                    New Flow
-                  </Button>
+              {/* Stats */}
+              <div className="flex items-center gap-3 text-sm text-neutral-500">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="font-medium text-neutral-700">{formatDuration(totalSeconds)}</span>
                 </div>
-              )}
+                <span>•</span>
+                <span><span className="font-medium text-neutral-700">{items.length}</span> poses</span>
+              </div>
+
+              {/* Spacer */}
+              <div className="flex-1" />
+
+              {/* Actions */}
+              <div className="flex items-center gap-1.5">
+                {/* Delete */}
+                <button
+                  onClick={clearFlow}
+                  className="h-9 px-3 flex items-center gap-1.5 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete</span>
+                </button>
+                {/* Load */}
+                {user && savedFlows.length > 0 && (
+                  <button
+                    onClick={() => setShowLoadModal(true)}
+                    className="h-9 px-3 flex items-center gap-1.5 text-sm font-medium text-white bg-neutral-500 hover:bg-neutral-600 rounded-lg transition-colors"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                    <span>Load</span>
+                  </button>
+                )}
+                {/* Save */}
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      setShowLoginModal(true);
+                    } else {
+                      setShowSaveModal(true);
+                    }
+                  }}
+                  disabled={isSaving}
+                  className="h-9 px-3 flex items-center gap-1.5 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isSaving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  <span>{currentFlowId ? 'Update' : 'Save'}</span>
+                </button>
+                {/* Create */}
+                <button
+                  onClick={createAndOpenShare}
+                  disabled={isCreatingShare}
+                  className="h-9 px-3 flex items-center gap-1.5 text-sm font-medium text-white bg-[#34C759] hover:bg-[#2DB84D] rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isCreatingShare ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Share2 className="w-4 h-4" />
+                  )}
+                  <span>Create</span>
+                </button>
+              </div>
             </div>
 
             {/* Mobile Toolbar */}
@@ -1003,6 +963,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
               {/* Build Tab - Mobile Content */}
               {activeTab === 'build' && (
                 <>
+                  {/* Row 1: Flow name */}
                   <div className="relative">
                     <input
                       type="text"
@@ -1011,38 +972,71 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                         setFlowTitle(e.target.value);
                         setIsDirty(true);
                       }}
-                      className="h-10 w-full px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 font-medium transition-all hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 placeholder:text-neutral-400 placeholder:font-normal"
-                      placeholder="Give your flow a name..."
+                      className="h-9 w-full px-3 text-sm rounded-lg bg-white border border-neutral-200 text-neutral-900 font-medium transition-all hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 placeholder:text-neutral-400 placeholder:font-normal"
+                      placeholder="Flow name..."
                     />
                     {isDirty && (
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full" />
                     )}
                   </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Select
-                      options={flowStyleOptions}
+                  {/* Row 2: Style, Level, Actions - all in one row */}
+                  <div className="flex items-center gap-1.5">
+                    {/* Style dropdown - compact */}
+                    <select
                       value={flowStyle}
                       onChange={(e) => setFlowStyle(e.target.value as FlowStyle)}
-                      className="flex-1 min-w-[100px]"
-                    />
-                    <Select
-                      options={difficultyOptions}
+                      className="h-8 px-2 text-xs rounded-lg bg-white border border-neutral-200 text-neutral-700 focus:outline-none focus:ring-1 focus:ring-primary-500/20 focus:border-primary-500"
+                    >
+                      {flowStyleOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    {/* Level dropdown - compact */}
+                    <select
                       value={flowLevel}
                       onChange={(e) => setFlowLevel(e.target.value as Difficulty)}
-                      className="flex-1 min-w-[100px]"
-                    />
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" onClick={clearFlow} disabled={items.length === 0}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => user ? setShowSaveModal(true) : setShowLoginModal(true)}
-                        disabled={items.length === 0 || isSaving}
+                      className="h-8 px-2 text-xs rounded-lg bg-white border border-neutral-200 text-neutral-700 focus:outline-none focus:ring-1 focus:ring-primary-500/20 focus:border-primary-500"
+                    >
+                      {difficultyOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    {/* Spacer */}
+                    <div className="flex-1" />
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-1">
+                      {/* Delete */}
+                      <button
+                        onClick={clearFlow}
+                        className="w-8 h-8 flex items-center justify-center text-white bg-red-500 active:bg-red-600 rounded-lg"
                       >
-                        <Save className="w-4 h-4" />
-                      </Button>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                      {/* Load */}
+                      {user && savedFlows.length > 0 && (
+                        <button
+                          onClick={() => setShowLoadModal(true)}
+                          className="w-8 h-8 flex items-center justify-center text-white bg-neutral-500 active:bg-neutral-600 rounded-lg"
+                        >
+                          <FolderOpen className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {/* Save */}
+                      <button
+                        onClick={() => user ? setShowSaveModal(true) : setShowLoginModal(true)}
+                        disabled={isSaving}
+                        className="w-8 h-8 flex items-center justify-center text-white bg-primary-500 active:bg-primary-600 rounded-lg disabled:opacity-50"
+                      >
+                        {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                      </button>
+                      {/* Create */}
+                      <button
+                        onClick={createAndOpenShare}
+                        disabled={isCreatingShare}
+                        className="w-8 h-8 flex items-center justify-center text-white bg-[#34C759] active:bg-[#2DB84D] rounded-lg disabled:opacity-50"
+                      >
+                        {isCreatingShare ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
+                      </button>
                     </div>
                   </div>
                 </>
@@ -1217,20 +1211,6 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                             <ZoomIn className="w-3.5 h-3.5" />
                           </button>
                         </div>
-                        {currentFlowId && (
-                          <button
-                            onClick={createAndOpenShare}
-                            disabled={isCreatingShare}
-                            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-white bg-[#34C759] active:bg-[#2DB84D] rounded-lg disabled:opacity-50"
-                          >
-                            {isCreatingShare ? (
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            ) : (
-                              <Share2 className="w-3.5 h-3.5" />
-                            )}
-                            <span>CREATE</span>
-                          </button>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -1276,57 +1256,6 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
-                      {/* Load Button */}
-                      {user && savedFlows.length > 0 && (
-                        <button
-                          onClick={() => setShowLoadModal(true)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
-                        >
-                          <FolderOpen className="w-4 h-4" />
-                          <span>Load</span>
-                        </button>
-                      )}
-
-                      {/* Save Button */}
-                      <button
-                        onClick={() => {
-                          if (!user) {
-                            setShowLoginModal(true);
-                          } else if (tierLimits.tier === 'free') {
-                            setShowSaveModal(true);
-                          } else {
-                            saveFlow();
-                          }
-                        }}
-                        disabled={items.length === 0 || isSaving}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary-500 text-white hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isSaving ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Save className="w-4 h-4" />
-                        )}
-                        <span>{currentFlowId ? 'Update' : 'Save'}</span>
-                      </button>
-
-                      {/* Create/Share Button */}
-                      <button
-                        onClick={createAndOpenShare}
-                        disabled={!currentFlowId || isCreatingShare}
-                        className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-[#34C759] hover:bg-[#2DB84D] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title={!currentFlowId ? 'Save your flow first' : 'Create shareable page'}
-                      >
-                        {isCreatingShare ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Share2 className="w-4 h-4" />
-                        )}
-                        <span>{isCreatingShare ? 'Creating...' : 'CREATE'}</span>
-                      </button>
-
-                      {/* Divider */}
-                      <div className="w-px h-6 bg-neutral-200 mx-1" />
-
                       {/* Zoom Controls */}
                       <div className="flex items-center gap-1 bg-neutral-100 rounded-lg px-1 py-0.5">
                         <button
@@ -1908,6 +1837,33 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
         flowTitle={flowTitle}
         isProUser={isProUser}
       />
+
+      {/* Save First Warning Modal */}
+      {showSaveFirstWarning && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-4 animate-scale-in">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                Save your flow first
+              </h3>
+              <p className="text-sm text-neutral-600 mb-6">
+                You need to save your flow before creating a shareable link. Go to the Settings panel and click Save.
+              </p>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setShowSaveFirstWarning(false)}
+                className="w-full"
+              >
+                Got it
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Floating Action Button - Add Poses */}
       {activeTab === 'build' && items.length > 0 && (

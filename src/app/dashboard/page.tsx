@@ -80,7 +80,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen flex flex-col bg-neutral-50">
       <Header user={userForHeader} profile={profile} />
 
-      <main className="flex-1 pt-24 md:pt-28 pb-8">
+      <main className="flex-1 pt-16 md:pt-20 pb-8">
         <Container size="xl">
           {/* Welcome Section */}
           <div className="mb-8">

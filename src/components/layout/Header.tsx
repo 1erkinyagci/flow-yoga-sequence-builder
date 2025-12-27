@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard, Home } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { Button, Container } from '@/components/ui';
 import { createClient } from '@/lib/supabase/client';
@@ -98,17 +98,19 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
   return (
     <header className={cn(
       'fixed top-0 left-0 right-0 z-50 w-full',
-      isTransparent ? '' : 'bg-white/95 backdrop-blur-md shadow-sm'
+      isTransparent
+        ? 'bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] border-b border-white/10'
+        : 'bg-white/95 backdrop-blur-md shadow-sm'
     )}>
       {/* Mobile Header - Logo and Hamburger only */}
-      <div className="md:hidden flex items-center justify-between px-4 pt-4">
+      <div className="md:hidden flex items-center justify-between px-4 h-14">
         <Link href="/" className="flex items-center relative z-10">
           <Image
             src="/images/flow-logo.png"
             alt="FLOW Yoga Sequence Builder"
             width={200}
             height={80}
-            className="h-16 w-auto object-contain"
+            className="h-10 w-auto object-contain"
             priority
           />
         </Link>
@@ -131,8 +133,8 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
       </div>
 
       {/* Desktop Header */}
-      <div className="hidden md:block px-6 pt-4">
-        <nav className="flex items-center justify-between max-w-7xl mx-auto">
+      <div className="hidden md:flex items-center px-6 h-16">
+        <nav className="flex items-center justify-between max-w-7xl mx-auto w-full">
           {/* Logo */}
           <Link href="/" className="flex items-center relative z-10">
             <Image
@@ -140,13 +142,26 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
               alt="FLOW Yoga Sequence Builder"
               width={200}
               height={80}
-              className="h-16 w-auto object-contain"
+              className="h-12 w-auto object-contain"
               priority
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6">
+            {/* Home Icon */}
+            <Link
+              href="/"
+              className={cn(
+                'p-2 rounded-lg transition-all duration-200',
+                isTransparent
+                  ? 'text-white/80 hover:text-white hover:bg-white/10'
+                  : 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50',
+                pathname === '/' && (isTransparent ? 'text-white bg-white/10' : 'text-primary-600 bg-primary-50')
+              )}
+            >
+              <Home className="w-5 h-5" />
+            </Link>
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -282,6 +297,20 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
       {mobileMenuOpen && (
         <div className="md:hidden mx-4 mt-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/50 shadow-lg overflow-hidden">
           <div className="p-4 space-y-2">
+            {/* Home Link */}
+            <Link
+              href="/"
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                pathname === '/'
+                  ? 'text-primary-700 bg-primary-50'
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              )}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Home className="w-4 h-4" />
+              Home
+            </Link>
             {navigation.map((item) => (
               <Link
                 key={item.name}

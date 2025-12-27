@@ -174,7 +174,7 @@ export default async function PosesPage({ searchParams }: PageProps) {
 
       <Header user={initialUser} profile={profile} />
 
-      <main className="flex-1 pt-24 md:pt-28 pb-4 md:pb-6 relative z-10">
+      <main className="flex-1 pt-14 md:pt-16 pb-4 md:pb-6 relative z-10">
         <Container size="xl">
           {/* Page Header - Compact */}
           <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
