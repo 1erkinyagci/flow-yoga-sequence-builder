@@ -90,9 +90,14 @@ export function FlowPageClient({ flow, items }: FlowPageClientProps) {
             </div>
 
             {/* Info Text */}
-            <p className="text-xs text-neutral-500">
-              Anyone with this link can view this yoga flow sequence.
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-neutral-500">
+                Anyone with this link can view this yoga flow sequence.
+              </p>
+              <p className="text-xs text-amber-600 font-medium">
+                This link will expire in 24 hours.
+              </p>
+            </div>
           </div>
         </div>
       )}
