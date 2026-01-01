@@ -61,8 +61,15 @@ function parseInteger(value) {
   return isNaN(num) ? undefined : num;
 }
 
+// Detect CSV separator (tab or semicolon)
+function detectSeparator(line) {
+  if (line.includes('\t')) return '\t';
+  if (line.includes(';')) return ';';
+  return ',';
+}
+
 // Parse CSV line respecting quotes
-function parseCSVLine(line, headers) {
+function parseCSVLine(line, headers, separator) {
   const values = [];
   let current = '';
   let inQuotes = false;
@@ -71,7 +78,7 @@ function parseCSVLine(line, headers) {
     const char = line[i];
     if (char === '"') {
       inQuotes = !inQuotes;
-    } else if (char === ';' && !inQuotes) {
+    } else if (char === separator && !inQuotes) {
       values.push(current.trim());
       current = '';
     } else {
@@ -98,8 +105,11 @@ async function importCSV(filePath) {
     process.exit(1);
   }
 
-  // Parse header
-  const headers = lines[0].split(';').map(h => h.trim());
+  // Detect separator and parse header
+  const separator = detectSeparator(lines[0]);
+  console.log(`Detected separator: ${separator === '\t' ? 'TAB' : separator}`);
+
+  const headers = lines[0].split(separator).map(h => h.trim());
   console.log('Headers:', headers);
 
   // Get existing slugs
@@ -116,7 +126,7 @@ async function importCSV(filePath) {
 
   // Process each row
   for (let i = 1; i < lines.length; i++) {
-    const row = parseCSVLine(lines[i], headers);
+    const row = parseCSVLine(lines[i], headers, separator);
     const rowNum = i + 1;
 
     try {
