@@ -91,18 +91,34 @@ export function CsvImport() {
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Detect CSV separator (tab, semicolon, or comma)
+  const detectSeparator = (line: string): string => {
+    // Count occurrences of potential separators
+    const tabCount = (line.match(/\t/g) || []).length;
+    const semicolonCount = (line.match(/;/g) || []).length;
+    const commaCount = (line.match(/,/g) || []).length;
+
+    // Return the separator with most occurrences
+    if (tabCount >= semicolonCount && tabCount >= commaCount && tabCount > 0) return '\t';
+    if (semicolonCount >= commaCount && semicolonCount > 0) return ';';
+    return ',';
+  };
+
   const parseCsv = (text: string): Record<string, string>[] => {
     const lines = text.split('\n').filter((line) => line.trim());
     if (lines.length < 2) return [];
 
+    // Detect separator from header line
+    const separator = detectSeparator(lines[0]);
+
     // Parse header
     const headerLine = lines[0];
-    const headers = parseCSVLine(headerLine);
+    const headers = parseCSVLine(headerLine, separator);
 
     // Parse data rows
     const rows: Record<string, string>[] = [];
     for (let i = 1; i < lines.length; i++) {
-      const values = parseCSVLine(lines[i]);
+      const values = parseCSVLine(lines[i], separator);
       const row: Record<string, string> = {};
       headers.forEach((header, index) => {
         // Normalize header: lowercase, trim, replace spaces with underscores
@@ -116,7 +132,7 @@ export function CsvImport() {
   };
 
   // Parse a single CSV line, handling quoted values
-  const parseCSVLine = (line: string): string[] => {
+  const parseCSVLine = (line: string, separator: string): string[] => {
     const result: string[] = [];
     let current = '';
     let inQuotes = false;
@@ -132,7 +148,7 @@ export function CsvImport() {
         } else {
           inQuotes = !inQuotes;
         }
-      } else if (char === ',' && !inQuotes) {
+      } else if (char === separator && !inQuotes) {
         result.push(current);
         current = '';
       } else {

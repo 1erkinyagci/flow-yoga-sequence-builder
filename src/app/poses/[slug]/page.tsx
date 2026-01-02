@@ -156,13 +156,13 @@ export default async function PosePage({ params }: PageProps) {
 
               {/* Pose Image */}
               <Card variant="glass" padding="none" className="mb-8 overflow-hidden">
-                <div className="aspect-[16/9] bg-neutral-100 flex items-center justify-center relative">
+                <div className="aspect-[4/3] bg-gradient-to-b from-neutral-50 to-neutral-100 flex items-center justify-center relative">
                   {pose.image_url ? (
                     <Image
                       src={pose.image_url}
                       alt={pose.image_alt || pose.english_name}
                       fill
-                      className="object-cover"
+                      className="object-contain p-4"
                       priority
                     />
                   ) : (
