@@ -32,10 +32,14 @@ async function checkPoses() {
   console.log('=== All Poses (' + data.length + ' total) ===\n');
 
   // Group by image prefix
-  const flow11to20 = data.filter(p => p.image_original_filename && p.image_original_filename.includes('FLOW-3-4-5-6.01') || p.image_original_filename && p.image_original_filename.includes('FLOW-3-4-5-6.02'));
+  const flow11to30 = data.filter(p => p.image_original_filename && (
+    p.image_original_filename.includes('FLOW-3-4-5-6.01') ||
+    p.image_original_filename.includes('FLOW-3-4-5-6.02') ||
+    p.image_original_filename.includes('FLOW-3-4-5-6.03')
+  ));
 
-  console.log('--- New Poses (011-020) ---');
-  flow11to20.forEach((p, i) => {
+  console.log('--- Poses (011-030) ---');
+  flow11to30.forEach((p, i) => {
     console.log((i+1) + '. ' + p.english_name + ' (' + p.sanskrit_name + ')');
     console.log('   Slug: ' + p.slug);
     console.log('   Difficulty: ' + p.difficulty + ' | Status: ' + p.status);
