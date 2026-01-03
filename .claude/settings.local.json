@@ -49,7 +49,10 @@
       "Bash(node scripts/list-forward-folds.js:*)",
       "Bash(node scripts/update-forward-folds.js:*)",
       "Bash(node scripts/list-standing.js:*)",
-      "Bash(node scripts/update-standing-1.js:*)"
+      "Bash(node scripts/update-standing-1.js:*)",
+      "Bash(node scripts/update-standing-2.js:*)",
+      "Bash(node scripts/update-standing-3.js:*)",
+      "Bash(node scripts/update-standing-4.js:*)"
     ]
   }
 }
