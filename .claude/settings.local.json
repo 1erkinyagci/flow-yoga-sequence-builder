@@ -37,7 +37,9 @@
       "Bash(node -e:*)",
       "Bash(node scripts/import-poses-folder-7-14-41-50.js:*)",
       "Bash(node scripts/import-poses-folder-7-14-51-60.js:*)",
-      "Bash(node scripts/import-poses-folder-7-14-61-70.js:*)"
+      "Bash(node scripts/import-poses-folder-7-14-61-70.js:*)",
+      "Bash(node scripts/analyze-poses.js:*)",
+      "Bash(node scripts/update-balancing-poses-seo.js:*)"
     ]
   }
 }

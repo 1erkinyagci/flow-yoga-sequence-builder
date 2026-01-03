@@ -18,6 +18,7 @@ import { DifficultyBadge, PoseTypeBadge } from '@/components/ui/Badge';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getProxiedImageUrl } from '@/lib/images';
 import { ProtectedImage } from '@/components/ui/ProtectedImage';
+import { PoseSchema, BreadcrumbSchema } from '@/components/seo/StructuredData';
 import type { Pose } from '@/types/pose';
 
 interface PageProps {
@@ -103,26 +104,20 @@ export default async function PosePage({ params }: PageProps) {
 
   const relatedPoses = await getRelatedPoses(pose);
 
-  // Structured data for SEO
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'ExerciseAction',
-    name: pose.english_name,
-    alternateName: pose.sanskrit_name,
-    description: pose.short_description,
-    exerciseType: 'Yoga',
-    category: pose.pose_type,
-  };
+  // Breadcrumb items for schema
+  const breadcrumbItems = [
+    { name: 'Home', url: '/' },
+    { name: 'Pose Library', url: '/poses' },
+    { name: pose.english_name, url: `/poses/${pose.slug}` },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      {/* Structured Data for SEO */}
+      <PoseSchema pose={pose} />
+      <BreadcrumbSchema items={breadcrumbItems} />
 
       <main className="flex-1 pt-16 md:pt-20 pb-8 md:pb-12">
         <Container size="lg">

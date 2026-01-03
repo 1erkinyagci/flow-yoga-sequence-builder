@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
+import { OrganizationSchema, WebSiteSchema } from '@/components/seo/StructuredData';
 import './globals.css';
 
 const inter = Inter({
@@ -89,6 +90,8 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
       <body className="antialiased bg-background text-foreground min-h-screen">
         <GoogleAnalytics />
+        <OrganizationSchema />
+        <WebSiteSchema />
         {children}
       </body>
     </html>

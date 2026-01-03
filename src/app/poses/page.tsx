@@ -8,6 +8,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Input, Select } from '@/components/ui';
 import { DifficultyBadge, PoseTypeBadge } from '@/components/ui/Badge';
+import { PoseListSchema, BreadcrumbSchema } from '@/components/seo/StructuredData';
 import { createServerSupabaseClient, getUser, getUserProfile } from '@/lib/supabase/server';
 import type { PoseDifficulty, PoseType } from '@/types/pose';
 import type { Profile } from '@/types';
@@ -174,6 +175,13 @@ export default async function PosesPage({ searchParams }: PageProps) {
       </div>
 
       <Header user={initialUser} profile={profile} />
+
+      {/* Structured Data for SEO */}
+      <PoseListSchema poses={poses} />
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'Pose Library', url: '/poses' },
+      ]} />
 
       <main className="flex-1 pt-14 md:pt-16 pb-4 md:pb-6 relative z-10">
         <Container size="xl">
