@@ -94,33 +94,67 @@ export async function POST(request: Request) {
       .from('pose-images')
       .getPublicUrl(filePath);
 
-    // Generate unique draft slug
-    const draftSlug = `draft-${shortUuid()}`;
-
-    // Create draft pose
-    const { data: poseData, error: poseError } = await db
+    // Check if a pose with matching image_original_filename already exists
+    const { data: existingPose } = await db
       .from('poses')
-      .insert({
-        slug: draftSlug,
-        english_name: 'Untitled Pose',
-        difficulty: 'beginner',
-        status: 'draft',
-        image_path: filePath,
-        image_url: publicUrl,
-        image_original_filename: originalFilename,
-        import_batch_id: batchId || null,
-        image_alt: '',
-        created_by: admin.id,
-        updated_by: admin.id,
-      })
-      .select('id')
+      .select('id, slug, english_name')
+      .eq('image_original_filename', originalFilename)
       .single();
 
-    if (poseError) {
-      console.error('Error creating pose:', poseError);
-      // Try to delete uploaded image if pose creation fails
-      await db.storage.from('pose-images').remove([filePath]);
-      return NextResponse.json({ error: poseError.message }, { status: 500 });
+    let poseData;
+    let wasUpdated = false;
+
+    if (existingPose) {
+      // UPDATE existing pose with the image
+      const { data: updatedPose, error: updateError } = await db
+        .from('poses')
+        .update({
+          image_path: filePath,
+          image_url: publicUrl,
+          updated_by: admin.id,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingPose.id)
+        .select('id, slug, english_name')
+        .single();
+
+      if (updateError) {
+        console.error('Error updating pose:', updateError);
+        await db.storage.from('pose-images').remove([filePath]);
+        return NextResponse.json({ error: updateError.message }, { status: 500 });
+      }
+
+      poseData = updatedPose;
+      wasUpdated = true;
+    } else {
+      // CREATE new draft pose (no matching filename found)
+      const draftSlug = `draft-${shortUuid()}`;
+
+      const { data: newPose, error: poseError } = await db
+        .from('poses')
+        .insert({
+          slug: draftSlug,
+          english_name: 'Untitled Pose',
+          difficulty: 'beginner',
+          status: 'draft',
+          image_path: filePath,
+          image_url: publicUrl,
+          image_original_filename: originalFilename,
+          import_batch_id: batchId || null,
+          image_alt: '',
+          created_by: admin.id,
+          updated_by: admin.id,
+        })
+        .select('id, slug, english_name')
+        .single();
+
+      if (poseError) {
+        console.error('Error creating pose:', poseError);
+        await db.storage.from('pose-images').remove([filePath]);
+        return NextResponse.json({ error: poseError.message }, { status: 500 });
+      }
+
+      poseData = newPose;
     }
 
     return NextResponse.json({
@@ -128,7 +162,9 @@ export async function POST(request: Request) {
       poseId: poseData.id,
       imagePath: filePath,
       imageUrl: publicUrl,
-      slug: draftSlug,
+      slug: poseData.slug,
+      poseName: poseData.english_name,
+      wasUpdated, // true if matched existing pose, false if created new draft
     });
   } catch (err) {
     console.error('Error processing upload:', err);

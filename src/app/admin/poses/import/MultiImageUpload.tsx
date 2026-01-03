@@ -11,6 +11,8 @@ interface FileUploadState {
   status: 'queued' | 'uploading' | 'success' | 'error';
   error?: string;
   poseId?: string;
+  poseName?: string;
+  wasUpdated?: boolean; // true = matched existing pose, false = created new draft
 }
 
 export function MultiImageUpload() {
@@ -99,7 +101,13 @@ export function MultiImageUpload() {
         setFiles((prev) =>
           prev.map((f) =>
             f.id === fileState.id
-              ? { ...f, status: 'success', poseId: result.poseId }
+              ? {
+                  ...f,
+                  status: 'success',
+                  poseId: result.poseId,
+                  poseName: result.poseName,
+                  wasUpdated: result.wasUpdated,
+                }
               : f
           )
         );
@@ -118,6 +126,8 @@ export function MultiImageUpload() {
   };
 
   const successCount = files.filter((f) => f.status === 'success').length;
+  const matchedCount = files.filter((f) => f.status === 'success' && f.wasUpdated).length;
+  const newDraftCount = files.filter((f) => f.status === 'success' && !f.wasUpdated).length;
   const errorCount = files.filter((f) => f.status === 'error').length;
   const queuedCount = files.filter((f) => f.status === 'queued').length;
   const uploadingCount = files.filter((f) => f.status === 'uploading').length;
@@ -188,15 +198,18 @@ export function MultiImageUpload() {
           </div>
 
           {/* Status Summary */}
-          <div className="flex gap-4 text-sm">
+          <div className="flex gap-4 text-sm flex-wrap">
             {queuedCount > 0 && (
               <span className="text-neutral-500">{queuedCount} queued</span>
             )}
             {uploadingCount > 0 && (
               <span className="text-blue-500">{uploadingCount} uploading</span>
             )}
-            {successCount > 0 && (
-              <span className="text-green-600">{successCount} completed</span>
+            {matchedCount > 0 && (
+              <span className="text-green-600">{matchedCount} matched</span>
+            )}
+            {newDraftCount > 0 && (
+              <span className="text-amber-600">{newDraftCount} new drafts</span>
             )}
             {errorCount > 0 && (
               <span className="text-red-500">{errorCount} failed</span>
@@ -239,6 +252,16 @@ export function MultiImageUpload() {
                   <p className="text-xs text-neutral-500">
                     {(fileState.file.size / 1024).toFixed(1)} KB
                   </p>
+                  {fileState.status === 'success' && fileState.wasUpdated && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Matched: {fileState.poseName}
+                    </p>
+                  )}
+                  {fileState.status === 'success' && !fileState.wasUpdated && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      + New draft created
+                    </p>
+                  )}
                   {fileState.error && (
                     <p className="text-xs text-red-600 mt-1">{fileState.error}</p>
                   )}

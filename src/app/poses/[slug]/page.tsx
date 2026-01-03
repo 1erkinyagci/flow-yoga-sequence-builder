@@ -16,6 +16,8 @@ import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
 import { DifficultyBadge, PoseTypeBadge } from '@/components/ui/Badge';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { getProxiedImageUrl } from '@/lib/images';
+import { ProtectedImage } from '@/components/ui/ProtectedImage';
 import type { Pose } from '@/types/pose';
 
 interface PageProps {
@@ -156,16 +158,18 @@ export default async function PosePage({ params }: PageProps) {
 
               {/* Pose Image */}
               <Card variant="glass" padding="none" className="mb-8 overflow-hidden">
-                <div className="aspect-[4/3] bg-gradient-to-b from-neutral-50 to-neutral-100 flex items-center justify-center relative">
-                  {pose.image_url ? (
-                    <Image
-                      src={pose.image_url}
-                      alt={pose.image_alt || pose.english_name}
-                      fill
-                      className="object-contain p-4"
-                      priority
-                    />
-                  ) : (
+                {pose.image_url ? (
+                  <ProtectedImage
+                    src={getProxiedImageUrl(pose.image_url) || pose.image_url}
+                    alt={pose.image_alt || pose.english_name}
+                    fill
+                    className="object-contain p-4"
+                    containerClassName="aspect-[4/3] bg-gradient-to-b from-neutral-50 to-neutral-100"
+                    priority
+                    showTrademark
+                  />
+                ) : (
+                  <div className="aspect-[4/3] bg-gradient-to-b from-neutral-50 to-neutral-100 flex items-center justify-center">
                     <div className="text-center">
                       <div className="w-24 h-24 rounded-full bg-neutral-200 mx-auto mb-3 flex items-center justify-center">
                         <span className="text-4xl text-neutral-400 font-light">
@@ -174,8 +178,8 @@ export default async function PosePage({ params }: PageProps) {
                       </div>
                       <p className="text-sm text-neutral-500">Pose illustration</p>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </Card>
 
               {/* Description */}
@@ -445,7 +449,7 @@ export default async function PosePage({ params }: PageProps) {
                           <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center overflow-hidden relative">
                             {related.image_url ? (
                               <Image
-                                src={related.image_url}
+                                src={getProxiedImageUrl(related.image_url) || related.image_url}
                                 alt={related.english_name}
                                 fill
                                 className="object-cover"

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Trash2, Loader2, X, AlertTriangle, Eye } from 'lucide-react';
 import { PoseListItem, PoseStatus, PoseDifficulty, PoseType, POSE_STATUSES } from '@/types/pose';
+import { getProxiedImageUrl } from '@/lib/images';
 import { PoseTableActions } from './PoseTableActions';
 
 interface SearchParams {
@@ -313,7 +314,7 @@ export function PosesTableClient({
                       <div className="w-12 h-12 rounded-lg bg-neutral-100 overflow-hidden flex items-center justify-center">
                         {pose.image_url ? (
                           <Image
-                            src={pose.image_url}
+                            src={getProxiedImageUrl(pose.image_url) || pose.image_url}
                             alt={pose.english_name}
                             width={48}
                             height={48}

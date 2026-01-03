@@ -282,14 +282,18 @@ export function VisualFlowItem({
         <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-transparent pointer-events-none" />
 
         {/* Image Container */}
-        <div className={cn('relative', s.imageMargin, s.imagePadding)}>
+        <div
+          className={cn('relative select-none', s.imageMargin, s.imagePadding)}
+          onContextMenu={(e) => e.preventDefault()}
+        >
           <div className={cn('aspect-square relative overflow-hidden', s.imageRadius)}>
             {poseImage ? (
               <Image
                 src={poseImage}
                 alt={poseName}
                 fill
-                className="object-contain"
+                className="object-contain pointer-events-none"
+                draggable={false}
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center bg-neutral-50">

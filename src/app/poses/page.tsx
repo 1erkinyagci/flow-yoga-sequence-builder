@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, Filter } from 'lucide-react';
+import { getProxiedImageUrl } from '@/lib/images';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Input, Select } from '@/components/ui';
@@ -263,14 +264,15 @@ export default async function PosesPage({ searchParams }: PageProps) {
                     {/* Content */}
                     <div className="relative z-10 h-full flex flex-col">
                       {/* Pose Image */}
-                      <div className="aspect-square flex items-center justify-center relative overflow-hidden">
+                      <div className="aspect-square flex items-center justify-center relative overflow-hidden select-none">
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
                         {pose.image_url ? (
                           <Image
-                            src={pose.image_url}
+                            src={getProxiedImageUrl(pose.image_url) || pose.image_url}
                             alt={pose.english_name}
                             fill
-                            className="object-contain group-hover:scale-110 transition-transform duration-700 ease-out"
+                            className="object-contain group-hover:scale-110 transition-transform duration-700 ease-out pointer-events-none"
+                            draggable={false}
                           />
                         ) : (
                           <div className="w-20 h-20 rounded-full bg-white/[0.08] backdrop-blur-xl flex items-center justify-center border border-white/[0.15]">

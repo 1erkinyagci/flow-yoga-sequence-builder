@@ -46,6 +46,7 @@ import { Container, Card, Input, Button, Select } from '@/components/ui';
 import { VisualFlowItem } from '@/components/flows/VisualFlowItem';
 import { ShareFlowModal } from '@/components/flows/ShareFlowModal';
 import { createClient } from '@/lib/supabase/client';
+import { getProxiedImageUrl } from '@/lib/images';
 import type { FlowStyle, Difficulty, PoseType, PoseSide, Flow, Profile } from '@/types';
 
 const ZOOM_LEVELS = [50, 75, 100, 125, 150, 200] as const;
@@ -411,7 +412,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
             poseId: item.pose_id,
             poseSlug: item.pose?.slug || '',
             poseName: item.pose?.english_name || 'Unknown Pose',
-            poseImage: item.pose?.image_url || null,
+            poseImage: getProxiedImageUrl(item.pose?.image_url) || null,
             durationSeconds: item.duration_seconds,
             side: item.side,
             notes: item.notes || '',
@@ -507,7 +508,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
         poseId: item.pose_id,
         poseSlug: item.pose?.slug || '',
         poseName: item.pose?.english_name || 'Unknown Pose',
-        poseImage: item.pose?.image_url || null,
+        poseImage: getProxiedImageUrl(item.pose?.image_url) || null,
         durationSeconds: item.duration_seconds,
         side: item.side,
         notes: item.notes || '',
@@ -601,7 +602,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
       poseId: pose.id,
       poseSlug: pose.slug,
       poseName: pose.english_name,
-      poseImage: pose.image_url,
+      poseImage: getProxiedImageUrl(pose.image_url),
       durationSeconds: pose.duration_hint_seconds || 30,
       side: 'both',
       notes: '',
@@ -764,7 +765,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
         poseId: item.pose_id,
         poseSlug: item.pose?.slug || '',
         poseName: item.pose?.english_name || 'Unknown Pose',
-        poseImage: item.pose?.image_url || null,
+        poseImage: getProxiedImageUrl(item.pose?.image_url) || null,
         durationSeconds: item.duration_seconds,
         side: item.side,
         notes: item.notes || '',
@@ -1113,7 +1114,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                             <div className="w-14 h-14 rounded-lg bg-neutral-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {pose.image_url ? (
                                 <Image
-                                  src={pose.image_url}
+                                  src={getProxiedImageUrl(pose.image_url) || pose.image_url}
                                   alt={pose.english_name}
                                   width={56}
                                   height={56}
@@ -1996,7 +1997,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                       <div className="w-full aspect-square rounded-lg bg-neutral-50 mb-1.5 overflow-hidden">
                         {pose.image_url ? (
                           <Image
-                            src={pose.image_url}
+                            src={getProxiedImageUrl(pose.image_url) || pose.image_url}
                             alt={pose.english_name}
                             width={100}
                             height={100}

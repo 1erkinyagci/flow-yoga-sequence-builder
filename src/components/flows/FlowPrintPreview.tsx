@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Clock, User } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { getProxiedImageUrl } from '@/lib/images';
 import type { Flow, FlowItemWithPose, FlowStyle, Difficulty } from '@/types';
 
 interface FlowPrintPreviewProps {
@@ -124,13 +125,18 @@ export function FlowPrintPreview({
               </div>
 
               {/* Pose Image - Maximized with minimal margin */}
-              <div className="aspect-square relative m-0.5 md:m-1.5 rounded-sm md:rounded-md overflow-hidden" style={{ backgroundColor: '#f5f5f5' }}>
+              <div
+                className="aspect-square relative m-0.5 md:m-1.5 rounded-sm md:rounded-md overflow-hidden select-none"
+                style={{ backgroundColor: '#f5f5f5' }}
+                onContextMenu={(e) => e.preventDefault()}
+              >
                 {item.pose?.image_url ? (
                   <Image
-                    src={item.pose.image_url}
+                    src={getProxiedImageUrl(item.pose.image_url) || item.pose.image_url}
                     alt={item.pose.english_name}
                     fill
-                    className="object-contain"
+                    className="object-contain pointer-events-none"
+                    draggable={false}
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
