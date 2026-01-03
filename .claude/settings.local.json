@@ -52,7 +52,9 @@
       "Bash(node scripts/update-standing-1.js:*)",
       "Bash(node scripts/update-standing-2.js:*)",
       "Bash(node scripts/update-standing-3.js:*)",
-      "Bash(node scripts/update-standing-4.js:*)"
+      "Bash(node scripts/update-standing-4.js:*)",
+      "Bash(node scripts/check-missing-images.js:*)",
+      "Bash(node scripts/check-image-urls.js:*)"
     ]
   }
 }

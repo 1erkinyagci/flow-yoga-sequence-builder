@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const ALLOWED_HOSTS = [
   'flowyoga.app',
   'www.flowyoga.app',
+  'yoga-sequencing.com',
+  'www.yoga-sequencing.com',
   'localhost:3000',
   'localhost:3001',
   '127.0.0.1:3000',
