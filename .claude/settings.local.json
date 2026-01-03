@@ -43,7 +43,9 @@
       "Bash(node scripts/list-remaining-balancing.js:*)",
       "Bash(node scripts/update-balancing-poses-seo-2.js:*)",
       "Bash(node scripts/list-poses-to-update.js:*)",
-      "Bash(node scripts/update-poses-batch-3.js:*)"
+      "Bash(node scripts/update-poses-batch-3.js:*)",
+      "Bash(node scripts/list-inv-kneel-twist.js:*)",
+      "Bash(node scripts/update-inv-kneel-twist.js:*)"
     ]
   }
 }
