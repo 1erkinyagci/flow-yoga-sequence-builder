@@ -47,7 +47,9 @@
       "Bash(node scripts/list-inv-kneel-twist.js:*)",
       "Bash(node scripts/update-inv-kneel-twist.js:*)",
       "Bash(node scripts/list-forward-folds.js:*)",
-      "Bash(node scripts/update-forward-folds.js:*)"
+      "Bash(node scripts/update-forward-folds.js:*)",
+      "Bash(node scripts/list-standing.js:*)",
+      "Bash(node scripts/update-standing-1.js:*)"
     ]
   }
 }
