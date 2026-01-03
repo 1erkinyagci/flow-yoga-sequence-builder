@@ -32,7 +32,10 @@
       "WebFetch(domain:www.yoga-sequencing.com)",
       "Bash(node scripts/update-bound-forward-fold.js:*)",
       "Bash(node scripts/import-poses-folder-7-14.js:*)",
-      "Bash(node scripts/import-poses-folder-7-14-11-20.js:*)"
+      "Bash(node scripts/import-poses-folder-7-14-11-20.js:*)",
+      "Bash(node scripts/import-poses-folder-7-14-31-40.js:*)",
+      "Bash(node -e:*)",
+      "Bash(node scripts/import-poses-folder-7-14-41-50.js:*)"
     ]
   }
 }
