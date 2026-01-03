@@ -54,7 +54,9 @@
       "Bash(node scripts/update-standing-3.js:*)",
       "Bash(node scripts/update-standing-4.js:*)",
       "Bash(node scripts/check-missing-images.js:*)",
-      "Bash(node scripts/check-image-urls.js:*)"
+      "Bash(node scripts/check-image-urls.js:*)",
+      "Bash(node scripts/import-poses-71-100.js:*)",
+      "Bash(node scripts/import-poses-101-125.js:*)"
     ]
   }
 }
