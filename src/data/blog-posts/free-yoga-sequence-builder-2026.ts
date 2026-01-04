@@ -142,6 +142,12 @@ This combination ensures FLOW solves real problems yoga teachers face.
 
 Let's be specific about what's included in FLOW's free tier:
 
+**Free Plan Limits:**
+- **3 saved flows** (upgrade for unlimited)
+- **8 poses per flow** (upgrade for unlimited)
+- **Full pose library access** (170+ poses)
+- **3 AI suggestions per day**
+
 ### The 170+ Pose Library {#pose-library}
 
 Our complete pose library includes **170+ yoga poses** across all categories:
@@ -182,14 +188,14 @@ The interface is designed to feel natural—if you can use a smartphone, you can
 
 ### AI-Powered Suggestions {#ai-suggestions}
 
-Even on the free tier, you get access to **intelligent pose suggestions**:
+Even on the free tier, you get access to **intelligent pose suggestions** (3 per day):
 
 - Suggestions based on your sequence so far
 - Counter-pose recommendations
 - Transition pose ideas
 - Warm-up and cool-down additions
 
-Our AI understands yoga sequencing principles, ensuring your sequences are balanced and safe.
+Our AI understands yoga sequencing principles, ensuring your sequences are balanced and safe. Free users get 3 AI suggestions daily—enough for most teachers. Upgrade to Pro for unlimited AI assistance.
 
 ---
 
@@ -242,7 +248,7 @@ On the left side, you'll see the **Pose Library** with all 170+ poses:
 3. **Choose yoga style** (Vinyasa, Hatha, Yin, etc.)
 4. **Save** to your library
 
-Your sequences are stored in your browser and synced when you create a free account.
+Create a free account to save up to 3 flows with 8 poses each. Need more? Upgrade to Pro for unlimited flows and poses per flow.
 
 ---
 
@@ -258,8 +264,8 @@ How does FLOW compare to other free yoga sequencing options?
 | **Modifications** | ✅ Multiple | ❌ Paid only | Some | Manual |
 | **Contraindications** | ✅ All poses | ❌ Paid only | Rarely | Manual |
 | **Sequence builder** | ✅ Drag-drop | ✅ Basic | ❌ | ❌ |
-| **Save sequences** | ✅ Unlimited | 3 max | ❌ | N/A |
-| **AI suggestions** | ✅ Basic | ❌ | ❌ | ❌ |
+| **Save sequences** | 3 flows (8 poses each) | 3 max | ❌ | N/A |
+| **AI suggestions** | ✅ 3/day | ❌ | ❌ | ❌ |
 | **Mobile friendly** | ✅ | Partial | ✅ | ❌ |
 | **Time to create** | 10-15 min | 20-30 min | N/A | 45-60 min |
 
@@ -374,11 +380,11 @@ Just open FLOW and start creating professional yoga sequences for your students.
   faqs: [
     {
       question: "Is FLOW Yoga Sequence Builder really free?",
-      answer: "Yes! FLOW offers a genuinely free tier that includes full access to our 170+ pose library, the drag-and-drop sequence builder, basic AI suggestions, and unlimited saved sequences. No credit card is required, and there's no trial period—the free features are yours to use indefinitely."
+      answer: "Yes! FLOW offers a genuinely free tier that includes full access to our 170+ pose library, the drag-and-drop sequence builder, and 3 AI suggestions per day. Free users can save up to 3 flows with 8 poses each. No credit card is required, and there's no trial period—the free features are yours to use indefinitely."
     },
     {
       question: "What's the difference between FLOW free and FLOW Pro?",
-      answer: "FLOW free includes full pose library access, sequence builder, and basic AI suggestions. FLOW Pro ($4.99/month) adds PDF export, shareable links, unlimited AI suggestions, priority support, and advanced analytics. Most teachers find the free tier sufficient for their needs."
+      answer: "FLOW free includes full pose library access (170+ poses), sequence builder (3 flows, 8 poses each), and 3 AI suggestions per day. FLOW Pro ($4.99/month) adds unlimited flows, unlimited poses per flow, PDF export, shareable links, unlimited AI suggestions, and priority support."
     },
     {
       question: "Do I need to create an account to use FLOW?",

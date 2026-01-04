@@ -476,8 +476,8 @@ Learn from these frequent errors:
 
 - **170+ poses** with complete details
 - **Drag-and-drop** sequence building
-- **AI suggestions** for pose recommendations
-- **Save and organize** unlimited sequences
+- **AI suggestions** for pose recommendations (3/day free, unlimited with Pro)
+- **Save up to 3 flows** on free plan (unlimited with Pro at $4.99/month)
 - **Contraindications** included for safety
 
 [**Try FLOW Free →**](/builder)
@@ -546,7 +546,7 @@ Browse our [complete pose library](/poses) for inspiration and detailed instruct
     },
     {
       question: "What are the best tools for creating yoga sequences?",
-      answer: "FLOW Yoga Sequence Builder is the best free option, offering 170+ poses with detailed instructions, drag-and-drop building, and AI suggestions. Other options include Tummee (larger library, paid), index cards for analog planning, and yoga sequence books for templates."
+      answer: "FLOW Yoga Sequence Builder is the best free option, offering 170+ poses with detailed instructions, drag-and-drop building, and AI suggestions. Free plan includes 3 saved flows (8 poses each) and 3 AI suggestions/day. Pro ($4.99/month) unlocks unlimited flows and exports. Other options include Tummee (larger library, paid) and index cards for analog planning."
     },
     {
       question: "How do I plan transitions between yoga poses?",
