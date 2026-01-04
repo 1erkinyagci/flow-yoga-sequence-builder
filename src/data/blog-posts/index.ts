@@ -1,8 +1,12 @@
 import { BlogPost } from '@/types/blog';
 import { yogaSequencingPlatforms2026 } from './yoga-sequencing-platforms-2026';
+import { freeYogaSequenceBuilder2026 } from './free-yoga-sequence-builder-2026';
+import { howToCreateYogaSequence } from './how-to-create-yoga-sequence';
 
 // All blog posts
 export const blogPosts: BlogPost[] = [
+  freeYogaSequenceBuilder2026,
+  howToCreateYogaSequence,
   yogaSequencingPlatforms2026,
 ];
 
