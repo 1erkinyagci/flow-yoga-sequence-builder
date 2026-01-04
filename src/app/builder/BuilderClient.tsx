@@ -1075,7 +1075,16 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                 {/* Pose Picker - Hidden on mobile, shown on desktop */}
                 <div className="hidden lg:block lg:col-span-1">
                 <Card variant="glass" padding="md" className="sticky top-44">
-                  <h2 className="font-semibold text-neutral-900 mb-4">Pose Library</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-semibold text-neutral-900">Pose Library</h2>
+                    <span className="text-sm text-neutral-500">
+                      {searchQuery || typeFilter ? (
+                        <><span className="font-medium text-neutral-700">{filteredPoses.length}</span> / {poses.length}</>
+                      ) : (
+                        <><span className="font-medium text-neutral-700">{poses.length}</span> poses</>
+                      )}
+                    </span>
+                  </div>
 
                   {/* Search and Filter */}
                   <div className="space-y-3 mb-4">
@@ -1896,7 +1905,16 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 pb-3 border-b border-neutral-100">
-              <h2 className="text-lg font-semibold text-neutral-900">Add Poses</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-neutral-900">Add Poses</h2>
+                <span className="text-sm text-neutral-500">
+                  {searchQuery || typeFilter ? (
+                    <>{filteredPoses.length} / {poses.length}</>
+                  ) : (
+                    <>{poses.length}</>
+                  )}
+                </span>
+              </div>
               <button
                 onClick={() => setShowMobilePoseLibrary(false)}
                 className="p-2 -mr-2 text-neutral-400 hover:text-neutral-600"

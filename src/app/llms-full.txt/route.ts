@@ -205,6 +205,9 @@ function formatPoseType(type: string): string {
     seated: 'Seated Poses',
     supine: 'Supine Poses',
     prone: 'Prone Poses',
+    arm_balance: 'Arm Balances',
+    hip_opening: 'Hip Openers',
+    restorative: 'Restorative Poses',
     other: 'Other Poses',
   };
   return types[type] || capitalize(type.replace(/_/g, ' '));
@@ -224,7 +227,11 @@ function formatFocus(focus: string): string {
     wrists: 'Wrists',
     ankles: 'Ankles',
     arms: 'Arms',
+    back: 'Back',
+    upper_back: 'Upper Back',
+    lower_back: 'Lower Back',
     full_body: 'Full Body',
+    posture: 'Posture',
   };
   return focuses[focus] || capitalize(focus.replace(/_/g, ' '));
 }

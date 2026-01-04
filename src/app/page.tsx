@@ -1,9 +1,35 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import { ArrowRight, Layout, Download, Users, Check, Play, Sparkles } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button, Container, Card } from '@/components/ui';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { getProxiedImageUrl } from '@/lib/images';
+
+export const metadata: Metadata = {
+  title: 'FLOW - Professional Yoga Sequence Builder | 170+ Poses',
+  description:
+    'Create professional yoga class sequences with our intuitive drag-and-drop builder. Access 170+ yoga poses with detailed instructions, alignment cues, benefits, and contraindications. Perfect for yoga teachers and studios.',
+  keywords: [
+    'yoga sequence builder',
+    'yoga class planner',
+    'yoga teacher tools',
+    'yoga flow builder',
+    'yoga pose library',
+    'class sequencing',
+    'vinyasa flow',
+    'yoga teaching',
+    'yoga poses',
+    'asana library',
+  ],
+  openGraph: {
+    title: 'FLOW - Professional Yoga Sequence Builder | 170+ Poses',
+    description:
+      'Create professional yoga class sequences with 170+ poses. Drag-and-drop builder with detailed instructions and alignment cues.',
+  },
+};
 
 const features = [
   {
@@ -32,16 +58,66 @@ const features = [
   },
 ];
 
-const poseCategories = [
-  { name: 'Standing', count: 15, color: 'bg-primary-100 text-primary-700' },
-  { name: 'Seated', count: 12, color: 'bg-primary-100 text-primary-700' },
-  { name: 'Backbends', count: 8, color: 'bg-accent-100 text-accent-700' },
-  { name: 'Inversions', count: 6, color: 'bg-accent-100 text-accent-700' },
-  { name: 'Twists', count: 10, color: 'bg-primary-100 text-primary-700' },
-  { name: 'Balance', count: 7, color: 'bg-primary-100 text-primary-700' },
+// Type label mapping
+const poseTypeLabels: Record<string, string> = {
+  standing: 'Standing',
+  forward_fold: 'Forward Folds',
+  kneeling: 'Kneeling',
+  balancing: 'Balancing',
+  twist: 'Twists',
+  inversion: 'Inversions',
+  backbend: 'Backbends',
+};
+
+// Featured poses to show in the preview
+const featuredPoseSlugs = [
+  'downward-facing-dog-classic',
+  'tree-pose-vrksasana',
+  'warrior-ii',
+  'cat-pose-marjaryasana',
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createServerSupabaseClient();
+
+  // Fetch all published poses for counting
+  const { data: poses } = await supabase
+    .from('poses')
+    .select('pose_type, slug, english_name, image_url')
+    .eq('status', 'published');
+
+  const totalPoses = poses?.length || 0;
+
+  // Count by pose type
+  const typeCount: Record<string, number> = {};
+  poses?.forEach((p: { pose_type: string }) => {
+    const type = p.pose_type || 'other';
+    typeCount[type] = (typeCount[type] || 0) + 1;
+  });
+
+  // Build pose categories with real counts (top 6 by count)
+  const poseCategories = Object.entries(typeCount)
+    .filter(([type]) => poseTypeLabels[type])
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([type, count], index) => ({
+      name: poseTypeLabels[type] || type,
+      count,
+      color: index % 2 === 0 ? 'bg-primary-100 text-primary-700' : 'bg-accent-100 text-accent-700',
+    }));
+
+  // Get featured poses with images and Sanskrit names
+  const { data: featuredPoses } = await supabase
+    .from('poses')
+    .select('slug, english_name, sanskrit_name, image_url')
+    .in('slug', featuredPoseSlugs)
+    .eq('status', 'published');
+
+  // Map to ensure order and provide fallbacks
+  const orderedFeaturedPoses = featuredPoseSlugs.map(slug => {
+    const pose = featuredPoses?.find((p: { slug: string }) => p.slug === slug);
+    return pose || { slug, english_name: slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), sanskrit_name: null, image_url: null };
+  });
   return (
     <div className="min-h-screen flex flex-col bg-neutral-50">
       <Header />
@@ -220,7 +296,7 @@ export default function HomePage() {
                   <span className="text-primary-600">pose library</span>
                 </h2>
                 <p className="text-sm md:text-xl text-neutral-600 mb-4 md:mb-8 leading-relaxed">
-                  Access our curated library of 100+ yoga poses with detailed
+                  Access our curated library of {totalPoses}+ yoga poses with detailed
                   instructions, benefits, contraindications, and alignment cues.
                 </p>
 
@@ -243,23 +319,47 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 md:gap-6">
-                {['Downward Dog', 'Warrior I', 'Tree Pose', 'Cobra'].map((pose, i) => (
-                  <div
-                    key={pose}
-                    className={`aspect-square rounded-2xl md:rounded-3xl hero-glass card-3d card-3d-shadow flex items-center justify-center ${
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                {orderedFeaturedPoses.map((pose: { slug: string; english_name: string; sanskrit_name: string | null; image_url: string | null }, i: number) => (
+                  <Link
+                    key={pose.slug}
+                    href={`/poses/${pose.slug}`}
+                    className={`aspect-[4/5] rounded-2xl md:rounded-[20px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_2px_20px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden group transition-all duration-300 ${
                       i === 1 ? 'md:translate-y-6' : i === 2 ? 'md:-translate-y-6' : ''
                     }`}
                   >
-                    <div className="text-center p-4 md:p-6">
-                      <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary-200 to-primary-300 mx-auto mb-2 md:mb-4 flex items-center justify-center shadow-inner">
-                        <span className="text-xl md:text-3xl font-bold text-primary-700">
-                          {pose.charAt(0)}
-                        </span>
-                      </div>
-                      <p className="text-sm md:text-lg font-semibold text-neutral-800">{pose}</p>
+                    {/* Image Container */}
+                    <div className="flex-1 p-2 md:p-2.5 flex items-center justify-center">
+                      {pose.image_url ? (
+                        <div className="w-full h-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                          <Image
+                            src={getProxiedImageUrl(pose.image_url) || pose.image_url}
+                            alt={pose.english_name}
+                            width={180}
+                            height={180}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
+                          <span className="text-2xl md:text-4xl font-bold text-primary-600">
+                            {pose.english_name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
+                    {/* Text Container */}
+                    <div className="px-2 pb-2 md:px-2.5 md:pb-2.5 text-center">
+                      <p className="text-xs md:text-sm font-semibold text-neutral-900 leading-tight group-hover:text-primary-600 transition-colors">
+                        {pose.english_name}
+                      </p>
+                      {pose.sanskrit_name && (
+                        <p className="text-[10px] md:text-xs text-neutral-500 italic mt-0.5">
+                          {pose.sanskrit_name}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
