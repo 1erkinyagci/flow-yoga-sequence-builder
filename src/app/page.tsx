@@ -9,9 +9,9 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getProxiedImageUrl } from '@/lib/images';
 
 export const metadata: Metadata = {
-  title: 'FLOW - Professional Yoga Sequence Builder | 170+ Poses',
+  title: 'FLOW - Professional Yoga Sequence Builder | 214+ Poses',
   description:
-    'Create professional yoga class sequences with our intuitive drag-and-drop builder. Access 170+ yoga poses with detailed instructions, alignment cues, benefits, and contraindications. Perfect for yoga teachers and studios.',
+    'Create professional yoga class sequences with our intuitive drag-and-drop builder. Access 214+ yoga poses with detailed instructions, alignment cues, benefits, and contraindications. Perfect for yoga teachers and studios.',
   keywords: [
     'yoga sequence builder',
     'yoga class planner',
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     'asana library',
   ],
   openGraph: {
-    title: 'FLOW - Professional Yoga Sequence Builder | 170+ Poses',
+    title: 'FLOW - Professional Yoga Sequence Builder | 214+ Poses',
     description:
-      'Create professional yoga class sequences with 170+ poses. Drag-and-drop builder with detailed instructions and alignment cues.',
+      'Create professional yoga class sequences with 214+ poses. Drag-and-drop builder with detailed instructions and alignment cues.',
   },
 };
 
@@ -199,7 +199,7 @@ export default async function HomePage() {
           <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-neutral-50/60 to-transparent z-[1]" />
 
           {/* Hero Content - Text positioned */}
-          <div className="relative z-10 flex flex-col items-center pt-[268px] lg:pt-[378px] px-4">
+          <div className="relative z-10 flex flex-col items-center pt-[268px] lg:pt-[628px] px-4">
             <div className="max-w-3xl mx-auto text-center">
                 {/* Main Heading - Large & 3D */}
                 <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 mb-4 leading-[0.9] tracking-tight text-3d">
