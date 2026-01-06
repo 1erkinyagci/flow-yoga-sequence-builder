@@ -62,7 +62,14 @@
       "Bash(python3:*)",
       "Bash(node scripts/import-poses-folder-15-18-51-70.js:*)",
       "Bash(node scripts/import-poses-folder-15-18-51-70-fixed.js:*)",
-      "Bash(node scripts/import-poses-folder-15-18-71-117.js:*)"
+      "Bash(node scripts/import-poses-folder-15-18-71-117.js:*)",
+      "Bash(node scripts/update-seo-batch-1-childs.js:*)",
+      "Bash(node scripts/update-seo-batch-2-boat.js:*)",
+      "Bash(node scripts/update-seo-batch-3-seated.js:*)",
+      "Bash(node scripts/update-seo-batch-4-supine.js:*)",
+      "Bash(node scripts/import-poses-folder-19-24.js:*)",
+      "Bash(node scripts/fix-poses-balance.js:*)",
+      "Bash(node scripts/import-poses-folder-19-24-batch2.js:*)"
     ]
   }
 }
