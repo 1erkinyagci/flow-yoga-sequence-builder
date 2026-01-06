@@ -61,7 +61,8 @@
       "Bash(node scripts/get-featured-poses.js:*)",
       "Bash(python3:*)",
       "Bash(node scripts/import-poses-folder-15-18-51-70.js:*)",
-      "Bash(node scripts/import-poses-folder-15-18-51-70-fixed.js:*)"
+      "Bash(node scripts/import-poses-folder-15-18-51-70-fixed.js:*)",
+      "Bash(node scripts/import-poses-folder-15-18-71-117.js:*)"
     ]
   }
 }

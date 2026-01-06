@@ -3,7 +3,7 @@ import { BlogPost } from '@/types/blog';
 export const freeYogaSequenceBuilder2026: BlogPost = {
   slug: 'free-yoga-sequence-builder-2026-flow-complete-guide',
   title: 'Best Free Yoga Sequence Builder 2026: Why FLOW Is the #1 Choice for Yoga Teachers',
-  excerpt: 'Discover why FLOW is the best free yoga sequence builder in 2026. Create professional yoga class sequences with 230+ poses, AI suggestions, and drag-and-drop tools—completely free. No credit card required.',
+  excerpt: 'Discover why FLOW is the best free yoga sequence builder in 2026. Create professional yoga class sequences with 280+ poses, AI suggestions, and drag-and-drop tools—completely free. No credit card required.',
   coverImage: '/images/blog/free-yoga-sequence-builder-cover.svg',
   coverImageAlt: 'Free Yoga Sequence Builder 2026 - FLOW Complete Guide',
   author: {
@@ -29,8 +29,8 @@ export const freeYogaSequenceBuilder2026: BlogPost = {
     'yoga flow builder',
   ],
   seo: {
-    metaTitle: 'Best Free Yoga Sequence Builder 2026 | FLOW - 230+ Poses, No Cost',
-    metaDescription: 'Create professional yoga sequences for free with FLOW. Access 230+ poses with detailed instructions, drag-and-drop builder, and AI suggestions. The best free yoga sequence builder in 2026.',
+    metaTitle: 'Best Free Yoga Sequence Builder 2026 | FLOW - 280+ Poses, No Cost',
+    metaDescription: 'Create professional yoga sequences for free with FLOW. Access 280+ poses with detailed instructions, drag-and-drop builder, and AI suggestions. The best free yoga sequence builder in 2026.',
     keywords: [
       'free yoga sequence builder',
       'yoga sequence builder free',
@@ -57,7 +57,7 @@ export const freeYogaSequenceBuilder2026: BlogPost = {
     { id: 'why-free-matters', title: 'Why a Free Yoga Sequence Builder Matters', level: 1 },
     { id: 'what-is-flow', title: 'What is FLOW Yoga Sequence Builder?', level: 1 },
     { id: 'free-features', title: 'What You Get for Free', level: 1 },
-    { id: 'pose-library', title: 'The 230+ Pose Library', level: 2 },
+    { id: 'pose-library', title: 'The 280+ Pose Library', level: 2 },
     { id: 'sequence-builder', title: 'Drag-and-Drop Sequence Builder', level: 2 },
     { id: 'ai-suggestions', title: 'AI-Powered Suggestions', level: 2 },
     { id: 'how-to-use', title: 'How to Create Your First Sequence', level: 1 },
@@ -145,12 +145,12 @@ Let's be specific about what's included in FLOW's free tier:
 **Free Plan Limits:**
 - **3 saved flows** (upgrade for unlimited)
 - **8 poses per flow** (upgrade for unlimited)
-- **Full pose library access** (230+ poses)
+- **Full pose library access** (280+ poses)
 - **3 AI suggestions per day**
 
-### The 230+ Pose Library {#pose-library}
+### The 280+ Pose Library {#pose-library}
 
-Our complete pose library includes **230+ yoga poses** across all categories:
+Our complete pose library includes **280+ yoga poses** across all categories:
 
 | Category | Number of Poses | Examples |
 |----------|-----------------|----------|
@@ -211,7 +211,7 @@ Let's walk through creating a complete yoga sequence in FLOW:
 
 ### Step 2: Browse the Pose Library {#step-2}
 
-On the left side, you'll see the **Pose Library** with all 230+ poses:
+On the left side, you'll see the **Pose Library** with all 280+ poses:
 
 1. **Filter by type**: Click "All Types" to filter by Standing, Seated, etc.
 2. **Search**: Type any pose name to find it quickly
@@ -258,7 +258,7 @@ How does FLOW compare to other free yoga sequencing options?
 
 | Feature | FLOW Free | Tummee Free | YouTube | Paper Planning |
 |---------|-----------|-------------|---------|----------------|
-| **Pose library** | 230+ full access | ~50 limited | N/A | N/A |
+| **Pose library** | 280+ full access | ~50 limited | N/A | N/A |
 | **Pose details** | Complete | Basic | Varies | Manual research |
 | **Sanskrit names** | ✅ All poses | ✅ Limited | Some | Manual |
 | **Modifications** | ✅ Multiple | ❌ Paid only | Some | Manual |
@@ -342,7 +342,7 @@ Ready to create your first professional yoga sequence for free?
 ### Quick Start Guide:
 
 1. **[Open the Sequence Builder](/builder)** — no signup required
-2. **Browse the [Pose Library](/poses)** — explore all 230+ poses
+2. **Browse the [Pose Library](/poses)** — explore all 280+ poses
 3. **Create your sequence** — drag and drop poses
 4. **Save your work** — create a free account to save
 
@@ -380,11 +380,11 @@ Just open FLOW and start creating professional yoga sequences for your students.
   faqs: [
     {
       question: "Is FLOW Yoga Sequence Builder really free?",
-      answer: "Yes! FLOW offers a genuinely free tier that includes full access to our 230+ pose library, the drag-and-drop sequence builder, and 3 AI suggestions per day. Free users can save up to 3 flows with 8 poses each. No credit card is required, and there's no trial period—the free features are yours to use indefinitely."
+      answer: "Yes! FLOW offers a genuinely free tier that includes full access to our 280+ pose library, the drag-and-drop sequence builder, and 3 AI suggestions per day. Free users can save up to 3 flows with 8 poses each. No credit card is required, and there's no trial period—the free features are yours to use indefinitely."
     },
     {
       question: "What's the difference between FLOW free and FLOW Pro?",
-      answer: "FLOW free includes full pose library access (230+ poses), sequence builder (3 flows, 8 poses each), and 3 AI suggestions per day. FLOW Pro ($4.99/month) adds unlimited flows, unlimited poses per flow, PDF export, shareable links, unlimited AI suggestions, and priority support."
+      answer: "FLOW free includes full pose library access (280+ poses), sequence builder (3 flows, 8 poses each), and 3 AI suggestions per day. FLOW Pro ($4.99/month) adds unlimited flows, unlimited poses per flow, PDF export, shareable links, unlimited AI suggestions, and priority support."
     },
     {
       question: "Do I need to create an account to use FLOW?",
@@ -392,7 +392,7 @@ Just open FLOW and start creating professional yoga sequences for your students.
     },
     {
       question: "How many poses does FLOW's free library include?",
-      answer: "FLOW's free tier includes access to all 230+ poses in our library—the same poses available to Pro users. Each pose includes English and Sanskrit names, step-by-step instructions, alignment cues, benefits, contraindications, modifications, and variations."
+      answer: "FLOW's free tier includes access to all 280+ poses in our library—the same poses available to Pro users. Each pose includes English and Sanskrit names, step-by-step instructions, alignment cues, benefits, contraindications, modifications, and variations."
     },
     {
       question: "Can I print sequences from the free version?",
@@ -400,7 +400,7 @@ Just open FLOW and start creating professional yoga sequences for your students.
     },
     {
       question: "How does FLOW compare to Tummee?",
-      answer: "FLOW offers a more generous free tier (230+ full-access poses vs Tummee's limited free selection), more detailed pose information, and a modern interface. Tummee has a larger total pose library (1000+) but charges for full access. FLOW is better for teachers who want quality over quantity."
+      answer: "FLOW offers a more generous free tier (280+ full-access poses vs Tummee's limited free selection), more detailed pose information, and a modern interface. Tummee has a larger total pose library (1000+) but charges for full access. FLOW is better for teachers who want quality over quantity."
     },
     {
       question: "Is FLOW better than using YouTube for sequence planning?",
@@ -440,7 +440,7 @@ Just open FLOW and start creating professional yoga sequences for your students.
     },
     {
       question: "What if I need a pose that's not in FLOW?",
-      answer: "With 230+ poses, FLOW covers most common yoga poses. If you need a specific pose that's not included, contact our team—we regularly add new poses based on teacher requests. You can also add custom notes to similar poses as a workaround."
+      answer: "With 280+ poses, FLOW covers most common yoga poses. If you need a specific pose that's not included, contact our team—we regularly add new poses based on teacher requests. You can also add custom notes to similar poses as a workaround."
     },
     {
       question: "Is FLOW safe to use for my yoga business?",
