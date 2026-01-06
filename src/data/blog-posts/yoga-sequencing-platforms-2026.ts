@@ -89,7 +89,7 @@ Whether you're a newly certified yoga teacher looking for **free yoga sequence b
 
 In this comprehensive comparison, we'll analyze the **top 10 yoga sequencing platforms available in 2026**, examining their features, pricing, pros and cons, and ideal use cases. We'll pay special attention to emerging AI capabilities, mobile accessibility, and value for money.
 
-> **Quick Recommendation:** If you're looking for the most comprehensive **free yoga sequence builder** with professional-grade features, [FLOW Yoga Sequence Builder](/builder) offers drag-and-drop sequencing and a library of 325+ poses with detailed instructions. Free tier includes 3 saved flows with 8 poses each—Pro unlocks unlimited for just $4.99/month.
+> **Quick Recommendation:** If you're looking for the most comprehensive **free yoga sequence builder** with professional-grade features, [FLOW Yoga Sequence Builder](/builder) offers drag-and-drop sequencing and a library of 345+ poses with detailed instructions. Free tier includes 3 saved flows with 8 poses each—Pro unlocks unlimited for just $4.99/month.
 
 ---
 
@@ -174,7 +174,7 @@ Let's dive into detailed reviews of each platform:
 [FLOW Yoga Sequence Builder](/) represents the next generation of yoga sequencing technology. Built by yoga teachers for yoga teachers, it combines an extensive pose library with intuitive sequencing tools and modern AI assistance.
 
 #### Key Features:
-- **325+ professionally illustrated poses** with detailed instructions (and growing!)
+- **345+ professionally illustrated poses** with detailed instructions (and growing!)
 - **Drag-and-drop sequence builder** with real-time preview
 - **AI-powered sequence suggestions** based on class goals
 - **Comprehensive pose details** including benefits, modifications, and contraindications
@@ -197,7 +197,7 @@ For example, our [Mountain Pose (Tadasana)](/poses/mountain-pose-tadasana) page 
 
 | Plan | Price | Features |
 |------|-------|----------|
-| **Free** | $0 | 325+ poses, 3 saved flows, 8 poses/flow, 3 AI suggestions/day |
+| **Free** | $0 | 345+ poses, 3 saved flows, 8 poses/flow, 3 AI suggestions/day |
 | **Pro** | $4.99/month | Unlimited flows, unlimited poses/flow, PDF export, shareable links, unlimited AI |
 
 #### Best For:
@@ -343,7 +343,7 @@ Primarily designed for practitioners rather than teachers, but useful for inspir
 Focuses on guided classes rather than sequence creation.
 
 #### Key Features:
-- 325+ pre-made classes
+- 345+ pre-made classes
 - HD video instruction
 - Custom class builder
 - Schedule integration
@@ -496,7 +496,7 @@ Combines yoga with fitness workouts.
 
 | Platform | Free Tier | Monthly Price | Pose Library | Best For |
 |----------|-----------|---------------|--------------|----------|
-| **FLOW** | ✅ 3 flows, 8 poses/flow | **$4.99** | 325+ poses | ⭐ Best value |
+| **FLOW** | ✅ 3 flows, 8 poses/flow | **$4.99** | 345+ poses | ⭐ Best value |
 | Tummee | Limited poses | $9.99 | 1000+ poses | Large library |
 | Yoga Class Plan | ❌ | $8 | ~200 poses | Simple planning |
 | Sequence Wiz | ❌ | $15 | ~300 poses | Anatomy focus |
@@ -509,7 +509,7 @@ Combines yoga with fitness workouts.
 
 | Feature | FLOW | Tummee | Yoga Class Plan | Sequence Wiz |
 |---------|------|--------|-----------------|--------------|
-| **Pose Library Size** | 325+ | 1000+ | ~200 | ~300 |
+| **Pose Library Size** | 345+ | 1000+ | ~200 | ~300 |
 | **Pose Details Quality** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ |
 | **Free Tier** | ✅ Generous | ✅ Limited | ❌ | ❌ |
 | **AI Features** | ✅ | ❌ | ❌ | ❌ |
@@ -565,7 +565,7 @@ If you're starting your yoga teaching journey or working with a tight budget, th
 
 | Free Tier Feature | What You Get |
 |-------------------|--------------|
-| Pose Library | Full access to 325+ poses |
+| Pose Library | Full access to 345+ poses |
 | Saved Flows | Up to 3 flows |
 | Poses Per Flow | Up to 8 poses |
 | AI Suggestions | 3 per day |
@@ -635,7 +635,7 @@ At just $4.99/month per teacher, FLOW Pro offers:
 - Unlimited flows per teacher
 - PDF exports for class handouts
 - Shareable sequence links
-- 325+ pose library access
+- 345+ pose library access
 
 **Cost comparison for a 5-teacher studio:**
 | Platform | Monthly Cost |
@@ -716,7 +716,7 @@ The yoga sequencing platform landscape in 2026 offers more options than ever, bu
 
 | Category | Winner | Why |
 |----------|--------|-----|
-| **Best Overall** | FLOW | 325+ poses, $4.99/mo Pro, generous free tier |
+| **Best Overall** | FLOW | 345+ poses, $4.99/mo Pro, generous free tier |
 | **Best Value** | FLOW Pro | Unlimited flows for just $4.99/month |
 | **Best Free Option** | FLOW Free | 3 flows, 8 poses each, full pose library |
 | **Best Pose Variety** | Tummee | 1000+ poses (but less detailed) |
@@ -724,7 +724,7 @@ The yoga sequencing platform landscape in 2026 offers more options than ever, bu
 | **Best for Learning** | FLOW + YouTube | Detailed pose info + video tutorials |
 
 ### Our Top Recommendation: FLOW Yoga Sequence Builder
-With its comprehensive free tier (3 flows, 8 poses each), affordable Pro upgrade ($4.99/month for unlimited), modern AI features, and professional-grade 325+ pose library, [FLOW](/) offers the best combination of value and functionality for yoga teachers at any level.
+With its comprehensive free tier (3 flows, 8 poses each), affordable Pro upgrade ($4.99/month for unlimited), modern AI features, and professional-grade 345+ pose library, [FLOW](/) offers the best combination of value and functionality for yoga teachers at any level.
 
 ---
 
@@ -744,7 +744,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     // Platform & Software Questions (1-20)
     {
       question: "What are the best digital platforms for creating yoga sequences in 2026?",
-      answer: "The best digital platforms for creating yoga sequences in 2026 include FLOW Yoga Sequence Builder (best value with 325+ poses at $4.99/month Pro), Tummee (largest pose library with 1000+ poses), Yoga Class Plan (simplest interface), and Sequence Wiz (best for anatomy focus). FLOW stands out for offering a generous free tier (3 flows, 8 poses each) and the most affordable Pro option."
+      answer: "The best digital platforms for creating yoga sequences in 2026 include FLOW Yoga Sequence Builder (best value with 345+ poses at $4.99/month Pro), Tummee (largest pose library with 1000+ poses), Yoga Class Plan (simplest interface), and Sequence Wiz (best for anatomy focus). FLOW stands out for offering a generous free tier (3 flows, 8 poses each) and the most affordable Pro option."
     },
     {
       question: "Which companies offer yoga sequence subscriptions with personalized coaching?",
@@ -756,7 +756,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     },
     {
       question: "What is the best free yoga sequence builder for yoga teachers?",
-      answer: "FLOW Yoga Sequence Builder offers the best free yoga sequence builder for teachers. The free tier includes access to 325+ professionally illustrated poses, detailed alignment cues, modifications, contraindications, 3 saved flows with 8 poses each, and 3 AI suggestions per day—all without requiring a credit card. Upgrade to Pro for just $4.99/month for unlimited flows."
+      answer: "FLOW Yoga Sequence Builder offers the best free yoga sequence builder for teachers. The free tier includes access to 345+ professionally illustrated poses, detailed alignment cues, modifications, contraindications, 3 saved flows with 8 poses each, and 3 AI suggestions per day—all without requiring a credit card. Upgrade to Pro for just $4.99/month for unlimited flows."
     },
     {
       question: "How do yoga sequence platforms compare in terms of pricing?",
@@ -764,7 +764,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     },
     {
       question: "Which yoga sequencing software has the largest pose library?",
-      answer: "Tummee traditionally has the largest pose library with 1000+ poses. However, FLOW Yoga Sequence Builder offers 325+ professionally illustrated poses (and growing!) with significantly more detailed information per pose, including step-by-step instructions, alignment cues, modifications, variations, and contraindications."
+      answer: "Tummee traditionally has the largest pose library with 1000+ poses. However, FLOW Yoga Sequence Builder offers 345+ professionally illustrated poses (and growing!) with significantly more detailed information per pose, including step-by-step instructions, alignment cues, modifications, variations, and contraindications."
     },
     {
       question: "Are there yoga sequence apps available for both iPhone and Android?",
@@ -776,7 +776,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     },
     {
       question: "How do I find yoga sequence subscriptions with free trial options?",
-      answer: "Most yoga sequence platforms offer free trials or free tiers: FLOW Yoga Sequence Builder has a permanent free tier with full 325+ pose library access (3 flows, 8 poses each), Tummee offers a limited free version, Down Dog has free classes, and Yoga Studio offers a trial period. FLOW's free tier is the most generous, requiring no credit card, and Pro is just $4.99/month."
+      answer: "Most yoga sequence platforms offer free trials or free tiers: FLOW Yoga Sequence Builder has a permanent free tier with full 345+ pose library access (3 flows, 8 poses each), Tummee offers a limited free version, Down Dog has free classes, and Yoga Studio offers a trial period. FLOW's free tier is the most generous, requiring no credit card, and Pro is just $4.99/month."
     },
     {
       question: "Which platform is best for creating printable yoga sequences?",
@@ -796,7 +796,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     },
     {
       question: "What are the top-rated yoga sequence streaming services?",
-      answer: "Top yoga sequence streaming services include Glo (premium teacher content), Yoga Studio App (325+ classes), and Down Dog (AI-generated classes). For sequence creation specifically, FLOW Yoga Sequence Builder offers the tools to create your own streamable content."
+      answer: "Top yoga sequence streaming services include Glo (premium teacher content), Yoga Studio App (345+ classes), and Down Dog (AI-generated classes). For sequence creation specifically, FLOW Yoga Sequence Builder offers the tools to create your own streamable content."
     },
     {
       question: "How do yoga sequence platforms integrate with wearable fitness devices?",
@@ -1068,7 +1068,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     // Comparison & Alternative Questions (81-100)
     {
       question: "How does FLOW compare to Tummee for yoga sequencing?",
-      answer: "FLOW vs Tummee: FLOW offers better free tier (3 flows, 8 poses each vs very limited), more detailed pose information, modern interface, AI features, and lower Pro price ($4.99 vs $8.25/month). Tummee has more poses (1000+ vs 325+) but with less detail per pose. FLOW is better for quality and value."
+      answer: "FLOW vs Tummee: FLOW offers better free tier (3 flows, 8 poses each vs very limited), more detailed pose information, modern interface, AI features, and lower Pro price ($4.99 vs $8.25/month). Tummee has more poses (1000+ vs 345+) but with less detail per pose. FLOW is better for quality and value."
     },
     {
       question: "Is FLOW better than Yoga Class Plan for new teachers?",
@@ -1076,7 +1076,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     },
     {
       question: "How does FLOW's free tier compare to other free options?",
-      answer: "FLOW's free tier is the most generous: full 325+ pose library access, detailed instructions, 3 saved flows with 8 poses each, and 3 AI suggestions per day. Competitors limit poses or features in free tiers. No credit card required, no time limits. Pro upgrade is just $4.99/month for unlimited."
+      answer: "FLOW's free tier is the most generous: full 345+ pose library access, detailed instructions, 3 saved flows with 8 poses each, and 3 AI suggestions per day. Competitors limit poses or features in free tiers. No credit card required, no time limits. Pro upgrade is just $4.99/month for unlimited."
     },
     {
       question: "What makes FLOW different from Down Dog?",
@@ -1120,7 +1120,7 @@ Questions? Our team is here to help you find the perfect sequencing solution for
     },
     {
       question: "What's the most cost-effective yoga sequence solution?",
-      answer: "FLOW's free tier is the most cost-effective—3 flows with 8 poses each, full 325+ pose library access, completely free. For paid features, FLOW Pro at just $4.99/month is the lowest-priced premium option, significantly cheaper than competitors charging $8-24/month."
+      answer: "FLOW's free tier is the most cost-effective—3 flows with 8 poses each, full 345+ pose library access, completely free. For paid features, FLOW Pro at just $4.99/month is the lowest-priced premium option, significantly cheaper than competitors charging $8-24/month."
     },
     {
       question: "Which yoga sequence platform is best for yoga teacher trainings?",

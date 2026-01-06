@@ -69,7 +69,8 @@
       "Bash(node scripts/update-seo-batch-4-supine.js:*)",
       "Bash(node scripts/import-poses-folder-19-24.js:*)",
       "Bash(node scripts/fix-poses-balance.js:*)",
-      "Bash(node scripts/import-poses-folder-19-24-batch2.js:*)"
+      "Bash(node scripts/import-poses-folder-19-24-batch2.js:*)",
+      "Bash(node scripts/import-poses-folder-19-24-batch3.js:*)"
     ]
   }
 }

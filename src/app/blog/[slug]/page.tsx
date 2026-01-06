@@ -447,7 +447,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   href="/poses"
                   className="px-8 py-3 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors"
                 >
-                  Explore 325+ Poses
+                  Explore 345+ Poses
                 </Link>
               </div>
             </Container>
