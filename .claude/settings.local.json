@@ -59,7 +59,9 @@
       "Bash(node scripts/import-poses-101-125.js:*)",
       "Bash(node scripts/get-pose-stats.js:*)",
       "Bash(node scripts/get-featured-poses.js:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(node scripts/import-poses-folder-15-18-51-70.js:*)",
+      "Bash(node scripts/import-poses-folder-15-18-51-70-fixed.js:*)"
     ]
   }
 }
