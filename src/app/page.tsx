@@ -9,9 +9,9 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getProxiedImageUrl } from '@/lib/images';
 
 export const metadata: Metadata = {
-  title: 'FLOW - Professional Yoga Sequence Builder | 365+ Poses',
+  title: 'FLOW - Professional Yoga Sequence Builder | 415+ Poses',
   description:
-    'Create professional yoga class sequences with our intuitive drag-and-drop builder. Access 365+ yoga poses with detailed instructions, alignment cues, benefits, and contraindications. Perfect for yoga teachers and studios.',
+    'Create professional yoga class sequences with our intuitive drag-and-drop builder. Access 415+ yoga poses with detailed instructions, alignment cues, benefits, and contraindications. Perfect for yoga teachers and studios.',
   keywords: [
     'yoga sequence builder',
     'yoga class planner',
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     'asana library',
   ],
   openGraph: {
-    title: 'FLOW - Professional Yoga Sequence Builder | 365+ Poses',
+    title: 'FLOW - Professional Yoga Sequence Builder | 415+ Poses',
     description:
-      'Create professional yoga class sequences with 365+ poses. Drag-and-drop builder with detailed instructions and alignment cues.',
+      'Create professional yoga class sequences with 415+ poses. Drag-and-drop builder with detailed instructions and alignment cues.',
   },
 };
 
