@@ -2,9 +2,21 @@ import { BlogPost } from '@/types/blog';
 import { yogaSequencingPlatforms2026 } from './yoga-sequencing-platforms-2026';
 import { freeYogaSequenceBuilder2026 } from './free-yoga-sequence-builder-2026';
 import { howToCreateYogaSequence } from './how-to-create-yoga-sequence';
+import { beginnerYogaFlowsStepByStep } from './beginner-yoga-flows-step-by-step';
+import { yogaFlowsForLowerBackPain } from './yoga-flows-for-lower-back-pain';
+import { yogaFlowsWithoutMemorizing } from './yoga-flows-without-memorizing';
+import { yogaFlowPlanning10Minutes } from './yoga-flow-planning-10-minutes';
+import { commonYogaFlowMistakes } from './common-yoga-flow-mistakes';
+import { peakPoseSequencingMethod } from './peak-pose-sequencing-method';
 
 // All blog posts
 export const blogPosts: BlogPost[] = [
+  beginnerYogaFlowsStepByStep,
+  yogaFlowsForLowerBackPain,
+  yogaFlowsWithoutMemorizing,
+  yogaFlowPlanning10Minutes,
+  commonYogaFlowMistakes,
+  peakPoseSequencingMethod,
   freeYogaSequenceBuilder2026,
   howToCreateYogaSequence,
   yogaSequencingPlatforms2026,
