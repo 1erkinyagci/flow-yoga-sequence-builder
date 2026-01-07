@@ -14,11 +14,11 @@ import type { PoseDifficulty, PoseType } from '@/types/pose';
 import type { Profile } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Yoga Pose Library - 405+ Poses with Instructions',
+  title: 'Yoga Pose Library - 420+ Poses with Instructions',
   description:
     'Browse our comprehensive yoga pose library. Each pose includes step-by-step instructions, benefits, modifications, and alignment cues for all levels.',
   openGraph: {
-    title: 'Yoga Pose Library - 405+ Poses with Instructions',
+    title: 'Yoga Pose Library - 420+ Poses with Instructions',
     description:
       'Browse our comprehensive yoga pose library with detailed instructions, benefits, and modifications.',
   },

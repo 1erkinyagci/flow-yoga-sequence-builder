@@ -7,7 +7,7 @@ export async function GET() {
 
 > Professional yoga sequence building platform for yoga teachers and studios.
 
-FLOW is a comprehensive web application designed for yoga instructors to create, organize, and share professional yoga class sequences. The platform features an extensive pose library with 405+ yoga poses, each with detailed alignment cues, benefits, contraindications, and Sanskrit names.
+FLOW is a comprehensive web application designed for yoga instructors to create, organize, and share professional yoga class sequences. The platform features an extensive pose library with 420+ yoga poses, each with detailed alignment cues, benefits, contraindications, and Sanskrit names.
 
 ## Core Features
 
