@@ -200,7 +200,7 @@ export default async function HomePage() {
 
           {/* Hero Content - Text positioned */}
           <div className="relative z-10 flex flex-col items-center pt-[268px] lg:pt-[628px] px-4">
-            <div className="max-w-3xl mx-auto text-center lg:-translate-y-[50px]">
+            <div className="max-w-3xl mx-auto text-center lg:-translate-y-[130px]">
                 {/* Main Heading - Large & 3D */}
                 <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 mb-4 leading-[0.9] tracking-tight text-3d">
                   Design Your
