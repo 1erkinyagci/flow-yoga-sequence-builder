@@ -104,15 +104,22 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
     )}>
       {/* Mobile Header - Logo and Hamburger only */}
       <div className="md:hidden flex items-center justify-between px-4 h-14">
-        <Link href="/" className="flex items-center relative z-10">
+        <Link href="/" className="flex items-center gap-2 relative z-10">
           <Image
             src="/images/flow-logo.png"
             alt="FLOW Yoga Sequence Builder"
             width={200}
             height={80}
-            className="h-10 w-auto object-contain"
+            className="h-8 w-auto object-contain"
             priority
           />
+          <span className={cn(
+            'text-sm font-bold',
+            isTransparent ? 'text-white' : 'text-neutral-900'
+          )}>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-600">FLOW</span>
+            {' '}Yoga Sequence Builder
+          </span>
         </Link>
         <button
           type="button"
@@ -136,7 +143,7 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
       <div className="hidden md:flex items-center px-6 h-16">
         <nav className="flex items-center justify-between max-w-7xl mx-auto w-full">
           {/* Logo */}
-          <Link href="/" className="flex items-center relative z-10">
+          <Link href="/" className="flex items-center gap-2 relative z-10">
             <Image
               src="/images/flow-logo.png"
               alt="FLOW Yoga Sequence Builder"
@@ -145,6 +152,13 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
               className="h-12 w-auto object-contain"
               priority
             />
+            <span className={cn(
+              'text-lg font-bold',
+              isTransparent ? 'text-white' : 'text-neutral-900'
+            )}>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-600">FLOW</span>
+              {' '}Yoga Sequence Builder
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

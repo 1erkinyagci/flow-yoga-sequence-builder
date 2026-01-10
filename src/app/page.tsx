@@ -146,7 +146,7 @@ export default async function HomePage() {
             {/* Main Heading - Top of image */}
             <div className="absolute inset-x-0 top-[280px] z-10 px-5">
               <h1 className="text-2xl font-bold text-neutral-900 leading-tight tracking-tight text-3d text-center">
-                Design Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700">Perfect Flow</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700">FLOW</span> Yoga Sequence Builder
               </h1>
             </div>
 
@@ -200,14 +200,14 @@ export default async function HomePage() {
 
           {/* Hero Content - Text positioned */}
           <div className="relative z-10 flex flex-col items-center pt-[268px] lg:pt-[628px] px-4">
-            <div className="max-w-3xl mx-auto text-center lg:-translate-y-[130px]">
+            <div className="max-w-3xl mx-auto text-center lg:-translate-y-[180px]">
                 {/* Main Heading - Large & 3D */}
                 <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 mb-4 leading-[0.9] tracking-tight text-3d">
-                  Design Your
-                  <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700">
-                    Perfect Flow
+                    FLOW
                   </span>
+                  <br />
+                  Yoga Sequence Builder
                 </h1>
 
                 {/* Subtitle */}
