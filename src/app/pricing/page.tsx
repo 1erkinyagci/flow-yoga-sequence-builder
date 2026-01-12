@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { Check, X, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
+import { SubscriptionSuccessBanner } from '@/components/stripe/SubscriptionSuccessBanner';
 import { getUser, getUserProfile } from '@/lib/supabase/server';
 import { PricingClient } from './PricingClient';
 import type { Profile } from '@/types';
@@ -54,11 +56,20 @@ export default async function PricingPage() {
     email: user.email || '',
   } : null;
 
+  const isPro = profile?.subscription_tier === 'paid';
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header user={initialUser} profile={profile} />
 
       <main className="flex-1 pt-16 md:pt-20">
+        {/* Subscription Success Banner */}
+        <Container size="lg" className="pt-4">
+          <Suspense fallback={null}>
+            <SubscriptionSuccessBanner currentTier={isPro ? 'paid' : 'free'} />
+          </Suspense>
+        </Container>
+
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-transparent to-accent-50/30" />

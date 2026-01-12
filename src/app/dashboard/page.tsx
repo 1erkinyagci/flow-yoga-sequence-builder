@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { Plus, FileText, Settings, CreditCard, Sparkles, ArrowRight, Clock } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
+import { SubscriptionSuccessBanner } from '@/components/stripe/SubscriptionSuccessBanner';
 import { getUser, getUserProfile, createServerSupabaseClient } from '@/lib/supabase/server';
 import type { Profile } from '@/types';
 
@@ -82,6 +84,11 @@ export default async function DashboardPage() {
 
       <main className="flex-1 pt-16 md:pt-20 pb-8">
         <Container size="xl">
+          {/* Subscription Success Banner */}
+          <Suspense fallback={null}>
+            <SubscriptionSuccessBanner currentTier={isPro ? 'paid' : 'free'} />
+          </Suspense>
+
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-2">

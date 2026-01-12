@@ -126,14 +126,22 @@ export function PricingClient({ user, profile }: PricingClientProps) {
               </Button>
             </Link>
           ) : isProUser ? (
-            <Button
-              variant="primary"
-              size="sm"
-              className="w-full"
-              disabled
-            >
-              Current Plan
-            </Button>
+            <div className="space-y-2">
+              <div className="flex items-center justify-center gap-2 py-2 px-3 bg-success/10 text-success rounded-lg text-sm font-medium">
+                <Check className="w-4 h-4" />
+                Your Current Plan
+              </div>
+              <Link href="/dashboard">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                >
+                  Go to Dashboard
+                </Button>
+              </Link>
+            </div>
           ) : user ? (
             <CheckoutButton
               variant="primary"
