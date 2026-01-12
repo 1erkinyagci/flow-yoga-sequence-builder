@@ -24,6 +24,8 @@ export interface Database {
           stripe_subscription_id: string | null;
           subscription_current_period_end: string | null;
           flows_created: number;
+          flows_saved_today: number;
+          flows_saved_reset_at: string;
           ai_suggestions_today: number;
           ai_suggestions_reset_at: string;
           default_flow_style: 'vinyasa' | 'hatha' | 'yin' | 'restorative' | 'power' | 'gentle' | 'prenatal' | 'custom';
@@ -43,6 +45,8 @@ export interface Database {
           stripe_subscription_id?: string | null;
           subscription_current_period_end?: string | null;
           flows_created?: number;
+          flows_saved_today?: number;
+          flows_saved_reset_at?: string;
           ai_suggestions_today?: number;
           ai_suggestions_reset_at?: string;
           default_flow_style?: 'vinyasa' | 'hatha' | 'yin' | 'restorative' | 'power' | 'gentle' | 'prenatal' | 'custom';
@@ -62,6 +66,8 @@ export interface Database {
           stripe_subscription_id?: string | null;
           subscription_current_period_end?: string | null;
           flows_created?: number;
+          flows_saved_today?: number;
+          flows_saved_reset_at?: string;
           ai_suggestions_today?: number;
           ai_suggestions_reset_at?: string;
           default_flow_style?: 'vinyasa' | 'hatha' | 'yin' | 'restorative' | 'power' | 'gentle' | 'prenatal' | 'custom';

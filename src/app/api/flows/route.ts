@@ -115,6 +115,51 @@ export async function POST(request: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any;
 
+    // Check user's profile for subscription tier and daily save limit
+    const { data: profile, error: profileError } = await db
+      .from('profiles')
+      .select('subscription_tier, flows_saved_today, flows_saved_reset_at')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error('Error fetching profile:', profileError);
+      return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 });
+    }
+
+    // Check if free tier user has reached daily save limit
+    if (profile.subscription_tier === 'free') {
+      const now = new Date();
+      const resetAt = new Date(profile.flows_saved_reset_at);
+      const hoursSinceReset = (now.getTime() - resetAt.getTime()) / (1000 * 60 * 60);
+
+      // Reset counter if 24 hours have passed
+      if (hoursSinceReset >= 24) {
+        await db
+          .from('profiles')
+          .update({
+            flows_saved_today: 0,
+            flows_saved_reset_at: now.toISOString(),
+          })
+          .eq('id', user.id);
+
+        profile.flows_saved_today = 0;
+      }
+
+      // Check daily save limit (1 per day for free tier)
+      if (profile.flows_saved_today >= 1) {
+        const hoursUntilReset = 24 - hoursSinceReset;
+        return NextResponse.json(
+          {
+            error: 'Daily save limit reached',
+            message: 'Free tier users can save 1 flow per day. Upgrade to Pro for unlimited saves.',
+            resetIn: Math.ceil(hoursUntilReset),
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     // Create the flow
     const { data: flow, error: flowError } = await db
       .from('flows')
@@ -158,6 +203,16 @@ export async function POST(request: Request) {
         await db.from('flows').delete().eq('id', flow.id);
         return NextResponse.json({ error: itemsError.message }, { status: 500 });
       }
+    }
+
+    // Increment flows_saved_today counter for free tier users
+    if (profile.subscription_tier === 'free') {
+      await db
+        .from('profiles')
+        .update({
+          flows_saved_today: profile.flows_saved_today + 1,
+        })
+        .eq('id', user.id);
     }
 
     // Fetch the complete flow with items

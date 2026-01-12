@@ -107,6 +107,8 @@ export interface Profile {
   stripe_subscription_id: string | null;
   subscription_current_period_end: string | null;
   flows_created: number;
+  flows_saved_today: number;
+  flows_saved_reset_at: string;
   ai_suggestions_today: number;
   ai_suggestions_reset_at: string;
   default_flow_style: FlowStyle;
@@ -320,13 +322,15 @@ export const TIER_LIMITS = {
     canSave: false,
     canExport: false,
     aiSuggestionsPerDay: 0,
+    flowSavesPerDay: 0,
   },
   free: {
     maxFlows: 5,
-    maxPosesPerFlow: 15,
+    maxPosesPerFlow: 10,
     canSave: true,
     canExport: false,
     aiSuggestionsPerDay: 3,
+    flowSavesPerDay: 1,
   },
   paid: {
     maxFlows: Infinity,
@@ -334,6 +338,7 @@ export const TIER_LIMITS = {
     canSave: true,
     canExport: true,
     aiSuggestionsPerDay: Infinity,
+    flowSavesPerDay: Infinity,
   },
 } as const;
 
