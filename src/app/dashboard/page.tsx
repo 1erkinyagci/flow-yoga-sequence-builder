@@ -103,10 +103,9 @@ export default async function DashboardPage() {
                 <div className="flex items-start gap-3">
                   <Sparkles className="w-6 h-6 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold mb-1">Upgrade to Pro</h3>
+                    <h3 className="font-semibold mb-1">Try Pro Free for 7 Days</h3>
                     <p className="text-primary-100 text-sm">
-                      Get unlimited flows, AI suggestions, and PDF exports for just
-                      $4.99/month.
+                      Get unlimited flows, AI suggestions, and PDF exports. Cancel anytime.
                     </p>
                   </div>
                 </div>

@@ -34,7 +34,7 @@ const plans = [
     name: 'Pro',
     price: '$4.99',
     period: '/month',
-    description: 'Everything you need to teach',
+    description: '7-day free trial, cancel anytime',
     features: [
       { included: true, text: 'Unlimited flows' },
       { included: true, text: 'Unlimited poses per flow' },
@@ -141,7 +141,7 @@ export function PricingClient({ user, profile }: PricingClientProps) {
               className="w-full"
               rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
             >
-              Upgrade to Pro
+              Start Free Trial
             </CheckoutButton>
           ) : (
             <Link href="/signup?plan=pro">
@@ -151,7 +151,7 @@ export function PricingClient({ user, profile }: PricingClientProps) {
                 className="w-full"
                 rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
               >
-                Start Pro
+                Start Free Trial
               </Button>
             </Link>
           )}

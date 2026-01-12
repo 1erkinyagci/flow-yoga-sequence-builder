@@ -30,7 +30,7 @@ const faqs = [
   {
     question: 'Is there a free trial for Pro?',
     answer:
-      "We don't offer a traditional free trial, but our Free plan lets you fully explore the platform. Upgrade when you're ready for more.",
+      "Yes! Pro comes with a 7-day free trial. You can cancel anytime during the trial and won't be charged. Your card will only be charged after the trial ends.",
   },
   {
     question: 'What happens to my flows if I downgrade?',
@@ -80,7 +80,7 @@ export default async function PricingPage() {
             <PricingClient user={initialUser} profile={profile} />
 
             <p className="text-center text-xs text-neutral-500 mt-4">
-              All prices in USD. Cancel anytime.
+              All prices in USD. 7-day free trial. Cancel anytime.
             </p>
           </Container>
         </section>
