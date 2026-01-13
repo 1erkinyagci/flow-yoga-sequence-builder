@@ -30,16 +30,38 @@ export function SubscriptionSuccessBanner({ currentTier }: SubscriptionSuccessBa
       return;
     }
 
-    // Start polling for subscription update
+    // Start syncing and polling for subscription update
     setIsPolling(true);
     let attempts = 0;
-    const maxAttempts = 15; // 15 seconds max
+    const maxAttempts = 20; // 20 seconds max
+    let syncAttempted = false;
 
     const pollInterval = setInterval(async () => {
       attempts++;
 
       try {
-        // Fetch fresh profile data
+        // First, try to sync subscription from Stripe (fallback for webhook)
+        if (!syncAttempted || attempts % 3 === 0) {
+          syncAttempted = true;
+          const syncResponse = await fetch('/api/subscription/sync', {
+            method: 'POST',
+          });
+          if (syncResponse.ok) {
+            const syncData = await syncResponse.json();
+            if (syncData.subscription_tier === 'paid') {
+              clearInterval(pollInterval);
+              setIsPolling(false);
+              setShowSuccess(true);
+              // Refresh the page to update all components
+              setTimeout(() => {
+                router.refresh();
+              }, 1500);
+              return;
+            }
+          }
+        }
+
+        // Also check profile directly
         const response = await fetch('/api/auth/profile');
         if (response.ok) {
           const data = await response.json();
@@ -54,17 +76,29 @@ export function SubscriptionSuccessBanner({ currentTier }: SubscriptionSuccessBa
           }
         }
       } catch (error) {
-        console.error('Error polling profile:', error);
+        console.error('Error polling/syncing subscription:', error);
       }
 
       if (attempts >= maxAttempts) {
         clearInterval(pollInterval);
         setIsPolling(false);
-        // Show success anyway and refresh
-        setShowSuccess(true);
-        setTimeout(() => {
-          router.refresh();
-        }, 1500);
+        // Try one final sync
+        try {
+          const finalSync = await fetch('/api/subscription/sync', { method: 'POST' });
+          const finalData = await finalSync.json();
+          if (finalData.subscription_tier === 'paid') {
+            setShowSuccess(true);
+            setTimeout(() => {
+              router.refresh();
+            }, 1500);
+            return;
+          }
+        } catch (e) {
+          console.error('Final sync failed:', e);
+        }
+        // Show error state if still not synced
+        setShowSuccess(false);
+        router.refresh();
       }
     }, 1000);
 

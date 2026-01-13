@@ -98,12 +98,18 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session, stripe: 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const subscriptionData = await stripe.subscriptions.retrieve(subscriptionId) as any;
 
+  // Map Stripe status - trialing counts as active for access
+  const stripeStatus = subscriptionData.status;
+  const subscriptionStatus = stripeStatus === 'trialing' ? 'trialing' :
+                             stripeStatus === 'active' ? 'active' :
+                             stripeStatus === 'past_due' ? 'past_due' : 'active';
+
   // Update user profile
   const { error } = await db
     .from('profiles')
     .update({
       subscription_tier: 'paid',
-      subscription_status: 'active',
+      subscription_status: subscriptionStatus,
       stripe_customer_id: customerId,
       stripe_subscription_id: subscriptionId,
       subscription_current_period_end: new Date(
@@ -116,6 +122,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session, stripe: 
     console.error('Error updating user profile:', error);
     throw error;
   }
+
+  console.log(`Subscription activated for user ${userId}, status: ${subscriptionStatus}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -135,8 +143,10 @@ async function handleSubscriptionUpdate(subscription: any, db: any) {
   }
 
   // Map Stripe status to our status
-  let subscriptionStatus: 'active' | 'canceled' | 'past_due' = 'active';
-  if (subscription.status === 'past_due') {
+  let subscriptionStatus: 'active' | 'canceled' | 'past_due' | 'trialing' = 'active';
+  if (subscription.status === 'trialing') {
+    subscriptionStatus = 'trialing';
+  } else if (subscription.status === 'past_due') {
     subscriptionStatus = 'past_due';
   } else if (
     subscription.status === 'canceled' ||
