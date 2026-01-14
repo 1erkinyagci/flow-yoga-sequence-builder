@@ -13,6 +13,7 @@ export function SubscriptionSuccessBanner({ currentTier }: SubscriptionSuccessBa
   const router = useRouter();
   const searchParams = useSearchParams();
   const isSuccess = searchParams.get('success') === 'true';
+  const sessionId = searchParams.get('session_id');
 
   const [isPolling, setIsPolling] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -30,29 +31,24 @@ export function SubscriptionSuccessBanner({ currentTier }: SubscriptionSuccessBa
       return;
     }
 
-    // Start syncing and polling for subscription update
+    // Start activation process
     setIsPolling(true);
-    let attempts = 0;
-    const maxAttempts = 20; // 20 seconds max
-    let syncAttempted = false;
 
-    const pollInterval = setInterval(async () => {
-      attempts++;
-
+    const activateSubscription = async () => {
       try {
-        // First, try to sync subscription from Stripe (fallback for webhook)
-        if (!syncAttempted || attempts % 3 === 0) {
-          syncAttempted = true;
-          const syncResponse = await fetch('/api/subscription/sync', {
+        // If we have a session_id, use the activate API directly
+        if (sessionId) {
+          const activateResponse = await fetch('/api/subscription/activate', {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId }),
           });
-          if (syncResponse.ok) {
-            const syncData = await syncResponse.json();
-            if (syncData.subscription_tier === 'paid') {
-              clearInterval(pollInterval);
+
+          if (activateResponse.ok) {
+            const activateData = await activateResponse.json();
+            if (activateData.activated && activateData.subscription_tier === 'paid') {
               setIsPolling(false);
               setShowSuccess(true);
-              // Refresh the page to update all components
               setTimeout(() => {
                 router.refresh();
               }, 1500);
@@ -61,49 +57,86 @@ export function SubscriptionSuccessBanner({ currentTier }: SubscriptionSuccessBa
           }
         }
 
-        // Also check profile directly
-        const response = await fetch('/api/auth/profile');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.profile?.subscription_tier === 'paid') {
-            clearInterval(pollInterval);
+        // Fallback: Try sync API
+        const syncResponse = await fetch('/api/subscription/sync', {
+          method: 'POST',
+        });
+        if (syncResponse.ok) {
+          const syncData = await syncResponse.json();
+          if (syncData.subscription_tier === 'paid') {
             setIsPolling(false);
-            setShowSuccess(true);
-            // Refresh the page to update all components
-            setTimeout(() => {
-              router.refresh();
-            }, 1500);
-          }
-        }
-      } catch (error) {
-        console.error('Error polling/syncing subscription:', error);
-      }
-
-      if (attempts >= maxAttempts) {
-        clearInterval(pollInterval);
-        setIsPolling(false);
-        // Try one final sync
-        try {
-          const finalSync = await fetch('/api/subscription/sync', { method: 'POST' });
-          const finalData = await finalSync.json();
-          if (finalData.subscription_tier === 'paid') {
             setShowSuccess(true);
             setTimeout(() => {
               router.refresh();
             }, 1500);
             return;
           }
-        } catch (e) {
-          console.error('Final sync failed:', e);
         }
-        // Show error state if still not synced
-        setShowSuccess(false);
+
+        // If first attempts failed, poll for a while
+        let attempts = 0;
+        const maxAttempts = 15;
+
+        const pollInterval = setInterval(async () => {
+          attempts++;
+
+          try {
+            // Check profile
+            const response = await fetch('/api/auth/profile');
+            if (response.ok) {
+              const data = await response.json();
+              if (data.profile?.subscription_tier === 'paid') {
+                clearInterval(pollInterval);
+                setIsPolling(false);
+                setShowSuccess(true);
+                setTimeout(() => {
+                  router.refresh();
+                }, 1500);
+                return;
+              }
+            }
+
+            // Try activate again every 3 seconds
+            if (sessionId && attempts % 3 === 0) {
+              const retryActivate = await fetch('/api/subscription/activate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: sessionId }),
+              });
+              if (retryActivate.ok) {
+                const retryData = await retryActivate.json();
+                if (retryData.activated) {
+                  clearInterval(pollInterval);
+                  setIsPolling(false);
+                  setShowSuccess(true);
+                  setTimeout(() => {
+                    router.refresh();
+                  }, 1500);
+                  return;
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error polling subscription:', error);
+          }
+
+          if (attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            setIsPolling(false);
+            // Show message to refresh
+            setShowSuccess(false);
+            router.refresh();
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('Error activating subscription:', error);
+        setIsPolling(false);
         router.refresh();
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(pollInterval);
-  }, [isSuccess, currentTier, router]);
+    activateSubscription();
+  }, [isSuccess, sessionId, currentTier, router]);
 
   if (!isSuccess && !showSuccess) return null;
 

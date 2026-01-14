@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 // Lazy initialization to avoid build-time errors
 const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY!);
+const getSupabaseAdmin = () => createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 interface ProfileData {
   stripe_customer_id: string | null;
@@ -42,12 +47,17 @@ export async function POST() {
       });
       customerId = customer.id;
 
-      // Save customer ID to profile
+      // Save customer ID to profile using admin client (bypasses RLS)
+      const db = getSupabaseAdmin();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      const { error: updateError } = await (db as any)
         .from('profiles')
         .update({ stripe_customer_id: customerId })
         .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error saving customer ID:', updateError);
+      }
     }
 
     // Create checkout session with 7-day free trial and promotion codes
@@ -62,7 +72,7 @@ export async function POST() {
         },
       ],
       allow_promotion_codes: true,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
       metadata: {
         user_id: user.id,
