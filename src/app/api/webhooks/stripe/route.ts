@@ -2,6 +2,12 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import {
+  sendEmail,
+  getProWelcomeEmailHtml,
+  getSubscriptionCancelledEmailHtml,
+  getPaymentFailedEmailHtml,
+} from '@/lib/email/resend';
 
 // Lazy initialization to avoid build-time errors
 const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -12,6 +18,8 @@ const getSupabaseAdmin = () => createClient(
 
 interface ProfileRow {
   id: string;
+  email?: string;
+  full_name?: string;
   subscription_status?: string;
 }
 
@@ -123,6 +131,23 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session, stripe: 
     throw error;
   }
 
+  // Get user email and name for welcome email
+  const { data: userProfile } = await db
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', userId)
+    .single();
+
+  if (userProfile?.email) {
+    // Send Pro welcome email
+    await sendEmail({
+      to: userProfile.email,
+      subject: 'Welcome to FLOW Pro! 🎉',
+      html: getProWelcomeEmailHtml(userProfile.full_name || ''),
+    });
+    console.log(`Pro welcome email sent to ${userProfile.email}`);
+  }
+
   console.log(`Subscription activated for user ${userId}, status: ${subscriptionStatus}`);
 }
 
@@ -179,7 +204,7 @@ async function handleSubscriptionDeleted(subscription: any, db: any) {
   // Find user by Stripe customer ID
   const { data: profile } = await db
     .from('profiles')
-    .select('id')
+    .select('id, email, full_name')
     .eq('stripe_customer_id', customerId)
     .single() as { data: ProfileRow | null };
 
@@ -203,6 +228,16 @@ async function handleSubscriptionDeleted(subscription: any, db: any) {
     console.error('Error downgrading subscription:', error);
     throw error;
   }
+
+  // Send cancellation email
+  if (profile.email) {
+    await sendEmail({
+      to: profile.email,
+      subject: 'Your FLOW Pro subscription has been cancelled',
+      html: getSubscriptionCancelledEmailHtml(profile.full_name || ''),
+    });
+    console.log(`Cancellation email sent to ${profile.email}`);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -212,7 +247,7 @@ async function handlePaymentFailed(invoice: any, db: any) {
   // Find user by Stripe customer ID
   const { data: profile } = await db
     .from('profiles')
-    .select('id')
+    .select('id, email, full_name')
     .eq('stripe_customer_id', customerId)
     .single() as { data: ProfileRow | null };
 
@@ -234,7 +269,15 @@ async function handlePaymentFailed(invoice: any, db: any) {
     throw error;
   }
 
-  // TODO: Send email notification about failed payment
+  // Send payment failed email
+  if (profile.email) {
+    await sendEmail({
+      to: profile.email,
+      subject: 'Action required: Payment failed for FLOW Pro',
+      html: getPaymentFailedEmailHtml(profile.full_name || ''),
+    });
+    console.log(`Payment failed email sent to ${profile.email}`);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
