@@ -24,6 +24,23 @@ interface ProfileRow {
 }
 
 export async function POST(request: Request) {
+  // Validate required environment variables
+  const requiredEnvVars = [
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'SUPABASE_SERVICE_ROLE_KEY',
+  ];
+
+  const missingEnvVars = requiredEnvVars.filter(key => !process.env[key]);
+  if (missingEnvVars.length > 0) {
+    console.error('Missing required environment variables:', missingEnvVars);
+    return NextResponse.json(
+      { error: 'Server configuration error', missing: missingEnvVars },
+      { status: 500 }
+    );
+  }
+
   const stripe = getStripe();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = getSupabaseAdmin() as any;
@@ -151,21 +168,26 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session, stripe: 
   }
   console.log('Profile updated successfully');
 
-  // Get user email and name for welcome email
-  const { data: userProfile } = await db
-    .from('profiles')
-    .select('email, full_name')
-    .eq('id', userId)
-    .single();
+  // Get user email and name for welcome email (non-blocking)
+  try {
+    const { data: userProfile } = await db
+      .from('profiles')
+      .select('email, full_name')
+      .eq('id', userId)
+      .single();
 
-  if (userProfile?.email) {
-    // Send Pro welcome email
-    await sendEmail({
-      to: userProfile.email,
-      subject: 'Welcome to FLOW Pro! 🎉',
-      html: getProWelcomeEmailHtml(userProfile.full_name || ''),
-    });
-    console.log(`Pro welcome email sent to ${userProfile.email}`);
+    if (userProfile?.email) {
+      // Send Pro welcome email
+      await sendEmail({
+        to: userProfile.email,
+        subject: 'Welcome to FLOW Pro! 🎉',
+        html: getProWelcomeEmailHtml(userProfile.full_name || ''),
+      });
+      console.log(`Pro welcome email sent to ${userProfile.email}`);
+    }
+  } catch (emailError) {
+    // Don't fail the webhook if email fails
+    console.error('Failed to send welcome email (non-critical):', emailError);
   }
 
   console.log(`Subscription activated for user ${userId}, status: ${subscriptionStatus}`);
@@ -249,14 +271,18 @@ async function handleSubscriptionDeleted(subscription: any, db: any) {
     throw error;
   }
 
-  // Send cancellation email
+  // Send cancellation email (non-blocking)
   if (profile.email) {
-    await sendEmail({
-      to: profile.email,
-      subject: 'Your FLOW Pro subscription has been cancelled',
-      html: getSubscriptionCancelledEmailHtml(profile.full_name || ''),
-    });
-    console.log(`Cancellation email sent to ${profile.email}`);
+    try {
+      await sendEmail({
+        to: profile.email,
+        subject: 'Your FLOW Pro subscription has been cancelled',
+        html: getSubscriptionCancelledEmailHtml(profile.full_name || ''),
+      });
+      console.log(`Cancellation email sent to ${profile.email}`);
+    } catch (emailError) {
+      console.error('Failed to send cancellation email (non-critical):', emailError);
+    }
   }
 }
 
@@ -289,14 +315,18 @@ async function handlePaymentFailed(invoice: any, db: any) {
     throw error;
   }
 
-  // Send payment failed email
+  // Send payment failed email (non-blocking)
   if (profile.email) {
-    await sendEmail({
-      to: profile.email,
-      subject: 'Action required: Payment failed for FLOW Pro',
-      html: getPaymentFailedEmailHtml(profile.full_name || ''),
-    });
-    console.log(`Payment failed email sent to ${profile.email}`);
+    try {
+      await sendEmail({
+        to: profile.email,
+        subject: 'Action required: Payment failed for FLOW Pro',
+        html: getPaymentFailedEmailHtml(profile.full_name || ''),
+      });
+      console.log(`Payment failed email sent to ${profile.email}`);
+    } catch (emailError) {
+      console.error('Failed to send payment failed email (non-critical):', emailError);
+    }
   }
 }
 
