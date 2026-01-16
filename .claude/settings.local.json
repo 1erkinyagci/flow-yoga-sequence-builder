@@ -76,7 +76,8 @@
       "Bash(node scripts/import-poses-folder-19-24-batch7.js:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(git push)"
     ]
   }
 }

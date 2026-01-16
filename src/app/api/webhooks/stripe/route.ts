@@ -82,8 +82,11 @@ export async function POST(request: Request) {
     }
   } catch (err) {
     console.error('Error processing webhook:', err);
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    const errorStack = err instanceof Error ? err.stack : '';
+    console.error('Webhook error details:', { errorMessage, errorStack, eventType: event.type });
     return NextResponse.json(
-      { error: 'Webhook handler failed' },
+      { error: 'Webhook handler failed', details: errorMessage },
       { status: 500 }
     );
   }
@@ -93,18 +96,29 @@ export async function POST(request: Request) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleCheckoutComplete(session: Stripe.Checkout.Session, stripe: Stripe, db: any) {
+  console.log('handleCheckoutComplete started', { sessionId: session.id });
+
   const customerId = session.customer as string;
   const subscriptionId = session.subscription as string;
   const userId = session.metadata?.user_id;
+
+  console.log('Checkout session data:', { customerId, subscriptionId, userId });
 
   if (!userId) {
     console.error('No user_id in session metadata');
     return;
   }
 
+  if (!subscriptionId) {
+    console.error('No subscription ID in session');
+    return;
+  }
+
   // Get subscription details
+  console.log('Fetching subscription from Stripe:', subscriptionId);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const subscriptionData = await stripe.subscriptions.retrieve(subscriptionId) as any;
+  console.log('Subscription data retrieved:', { status: subscriptionData.status, currentPeriodEnd: subscriptionData.current_period_end });
 
   // Map Stripe status - trialing counts as active for access
   const stripeStatus = subscriptionData.status;
@@ -113,23 +127,29 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session, stripe: 
                              stripeStatus === 'past_due' ? 'past_due' : 'active';
 
   // Update user profile
+  console.log('Updating profile for user:', userId);
+  const updateData = {
+    subscription_tier: 'paid',
+    subscription_status: subscriptionStatus,
+    stripe_customer_id: customerId,
+    stripe_subscription_id: subscriptionId,
+    subscription_current_period_end: new Date(
+      subscriptionData.current_period_end * 1000
+    ).toISOString(),
+  };
+  console.log('Update data:', updateData);
+
   const { error } = await db
     .from('profiles')
-    .update({
-      subscription_tier: 'paid',
-      subscription_status: subscriptionStatus,
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscriptionId,
-      subscription_current_period_end: new Date(
-        subscriptionData.current_period_end * 1000
-      ).toISOString(),
-    })
+    .update(updateData)
     .eq('id', userId);
 
   if (error) {
     console.error('Error updating user profile:', error);
-    throw error;
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    throw new Error(`Failed to update profile: ${error.message || JSON.stringify(error)}`);
   }
+  console.log('Profile updated successfully');
 
   // Get user email and name for welcome email
   const { data: userProfile } = await db
