@@ -129,22 +129,24 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
             {' '}Yoga Sequence Builder
           </span>
         </Link>
-        <button
-          type="button"
-          className={cn(
-            'p-2 rounded-xl transition-colors',
-            isTransparent
-              ? 'bg-white/10 hover:bg-white/20'
-              : 'bg-primary-500/10 hover:bg-primary-500/20'
-          )}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? (
-            <X className={cn('h-6 w-6', isTransparent ? 'text-white' : 'text-primary-600')} />
-          ) : (
-            <Menu className={cn('h-6 w-6', isTransparent ? 'text-white' : 'text-primary-600')} />
-          )}
-        </button>
+        {!isAppMode && (
+          <button
+            type="button"
+            className={cn(
+              'p-2 rounded-xl transition-colors',
+              isTransparent
+                ? 'bg-white/10 hover:bg-white/20'
+                : 'bg-primary-500/10 hover:bg-primary-500/20'
+            )}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className={cn('h-6 w-6', isTransparent ? 'text-white' : 'text-primary-600')} />
+            ) : (
+              <Menu className={cn('h-6 w-6', isTransparent ? 'text-white' : 'text-primary-600')} />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Desktop Header */}
