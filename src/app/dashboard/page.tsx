@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { Plus, FileText, Settings, CreditCard, Sparkles, ArrowRight } from 'lucide-react';
 import { UpgradeButton } from '@/components/UpgradeButton';
+import { HideInAppMode } from '@/components/HideInAppMode';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
@@ -100,26 +101,28 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          {/* Upgrade Banner (if free) */}
+          {/* Upgrade Banner (if free) — hidden in app mode */}
           {!isPro && (
-            <Card
-              variant="default"
-              padding="md"
-              className="mb-8 bg-gradient-to-r from-primary-500 to-primary-600 text-white border-none"
-            >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <Sparkles className="w-6 h-6 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Try Pro Free for 7 Days</h3>
-                    <p className="text-primary-100 text-sm">
-                      Get unlimited flows, AI suggestions, and PDF exports. Cancel anytime.
-                    </p>
+            <HideInAppMode>
+              <Card
+                variant="default"
+                padding="md"
+                className="mb-8 bg-gradient-to-r from-primary-500 to-primary-600 text-white border-none"
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <Sparkles className="w-6 h-6 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold mb-1">Try Pro Free for 7 Days</h3>
+                      <p className="text-primary-100 text-sm">
+                        Get unlimited flows, AI suggestions, and PDF exports. Cancel anytime.
+                      </p>
+                    </div>
                   </div>
+                  <UpgradeButton />
                 </div>
-                <UpgradeButton />
-              </div>
-            </Card>
+              </Card>
+            </HideInAppMode>
           )}
 
           <div className="grid lg:grid-cols-3 gap-6">

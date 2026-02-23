@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard, Home, Sparkles } from 'lucide-react';
-import { useAppMode, triggerNativePaywall } from '@/hooks/useAppMode';
+import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard, Home, Sparkles, Plus, FileText } from 'lucide-react';
+import { useAppMode } from '@/hooks/useAppMode';
 import { cn } from '@/lib/utils/cn';
 import { Button, Container } from '@/components/ui';
 import { createClient } from '@/lib/supabase/client';
@@ -169,39 +169,41 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="flex items-center gap-6">
-            {/* Home Icon */}
-            <Link
-              href="/"
-              className={cn(
-                'p-2 rounded-lg transition-all duration-200',
-                isTransparent
-                  ? 'text-white/80 hover:text-white hover:bg-white/10'
-                  : 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50',
-                pathname === '/' && (isTransparent ? 'text-white bg-white/10' : 'text-primary-600 bg-primary-50')
-              )}
-            >
-              <Home className="w-5 h-5" />
-            </Link>
-            {visibleNavigation.map((item) => (
+          {/* Desktop Navigation - hidden in app mode for logged-in users */}
+          {!(isAppMode && user) && (
+            <div className="flex items-center gap-6">
+              {/* Home Icon */}
               <Link
-                key={item.name}
-                href={item.href}
+                href="/"
                 className={cn(
-                  'relative px-1 py-2 text-sm font-semibold transition-all duration-200',
+                  'p-2 rounded-lg transition-all duration-200',
                   isTransparent
-                    ? 'text-white/80 hover:text-white'
-                    : 'text-neutral-700 hover:text-primary-600',
-                  isActive(item.href) && (isTransparent
-                    ? 'text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full'
-                    : 'text-primary-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-500 after:rounded-full')
+                    ? 'text-white/80 hover:text-white hover:bg-white/10'
+                    : 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50',
+                  pathname === '/' && (isTransparent ? 'text-white bg-white/10' : 'text-primary-600 bg-primary-50')
                 )}
               >
-                {item.name}
+                <Home className="w-5 h-5" />
               </Link>
-            ))}
-          </div>
+              {visibleNavigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    'relative px-1 py-2 text-sm font-semibold transition-all duration-200',
+                    isTransparent
+                      ? 'text-white/80 hover:text-white'
+                      : 'text-neutral-700 hover:text-primary-600',
+                    isActive(item.href) && (isTransparent
+                      ? 'text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white after:rounded-full'
+                      : 'text-primary-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-500 after:rounded-full')
+                  )}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Desktop Auth */}
           <div className="flex items-center gap-3">
@@ -254,6 +256,35 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
                           </span>
                         )}
                       </div>
+                      {/* App mode: navigation links */}
+                      {isAppMode && (
+                        <div className="py-1 border-b border-neutral-100">
+                          <Link
+                            href="/"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <Home className="w-4 h-4" />
+                            Home
+                          </Link>
+                          <Link
+                            href="/builder"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <Plus className="w-4 h-4" />
+                            Create Flow
+                          </Link>
+                          <Link
+                            href="/poses"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <FileText className="w-4 h-4" />
+                            Poses
+                          </Link>
+                        </div>
+                      )}
                       <div className="py-1">
                         <Link
                           href="/dashboard"
@@ -263,6 +294,16 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
                           <LayoutDashboard className="w-4 h-4" />
                           Dashboard
                         </Link>
+                        {isAppMode && profile?.subscription_tier !== 'paid' && (
+                          <Link
+                            href="/pricing"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-primary-600 hover:bg-primary-50"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            Upgrade
+                          </Link>
+                        )}
                         <Link
                           href="/dashboard/settings"
                           className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
@@ -272,21 +313,6 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
                           Settings
                         </Link>
                       </div>
-                      {/* App mode: native upgrade CTA */}
-                      {isAppMode && profile?.subscription_tier !== 'paid' && (
-                        <div className="border-t border-neutral-100 pt-1">
-                          <button
-                            onClick={() => {
-                              triggerNativePaywall();
-                              setUserMenuOpen(false);
-                            }}
-                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-primary-600 hover:bg-primary-50"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                            Upgrade
-                          </button>
-                        </div>
-                      )}
                       <div className="border-t border-neutral-100 pt-1">
                         <form action="/api/auth/signout" method="post">
                           <button
@@ -334,57 +360,85 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
       {mobileMenuOpen && (
         <div className="md:hidden mx-4 mt-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/50 shadow-lg overflow-hidden">
           <div className="p-4 space-y-2">
-            {/* Home Link */}
-            <Link
-              href="/"
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
-                pathname === '/'
-                  ? 'text-primary-700 bg-primary-50'
-                  : 'text-neutral-600 hover:bg-neutral-100'
-              )}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Home className="w-4 h-4" />
-              Home
-            </Link>
-            {visibleNavigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'block px-4 py-3 rounded-xl text-sm font-medium transition-colors',
-                  isActive(item.href)
-                    ? 'text-primary-700 bg-primary-50'
-                    : 'text-neutral-600 hover:bg-neutral-100'
-                )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
-            <div className="border-t border-neutral-200/50 pt-4 mt-4 flex flex-col gap-2">
-              {user ? (
-                <>
+            {isAppMode && user ? (
+              <>
+                {/* App mode: navigation at top */}
+                <Link
+                  href="/"
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                    pathname === '/'
+                      ? 'text-primary-700 bg-primary-50'
+                      : 'text-neutral-600 hover:bg-neutral-100'
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Home className="w-4 h-4" />
+                  Home
+                </Link>
+                <Link
+                  href="/builder"
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                    isActive('/builder')
+                      ? 'text-primary-700 bg-primary-50'
+                      : 'text-neutral-600 hover:bg-neutral-100'
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Plus className="w-4 h-4" />
+                  Create Flow
+                </Link>
+                <Link
+                  href="/poses"
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                    isActive('/poses')
+                      ? 'text-primary-700 bg-primary-50'
+                      : 'text-neutral-600 hover:bg-neutral-100'
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <FileText className="w-4 h-4" />
+                  Poses
+                </Link>
+                <div className="border-t border-neutral-200/50 pt-4 mt-4 flex flex-col gap-2">
                   <Link
                     href="/dashboard"
-                    className="block px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                      isActive('/dashboard')
+                        ? 'text-primary-700 bg-primary-50'
+                        : 'text-neutral-600 hover:bg-neutral-100'
+                    )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
+                    <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Link>
-                  {isAppMode && profile?.subscription_tier !== 'paid' && (
-                    <button
-                      onClick={() => {
-                        triggerNativePaywall();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="flex items-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-medium text-primary-600 hover:bg-primary-50"
+                  {profile?.subscription_tier !== 'paid' && (
+                    <Link
+                      href="/pricing"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-primary-600 hover:bg-primary-50"
+                      onClick={() => setMobileMenuOpen(false)}
                     >
                       <Sparkles className="w-4 h-4" />
                       Upgrade
-                    </button>
+                    </Link>
                   )}
+                  <Link
+                    href="/dashboard/settings"
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                      isActive('/dashboard/settings')
+                        ? 'text-primary-700 bg-primary-50'
+                        : 'text-neutral-600 hover:bg-neutral-100'
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="w-4 h-4" />
+                    Settings
+                  </Link>
                   <form action="/api/auth/signout" method="post">
                     <button
                       type="submit"
@@ -393,22 +447,75 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
                       Sign out
                     </button>
                   </form>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <button className="w-full py-3 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
-                      Sign in
-                    </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Normal web mode */}
+                <Link
+                  href="/"
+                  className={cn(
+                    'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                    pathname === '/'
+                      ? 'text-primary-700 bg-primary-50'
+                      : 'text-neutral-600 hover:bg-neutral-100'
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Home className="w-4 h-4" />
+                  Home
+                </Link>
+                {visibleNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      'block px-4 py-3 rounded-xl text-sm font-medium transition-colors',
+                      isActive(item.href)
+                        ? 'text-primary-700 bg-primary-50'
+                        : 'text-neutral-600 hover:bg-neutral-100'
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
                   </Link>
-                  <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                    <button className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-md">
-                      Get Started
-                    </button>
-                  </Link>
-                </>
-              )}
-            </div>
+                ))}
+                <div className="border-t border-neutral-200/50 pt-4 mt-4 flex flex-col gap-2">
+                  {user ? (
+                    <>
+                      <Link
+                        href="/dashboard"
+                        className="block px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+                      <form action="/api/auth/signout" method="post">
+                        <button
+                          type="submit"
+                          className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50"
+                        >
+                          Sign out
+                        </button>
+                      </form>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                        <button className="w-full py-3 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
+                          Sign in
+                        </button>
+                      </Link>
+                      <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                        <button className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-md">
+                          Get Started
+                        </button>
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
