@@ -1,8 +1,15 @@
 // SubscriptionManager.swift
 // FLOW
 //
-// StoreKit 2 ile auto-renewable subscription yönetimi.
-// Tek ürün: one_month_premium
+// StoreKit 2 — auto-renewable subscription.
+// Tek ürün: one_month_premium ($4.99/ay)
+//
+// Sorumluluklar:
+//   - Ürünü App Store'dan yükle
+//   - Satın alma (purchase)
+//   - Geri yükleme (restore)
+//   - Entitlement takibi (Transaction.currentEntitlements)
+//   - Arka plan transaction dinleme (Transaction.updates)
 
 import Foundation
 import StoreKit
@@ -45,7 +52,9 @@ final class SubscriptionManager: ObservableObject {
         guard product == nil else { return }
         do {
             purchaseState = .loading
-            let products = try await Product.products(for: AppConstants.ProductID.all)
+            let products = try await Product.products(
+                for: AppConstants.ProductID.all
+            )
             product = products.first
             purchaseState = .idle
         } catch {
@@ -60,24 +69,33 @@ final class SubscriptionManager: ObservableObject {
             purchaseState = .error("Ürün bulunamadı.")
             return
         }
+
         purchaseState = .purchasing
+
         do {
             let result = try await product.purchase()
+
             switch result {
             case .success(let verification):
                 let transaction = try checkVerified(verification)
                 await transaction.finish()
                 await updateEntitlements()
                 purchaseState = .success
+
             case .userCancelled:
                 purchaseState = .idle
+
             case .pending:
+                // Ask-to-buy / parental approval bekliyor
                 purchaseState = .idle
+
             @unknown default:
                 purchaseState = .idle
             }
         } catch {
-            purchaseState = .error("Satın alma başarısız: \(error.localizedDescription)")
+            purchaseState = .error(
+                "Satın alma başarısız: \(error.localizedDescription)"
+            )
             print("[SubscriptionManager] purchase failed: \(error)")
         }
     }
@@ -88,27 +106,26 @@ final class SubscriptionManager: ObservableObject {
         do {
             try await AppStore.sync()
             await updateEntitlements()
-            if isPro {
-                purchaseState = .success
-            } else {
-                purchaseState = .error("Geri yüklenecek aktif abonelik bulunamadı.")
-            }
+            purchaseState = isPro ? .success : .error(
+                "Geri yüklenecek aktif abonelik bulunamadı."
+            )
         } catch {
-            purchaseState = .error("Geri yükleme başarısız: \(error.localizedDescription)")
+            purchaseState = .error(
+                "Geri yükleme başarısız: \(error.localizedDescription)"
+            )
             print("[SubscriptionManager] restore failed: \(error)")
         }
     }
 
-    // MARK: - Reset State
+    // MARK: - Reset State (paywall dismiss'te çağrılır)
     func resetState() {
-        if purchaseState == .success || purchaseState != .idle {
-            purchaseState = .idle
-        }
+        purchaseState = .idle
     }
 
     // MARK: - Update Entitlements
     func updateEntitlements() async {
         var foundActive = false
+
         for await result in Transaction.currentEntitlements {
             if let transaction = try? checkVerified(result),
                transaction.productID == AppConstants.ProductID.monthlyPremium {
@@ -116,10 +133,11 @@ final class SubscriptionManager: ObservableObject {
                 break
             }
         }
+
         isPro = foundActive
     }
 
-    // MARK: - Transaction Listener
+    // MARK: - Transaction Listener (arka planda dinler)
     private func listenForTransactions() -> Task<Void, Never> {
         Task.detached { [weak self] in
             for await result in Transaction.updates {
@@ -132,7 +150,9 @@ final class SubscriptionManager: ObservableObject {
     }
 
     // MARK: - Verification
-    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+    private func checkVerified<T>(
+        _ result: VerificationResult<T>
+    ) throws -> T {
         switch result {
         case .unverified(_, let error):
             throw error

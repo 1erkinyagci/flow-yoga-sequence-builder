@@ -1,7 +1,8 @@
 // ContentView.swift
 // FLOW
 //
-// Ana ekran: FlowWebView gösterir, paywall ve settings sheet'lerini yönetir.
+// Ana ekran: FlowWebView + paywall sheet + settings sheet.
+// SubscriptionManager @StateObject olarak burada oluşturulur.
 // isPro değişince WebView'e event gönderir.
 
 import SwiftUI
@@ -22,17 +23,19 @@ struct ContentView: View {
                 showPaywall = true
             },
             onRequestStatus: {
-                webView?.sendSubscriptionStatus(isPro: subscriptionManager.isPro)
+                webView?.sendSubscriptionStatus(
+                    isPro: subscriptionManager.isPro
+                )
             }
         )
         .ignoresSafeArea(edges: .bottom)
-        // Paywall sheet
+        // Paywall
         .sheet(isPresented: $showPaywall, onDismiss: {
             subscriptionManager.resetState()
         }) {
             PaywallView(subscriptionManager: subscriptionManager)
         }
-        // Settings sheet
+        // Settings
         .sheet(isPresented: $showSettings) {
             SettingsView(subscriptionManager: subscriptionManager)
         }
@@ -40,12 +43,16 @@ struct ContentView: View {
         .onChange(of: subscriptionManager.isPro) { newValue in
             webView?.sendSubscriptionStatus(isPro: newValue)
         }
-        // Settings açma (WebView JS bridge veya başka tetikleyici)
-        .onReceive(NotificationCenter.default.publisher(for: .openNativeSettings)) { _ in
+        // WebView JS bridge → settings aç
+        .onReceive(
+            NotificationCenter.default.publisher(for: .openNativeSettings)
+        ) { _ in
             showSettings = true
         }
-        // SettingsView'dan paywall açma
-        .onReceive(NotificationCenter.default.publisher(for: .showPaywallFromSettings)) { _ in
+        // SettingsView → paywall aç
+        .onReceive(
+            NotificationCenter.default.publisher(for: .showPaywallFromSettings)
+        ) { _ in
             showPaywall = true
         }
     }

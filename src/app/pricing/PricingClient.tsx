@@ -5,6 +5,7 @@ import { Check, X, Sparkles, ArrowRight } from 'lucide-react';
 import { Card, Button } from '@/components/ui';
 import { CheckoutButton } from '@/components/stripe/CheckoutButton';
 import { cn } from '@/lib/utils/cn';
+import { useAppMode, triggerNativePaywall } from '@/hooks/useAppMode';
 import type { Profile } from '@/types';
 
 interface PricingClientProps {
@@ -51,6 +52,7 @@ const plans = [
 
 export function PricingClient({ user, profile }: PricingClientProps) {
   const isProUser = profile?.subscription_tier === 'paid';
+  const isAppMode = useAppMode();
 
   return (
     <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
@@ -114,54 +116,79 @@ export function PricingClient({ user, profile }: PricingClientProps) {
             ))}
           </ul>
 
-          {plan.name === 'Free' ? (
-            <Link href="/signup">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full"
-                rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
-              >
-                Get Started
-              </Button>
-            </Link>
-          ) : isProUser ? (
-            <div className="space-y-2">
+          {isAppMode ? (
+            /* App mode: informational only, native paywall CTA */
+            plan.name === 'Free' ? (
+              <div className="py-2 px-3 bg-neutral-100 text-neutral-600 rounded-lg text-sm font-medium text-center">
+                Free Plan
+              </div>
+            ) : isProUser ? (
               <div className="flex items-center justify-center gap-2 py-2 px-3 bg-success/10 text-success rounded-lg text-sm font-medium">
                 <Check className="w-4 h-4" />
                 Your Current Plan
               </div>
-              <Link href="/dashboard">
+            ) : (
+              <Button
+                variant="primary"
+                size="sm"
+                className="w-full"
+                rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                onClick={triggerNativePaywall}
+              >
+                Subscribe
+              </Button>
+            )
+          ) : (
+            /* Normal web mode */
+            plan.name === 'Free' ? (
+              <Link href="/signup">
                 <Button
                   variant="outline"
                   size="sm"
                   className="w-full"
                   rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
                 >
-                  Go to Dashboard
+                  Get Started
                 </Button>
               </Link>
-            </div>
-          ) : user ? (
-            <CheckoutButton
-              variant="primary"
-              size="sm"
-              className="w-full"
-              rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
-            >
-              Start Free Trial
-            </CheckoutButton>
-          ) : (
-            <Link href="/signup?plan=pro">
-              <Button
+            ) : isProUser ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-center gap-2 py-2 px-3 bg-success/10 text-success rounded-lg text-sm font-medium">
+                  <Check className="w-4 h-4" />
+                  Your Current Plan
+                </div>
+                <Link href="/dashboard">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                  >
+                    Go to Dashboard
+                  </Button>
+                </Link>
+              </div>
+            ) : user ? (
+              <CheckoutButton
                 variant="primary"
                 size="sm"
                 className="w-full"
                 rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
               >
                 Start Free Trial
-              </Button>
-            </Link>
+              </CheckoutButton>
+            ) : (
+              <Link href="/signup?plan=pro">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="w-full"
+                  rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                >
+                  Start Free Trial
+                </Button>
+              </Link>
+            )
           )}
         </Card>
       ))}

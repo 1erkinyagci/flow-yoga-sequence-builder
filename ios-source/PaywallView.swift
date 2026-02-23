@@ -1,8 +1,10 @@
 // PaywallView.swift
 // FLOW
 //
-// Tek ürün (one_month_premium) paywall ekranı.
-// Subscribe, Restore, legal linkler, hata/loading state.
+// Tek ürün paywall: one_month_premium ($4.99/ay)
+// Butonlar: Subscribe, Restore, Not Now (kapat)
+// Legal: Privacy Policy + EULA (Apple Standard)
+// Başarılı purchase/restore → auto-dismiss → ContentView isPro günceller
 
 import SwiftUI
 import StoreKit
@@ -34,7 +36,7 @@ struct PaywallView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Kapat") { dismiss() }
+                    Button("Not Now") { dismiss() }
                 }
             }
             .onChange(of: subscriptionManager.purchaseState) { state in
@@ -54,21 +56,20 @@ struct PaywallView: View {
                 .font(.system(size: 52))
                 .foregroundColor(.accentColor)
 
-            Text("Premium ile Tam Deneyim")
+            Text("Unlock FLOW Premium")
                 .font(.title2.bold())
 
-            Text("Sınırsız yoga sekansı oluşturun, tüm pozlara erişin ve daha fazlası.")
+            Text("Create unlimited yoga sequences, access all poses, and more.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            // Feature list
             VStack(alignment: .leading, spacing: 10) {
-                featureRow("Sınırsız sekans oluşturma")
-                featureRow("Tüm poz kütüphanesine erişim")
-                featureRow("PDF & görsel dışa aktarma")
-                featureRow("Gelişmiş düzenleme araçları")
+                featureRow("Unlimited sequence creation")
+                featureRow("Full pose library access")
+                featureRow("PDF & image export")
+                featureRow("Advanced editing tools")
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -90,7 +91,7 @@ struct PaywallView: View {
     private var productCard: some View {
         Group {
             if subscriptionManager.purchaseState == .loading {
-                ProgressView("Ürün yükleniyor...")
+                ProgressView("Loading…")
                     .padding(24)
             } else if let product = subscriptionManager.product {
                 HStack {
@@ -103,7 +104,16 @@ struct PaywallView: View {
 
                         if let intro = product.subscription?.introductoryOffer,
                            intro.paymentMode == .freeTrial {
-                            Text("\(intro.period.value) gün ücretsiz deneme")
+                            let val = intro.period.value
+                            let unit: String = {
+                                switch intro.period.unit {
+                                case .day:   return val == 1 ? "day" : "days"
+                                case .week:  return val == 1 ? "week" : "weeks"
+                                case .month: return val == 1 ? "month" : "months"
+                                default:     return ""
+                                }
+                            }()
+                            Text("\(val) \(unit) free trial")
                                 .font(.caption2.bold())
                                 .foregroundColor(.accentColor)
                         }
@@ -114,7 +124,7 @@ struct PaywallView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text(product.displayPrice)
                             .font(.title3.bold())
-                        Text("/ ay")
+                        Text("/ month")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
@@ -129,10 +139,11 @@ struct PaywallView: View {
                         .stroke(Color.accentColor, lineWidth: 2)
                 )
             } else {
+                // Product yüklenemedi
                 VStack(spacing: 10) {
-                    Text("Ürün yüklenemedi.")
+                    Text("Could not load subscription.")
                         .foregroundColor(.secondary)
-                    Button("Tekrar Dene") {
+                    Button("Try Again") {
                         Task { await subscriptionManager.loadProduct() }
                     }
                     .font(.subheadline.bold())
@@ -145,16 +156,16 @@ struct PaywallView: View {
     // MARK: - Subscribe Button
     private var subscribeButton: some View {
         VStack(spacing: 8) {
-            Button(action: {
+            Button {
                 Task { await subscriptionManager.purchase() }
-            }) {
+            } label: {
                 Group {
                     switch subscriptionManager.purchaseState {
                     case .purchasing:
                         ProgressView()
                             .tint(.white)
                     case .success:
-                        Label("Abonelik Aktif!", systemImage: "checkmark.circle.fill")
+                        Label("Subscription Active!", systemImage: "checkmark.circle.fill")
                     default:
                         Text(subscribeButtonTitle)
                     }
@@ -176,7 +187,6 @@ struct PaywallView: View {
                 || subscriptionManager.purchaseState == .success
             )
 
-            // Error
             if case .error(let msg) = subscriptionManager.purchaseState {
                 Text(msg)
                     .font(.caption)
@@ -187,23 +197,25 @@ struct PaywallView: View {
     }
 
     private var subscribeButtonTitle: String {
-        guard let product = subscriptionManager.product else { return "Yükleniyor..." }
+        guard let product = subscriptionManager.product else {
+            return "Loading…"
+        }
         if let intro = product.subscription?.introductoryOffer,
            intro.paymentMode == .freeTrial {
-            return "\(intro.period.value) Gün Ücretsiz Dene"
+            return "Start Free Trial"
         }
-        return "Abone Ol — \(product.displayPrice) / ay"
+        return "Subscribe — \(product.displayPrice)/month"
     }
 
     // MARK: - Restore
     private var restoreButton: some View {
-        Button(action: {
+        Button {
             Task { await subscriptionManager.restore() }
-        }) {
+        } label: {
             if subscriptionManager.purchaseState == .restoring {
                 ProgressView()
             } else {
-                Text("Satın Alımları Geri Yükle")
+                Text("Restore Purchases")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -215,16 +227,19 @@ struct PaywallView: View {
     private var legalSection: some View {
         VStack(spacing: 8) {
             HStack(spacing: 16) {
-                Link("Gizlilik Politikası", destination: AppConstants.Links.privacyPolicy)
+                Link("Privacy Policy",
+                     destination: AppConstants.Links.privacyPolicy)
                 Text("·").foregroundColor(.secondary)
-                Link("Kullanım Koşulları", destination: AppConstants.Links.termsOfUse)
+                Link("Terms of Use (EULA)",
+                     destination: AppConstants.Links.eula)
             }
             .font(.caption)
 
-            Link("Abonelikleri Yönet", destination: AppConstants.Links.manageSubscriptions)
+            Link("Manage Subscriptions",
+                 destination: AppConstants.Links.manageSubscriptions)
                 .font(.caption)
 
-            Text("Abonelik, onay üzerine Apple Hesabınızdan ücretlendirilir. Geçerli dönem bitiminden en az 24 saat önce iptal edilmezse otomatik olarak yenilenir. Aylık $4.99.")
+            Text("Payment is charged to your Apple ID account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period. $4.99/month.")
                 .font(.caption2)
                 .foregroundColor(.tertiaryLabel)
                 .multilineTextAlignment(.center)

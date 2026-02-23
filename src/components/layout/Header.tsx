@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard, Home } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard, Home, Sparkles } from 'lucide-react';
+import { useAppMode, triggerNativePaywall } from '@/hooks/useAppMode';
 import { cn } from '@/lib/utils/cn';
 import { Button, Container } from '@/components/ui';
 import { createClient } from '@/lib/supabase/client';
@@ -82,6 +83,8 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
     };
   }, []);
 
+  const isAppMode = useAppMode();
+
   // Build navigation - add Dashboard for logged-in users
   const navigation = user
     ? [
@@ -89,6 +92,11 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
         ...baseNavigation,
       ]
     : baseNavigation;
+
+  // In app mode, remove Pricing from nav (upgrade is handled natively)
+  const visibleNavigation = isAppMode
+    ? navigation.filter(item => item.name !== 'Pricing')
+    : navigation;
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -176,7 +184,7 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
             >
               <Home className="w-5 h-5" />
             </Link>
-            {navigation.map((item) => (
+            {visibleNavigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -264,6 +272,21 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
                           Settings
                         </Link>
                       </div>
+                      {/* App mode: native upgrade CTA */}
+                      {isAppMode && profile?.subscription_tier !== 'paid' && (
+                        <div className="border-t border-neutral-100 pt-1">
+                          <button
+                            onClick={() => {
+                              triggerNativePaywall();
+                              setUserMenuOpen(false);
+                            }}
+                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-primary-600 hover:bg-primary-50"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            Upgrade
+                          </button>
+                        </div>
+                      )}
                       <div className="border-t border-neutral-100 pt-1">
                         <form action="/api/auth/signout" method="post">
                           <button
@@ -325,7 +348,7 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
               <Home className="w-4 h-4" />
               Home
             </Link>
-            {navigation.map((item) => (
+            {visibleNavigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -350,6 +373,18 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
                   >
                     Dashboard
                   </Link>
+                  {isAppMode && profile?.subscription_tier !== 'paid' && (
+                    <button
+                      onClick={() => {
+                        triggerNativePaywall();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-medium text-primary-600 hover:bg-primary-50"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Upgrade
+                    </button>
+                  )}
                   <form action="/api/auth/signout" method="post">
                     <button
                       type="submit"

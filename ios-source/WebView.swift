@@ -1,14 +1,23 @@
 // WebView.swift
 // FLOW
 //
-// WKWebView wrapper with JS bridge support.
-// Message handlers: showPaywall, getSubscriptionStatus, openSettings
-// iOS → Web event: nativeSubscriptionStatus
+// WKWebView wrapper: struct adı FlowWebView (WebView DEĞİL — çakışma önlenir).
+//
+// JS → Native message handlers:
+//   - "showPaywall"            → onShowPaywall closure
+//   - "getSubscriptionStatus"  → onRequestStatus closure
+//   - "openSettings"           → NotificationCenter (.openNativeSettings)
+//
+// Native → Web event:
+//   window.dispatchEvent(new CustomEvent("nativeSubscriptionStatus",
+//       { detail: { isPro: true/false, source: "iap" }}))
+//
+// Queue-safe: sayfa yüklenmeden JS inject etmez, kuyruğa alır.
 
 import SwiftUI
 import WebKit
 
-// MARK: - FlowWebView (UIViewRepresentable)
+// MARK: - FlowWebView
 struct FlowWebView: UIViewRepresentable {
     let url: URL
     @Binding var webView: WKWebView?
@@ -21,12 +30,11 @@ struct FlowWebView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
-        let controller = config.userContentController
+        let uc = config.userContentController
 
-        // JS → Native message handlers
-        controller.add(context.coordinator, name: JSBridge.showPaywall)
-        controller.add(context.coordinator, name: JSBridge.getSubscriptionStatus)
-        controller.add(context.coordinator, name: JSBridge.openSettings)
+        uc.add(context.coordinator, name: JSBridge.showPaywall)
+        uc.add(context.coordinator, name: JSBridge.getSubscriptionStatus)
+        uc.add(context.coordinator, name: JSBridge.openSettings)
 
         let wk = WKWebView(frame: .zero, configuration: config)
         wk.navigationDelegate = context.coordinator
@@ -38,7 +46,6 @@ struct FlowWebView: UIViewRepresentable {
         }
         #endif
 
-        // Bind reference back to SwiftUI
         DispatchQueue.main.async {
             self.webView = wk
         }
@@ -48,7 +55,6 @@ struct FlowWebView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        // Keep coordinator's closure references fresh
         context.coordinator.parent = self
     }
 
@@ -60,7 +66,9 @@ struct FlowWebView: UIViewRepresentable {
     }
 
     // MARK: - Coordinator
-    final class Coordinator: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
+    final class Coordinator: NSObject,
+                             WKScriptMessageHandler,
+                             WKNavigationDelegate {
         var parent: FlowWebView
         private var pageLoaded = false
         private var pendingScripts: [String] = []
@@ -82,15 +90,20 @@ struct FlowWebView: UIViewRepresentable {
                 case JSBridge.getSubscriptionStatus:
                     self.parent.onRequestStatus?()
                 case JSBridge.openSettings:
-                    NotificationCenter.default.post(name: .openNativeSettings, object: nil)
+                    NotificationCenter.default.post(
+                        name: .openNativeSettings, object: nil
+                    )
                 default:
                     break
                 }
             }
         }
 
-        // Page loaded → flush queued scripts
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        // Sayfa yüklendi → kuyruktakileri çalıştır
+        func webView(
+            _ webView: WKWebView,
+            didFinish navigation: WKNavigation!
+        ) {
             pageLoaded = true
             for js in pendingScripts {
                 webView.evaluateJavaScript(js)
@@ -98,7 +111,7 @@ struct FlowWebView: UIViewRepresentable {
             pendingScripts.removeAll()
         }
 
-        /// Queue-safe: sayfa yüklenmeden JS çalıştırmaz, kuyruğa ekler
+        /// Queue-safe JS: sayfa henüz yüklenmediyse kuyruğa ekler
         func enqueueScript(_ js: String, in webView: WKWebView?) {
             guard let webView else { return }
             if pageLoaded {
@@ -110,7 +123,7 @@ struct FlowWebView: UIViewRepresentable {
     }
 }
 
-// MARK: - WKWebView Helper
+// MARK: - WKWebView Extension
 extension WKWebView {
     /// Native → Web: abonelik durumunu bildirir
     func sendSubscriptionStatus(isPro: Bool) {

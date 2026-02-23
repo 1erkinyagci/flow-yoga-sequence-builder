@@ -50,8 +50,8 @@ struct SettingsView: View {
                     Link(destination: AppConstants.Links.privacyPolicy) {
                         Label("Gizlilik Politikası", systemImage: "hand.raised")
                     }
-                    Link(destination: AppConstants.Links.termsOfUse) {
-                        Label("Kullanım Koşulları", systemImage: "doc.text")
+                    Link(destination: AppConstants.Links.eula) {
+                        Label("Kullanım Koşulları (EULA)", systemImage: "doc.text")
                     }
                 }
 

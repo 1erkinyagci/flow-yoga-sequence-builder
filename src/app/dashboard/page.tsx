@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { Plus, FileText, Settings, CreditCard, Sparkles, ArrowRight, Clock } from 'lucide-react';
+import { Plus, FileText, Settings, CreditCard, Sparkles, ArrowRight } from 'lucide-react';
+import { UpgradeButton } from '@/components/UpgradeButton';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Container, Card, Button } from '@/components/ui';
@@ -116,15 +117,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                 </div>
-                <Link href="/pricing">
-                  <Button
-                    variant="secondary"
-                    className="bg-white text-primary-600 hover:bg-primary-50"
-                    rightIcon={<ArrowRight className="w-4 h-4" />}
-                  >
-                    View Plans
-                  </Button>
-                </Link>
+                <UpgradeButton />
               </div>
             </Card>
           )}
