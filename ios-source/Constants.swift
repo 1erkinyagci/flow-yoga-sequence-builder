@@ -29,10 +29,12 @@ enum JSBridge {
     static let showPaywall = "showPaywall"
     static let getSubscriptionStatus = "getSubscriptionStatus"
     static let openSettings = "openSettings"
+    static let authState = "authState"
 }
 
 // MARK: - Notification Names (TEK YER — duplicate yok)
 extension Notification.Name {
     static let showPaywallFromSettings = Notification.Name("showPaywallFromSettings")
     static let openNativeSettings = Notification.Name("openNativeSettings")
+    static let authStateChanged = Notification.Name("authStateChanged")
 }

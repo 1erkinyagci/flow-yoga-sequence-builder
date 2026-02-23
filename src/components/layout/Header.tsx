@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, User, LogOut, Settings, LayoutDashboard, Home, Sparkles, Plus, FileText } from 'lucide-react';
-import { useAppMode } from '@/hooks/useAppMode';
+import { useAppMode, sendAuthState } from '@/hooks/useAppMode';
 import { cn } from '@/lib/utils/cn';
 import { Button, Container } from '@/components/ui';
 import { createClient } from '@/lib/supabase/client';
@@ -84,6 +84,13 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
   }, []);
 
   const isAppMode = useAppMode();
+
+  // Notify iOS native layer of auth state changes
+  useEffect(() => {
+    if (isAppMode) {
+      sendAuthState(!!user);
+    }
+  }, [isAppMode, user]);
 
   // Build navigation - add Dashboard for logged-in users
   const navigation = user
