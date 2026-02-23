@@ -223,13 +223,13 @@ export default async function PosesPage({ searchParams }: PageProps) {
                   name="type"
                   options={poseTypeOptions}
                   defaultValue={params.type || ''}
-                  className="w-32 md:w-36"
+                  className="!h-9 !px-2 !pr-7 !text-xs md:!text-sm w-auto min-w-0"
                 />
                 <Select
                   name="difficulty"
                   options={difficultyOptions}
                   defaultValue={params.difficulty || ''}
-                  className="w-28 md:w-32"
+                  className="!h-9 !px-2 !pr-7 !text-xs md:!text-sm w-auto min-w-0"
                 />
                 <button
                   type="submit"
