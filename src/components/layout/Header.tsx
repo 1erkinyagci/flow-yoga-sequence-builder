@@ -129,7 +129,8 @@ export function Header({ user: initialUser, profile: initialProfile }: HeaderPro
             {' '}Yoga Sequence Builder
           </span>
         </Link>
-        {!isAppMode && (
+        {/* Hide web hamburger only for logged-in app mode users (native menu handles nav) */}
+        {!(isAppMode && user) && (
           <button
             type="button"
             className={cn(
