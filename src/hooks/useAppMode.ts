@@ -46,5 +46,5 @@ export function triggerNativePaywall() {
 
 /** Notify iOS native layer of the current auth state */
 export function sendAuthState(loggedIn: boolean) {
-  window.webkit?.messageHandlers?.authState?.postMessage({ loggedIn });
+  window.webkit?.messageHandlers?.authState?.postMessage({ isAuthed: loggedIn });
 }
