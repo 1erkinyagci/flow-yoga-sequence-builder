@@ -79,7 +79,8 @@
       "Bash(npx tsx:*)",
       "Bash(git push)",
       "Bash(tail:*)",
-      "Bash(identify:*)"
+      "Bash(identify:*)",
+      "Bash(md5:*)"
     ]
   }
 }

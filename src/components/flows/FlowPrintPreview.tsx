@@ -147,11 +147,10 @@ export function FlowPrintPreview({
                 )}
                 {/* FLOW Watermark */}
                 <div className="absolute top-1 right-1 md:top-2 md:right-2 z-10 flex items-center gap-0.5 md:gap-1 bg-white/70 backdrop-blur-sm rounded-full px-1 py-0.5 md:px-1.5 md:py-0.5">
-                  <Image
-                    src="/images/flow-logo.png"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/yoga_sequencing_logo_transparent.png"
                     alt=""
-                    width={16}
-                    height={16}
                     className="w-3 h-3 md:w-4 md:h-4 object-contain"
                   />
                   <span className="text-[7px] md:text-[9px] font-bold text-primary-600 tracking-wide">FLOW</span>
@@ -191,7 +190,7 @@ export function FlowPrintPreview({
               </div>
               <span className="hidden md:inline" style={{ color: '#d4d4d4' }}>|</span>
               <span className="hidden md:inline text-xs" style={{ color: '#737373' }}>
-                flowyogasequence.com
+                yoga-sequencing.com
               </span>
             </div>
 
