@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient, getUser } from '@/lib/supabase/server';
-import type { CreateFlowInput, Flow, FlowItem, Pose } from '@/types';
+import { TIER_LIMITS } from '@/types';
+import type { CreateFlowInput, Flow, FlowItem, Pose, SubscriptionTier } from '@/types';
 
 // GET - List user's flows
 export async function GET() {
@@ -115,10 +116,10 @@ export async function POST(request: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any;
 
-    // Check user's profile for subscription tier and daily save limit
+    // Check user's profile for subscription tier
     const { data: profile, error: profileError } = await db
       .from('profiles')
-      .select('subscription_tier, flows_saved_today, flows_saved_reset_at')
+      .select('subscription_tier')
       .eq('id', user.id)
       .single();
 
@@ -127,37 +128,42 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 });
     }
 
-    // Check if free tier user has reached daily save limit
-    if (profile.subscription_tier === 'free') {
-      const now = new Date();
-      const resetAt = new Date(profile.flows_saved_reset_at);
-      const hoursSinceReset = (now.getTime() - resetAt.getTime()) / (1000 * 60 * 60);
+    const tier = (profile.subscription_tier as SubscriptionTier) === 'paid' ? 'paid' : 'free';
+    const limits = TIER_LIMITS[tier];
 
-      // Reset counter if 24 hours have passed
-      if (hoursSinceReset >= 24) {
-        await db
-          .from('profiles')
-          .update({
-            flows_saved_today: 0,
-            flows_saved_reset_at: now.toISOString(),
-          })
-          .eq('id', user.id);
+    // Check total flow count limit
+    if (limits.maxFlows !== Infinity) {
+      const { count, error: countError } = await db
+        .from('flows')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_archived', false);
 
-        profile.flows_saved_today = 0;
+      if (countError) {
+        console.error('Error counting flows:', countError);
+        return NextResponse.json({ error: 'Failed to check flow count' }, { status: 500 });
       }
 
-      // Check daily save limit (1 per day for free tier)
-      if (profile.flows_saved_today >= 1) {
-        const hoursUntilReset = 24 - hoursSinceReset;
+      if ((count ?? 0) >= limits.maxFlows) {
         return NextResponse.json(
           {
-            error: 'Daily save limit reached',
-            message: 'Free tier users can save 1 flow per day. Upgrade to Pro for unlimited saves.',
-            resetIn: Math.ceil(hoursUntilReset),
+            error: 'Flow limit reached',
+            message: `Free tier users can save up to ${limits.maxFlows} flows. Upgrade to Pro for unlimited flows.`,
           },
           { status: 403 }
         );
       }
+    }
+
+    // Check pose count limit
+    if (body.items && body.items.length > limits.maxPosesPerFlow && limits.maxPosesPerFlow !== Infinity) {
+      return NextResponse.json(
+        {
+          error: 'Pose limit exceeded',
+          message: `Your plan allows up to ${limits.maxPosesPerFlow} poses per flow. Upgrade to Pro for unlimited poses.`,
+        },
+        { status: 403 }
+      );
     }
 
     // Create the flow
@@ -203,16 +209,6 @@ export async function POST(request: Request) {
         await db.from('flows').delete().eq('id', flow.id);
         return NextResponse.json({ error: itemsError.message }, { status: 500 });
       }
-    }
-
-    // Increment flows_saved_today counter for free tier users
-    if (profile.subscription_tier === 'free') {
-      await db
-        .from('profiles')
-        .update({
-          flows_saved_today: profile.flows_saved_today + 1,
-        })
-        .eq('id', user.id);
     }
 
     // Fetch the complete flow with items

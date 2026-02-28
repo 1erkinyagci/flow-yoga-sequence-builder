@@ -317,20 +317,18 @@ export interface AuthState {
 
 export const TIER_LIMITS = {
   anonymous: {
-    maxFlows: 1,
-    maxPosesPerFlow: 8,
+    maxFlows: 0,
+    maxPosesPerFlow: 6,
     canSave: false,
     canExport: false,
     aiSuggestionsPerDay: 0,
-    flowSavesPerDay: 0,
   },
   free: {
-    maxFlows: 5,
-    maxPosesPerFlow: 10,
+    maxFlows: 3,
+    maxPosesPerFlow: 8,
     canSave: true,
     canExport: false,
     aiSuggestionsPerDay: 3,
-    flowSavesPerDay: 1,
   },
   paid: {
     maxFlows: Infinity,
@@ -338,7 +336,6 @@ export const TIER_LIMITS = {
     canSave: true,
     canExport: true,
     aiSuggestionsPerDay: Infinity,
-    flowSavesPerDay: Infinity,
   },
 } as const;
 

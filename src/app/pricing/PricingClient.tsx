@@ -15,6 +15,22 @@ interface PricingClientProps {
 
 const plans = [
   {
+    name: 'Guest',
+    price: '$0',
+    period: '',
+    description: 'No account needed',
+    features: [
+      { included: true, text: '6 poses per flow' },
+      { included: true, text: 'Full pose library access' },
+      { included: false, text: 'Save flows' },
+      { included: false, text: 'AI suggestions' },
+      { included: false, text: 'PDF export' },
+      { included: false, text: 'Shareable links' },
+      { included: false, text: 'Priority support' },
+    ],
+    highlighted: false,
+  },
+  {
     name: 'Free',
     price: '$0',
     period: 'forever',
@@ -55,7 +71,7 @@ export function PricingClient({ user, profile }: PricingClientProps) {
   const isAppMode = useAppMode();
 
   return (
-    <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+    <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
       {plans.map((plan) => (
         <Card
           key={plan.name}
@@ -116,7 +132,18 @@ export function PricingClient({ user, profile }: PricingClientProps) {
             ))}
           </ul>
 
-          {isAppMode ? (
+          {plan.name === 'Guest' ? (
+            <Link href="/builder">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+              >
+                Try the Builder
+              </Button>
+            </Link>
+          ) : isAppMode ? (
             /* App mode: informational only, native paywall CTA */
             plan.name === 'Free' ? (
               <div className="py-2 px-3 bg-neutral-100 text-neutral-600 rounded-lg text-sm font-medium text-center">

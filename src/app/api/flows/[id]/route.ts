@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient, getUser } from '@/lib/supabase/server';
-import type { UpdateFlowInput, FlowItem, Pose } from '@/types';
+import { TIER_LIMITS } from '@/types';
+import type { UpdateFlowInput, FlowItem, Pose, SubscriptionTier } from '@/types';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -105,6 +106,28 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
     if (!existingFlow) {
       return NextResponse.json({ error: 'Flow not found' }, { status: 404 });
+    }
+
+    // Check pose count limit if items are provided
+    if (body.items && body.items.length > 0) {
+      const { data: profile } = await db
+        .from('profiles')
+        .select('subscription_tier')
+        .eq('id', user.id)
+        .single();
+
+      const tier = (profile?.subscription_tier as SubscriptionTier) === 'paid' ? 'paid' : 'free';
+      const limits = TIER_LIMITS[tier];
+
+      if (limits.maxPosesPerFlow !== Infinity && body.items.length > limits.maxPosesPerFlow) {
+        return NextResponse.json(
+          {
+            error: 'Pose limit exceeded',
+            message: `Your plan allows up to ${limits.maxPosesPerFlow} poses per flow. Upgrade to Pro for unlimited poses.`,
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // Update flow metadata

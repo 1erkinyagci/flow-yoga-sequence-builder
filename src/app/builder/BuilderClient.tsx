@@ -47,6 +47,7 @@ import { VisualFlowItem } from '@/components/flows/VisualFlowItem';
 import { ShareFlowModal } from '@/components/flows/ShareFlowModal';
 import { createClient } from '@/lib/supabase/client';
 import { getProxiedImageUrl } from '@/lib/images';
+import { TIER_LIMITS } from '@/types';
 import type { FlowStyle, Difficulty, PoseType, PoseSide, Flow, Profile } from '@/types';
 
 const ZOOM_LEVELS = [50, 75, 100, 125, 150, 200] as const;
@@ -263,14 +264,11 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
     return 'xlarge';
   };
 
-  // Tier limits based on auth
-  // Guest: 0 flows (can't save), 6 poses
-  // Free: 3 flows, 8 poses per flow
-  // Pro: Unlimited flows, unlimited poses
+  // Tier limits based on auth — single source of truth from TIER_LIMITS
   const tierLimits = useMemo(() => {
-    if (!user) return { maxFlows: 0, maxPoses: 6, canSave: false, tier: 'guest' as const };
-    if (isProUser) return { maxFlows: Infinity, maxPoses: Infinity, canSave: true, tier: 'pro' as const };
-    return { maxFlows: 3, maxPoses: 8, canSave: true, tier: 'free' as const };
+    if (!user) return { ...TIER_LIMITS.anonymous, maxPoses: TIER_LIMITS.anonymous.maxPosesPerFlow, tier: 'guest' as const };
+    if (isProUser) return { ...TIER_LIMITS.paid, maxPoses: TIER_LIMITS.paid.maxPosesPerFlow, tier: 'pro' as const };
+    return { ...TIER_LIMITS.free, maxPoses: TIER_LIMITS.free.maxPosesPerFlow, tier: 'free' as const };
   }, [user, isProUser]);
 
   const isOverPoseLimit = items.length >= tierLimits.maxPoses;
@@ -351,10 +349,8 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
   // Determine user's max poses based on tier
   const getUserMaxPoses = useCallback(() => {
-    if (!user) return 8; // anonymous: 8 poses
-    if (isProUser) return Infinity; // paid: unlimited
-    return 15; // free: 15 poses
-  }, [user, isProUser]);
+    return tierLimits.maxPoses;
+  }, [tierLimits.maxPoses]);
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
