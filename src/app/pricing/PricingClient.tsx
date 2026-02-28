@@ -23,7 +23,6 @@ const plans = [
       { included: true, text: '6 poses per flow' },
       { included: true, text: 'Full pose library access' },
       { included: false, text: 'Save flows' },
-      { included: false, text: 'AI suggestions' },
       { included: false, text: 'PDF export' },
       { included: false, text: 'Shareable links' },
       { included: false, text: 'Priority support' },
@@ -36,10 +35,9 @@ const plans = [
     period: 'forever',
     description: 'Perfect for trying out FLOW',
     features: [
-      { included: true, text: 'Up to 3 saved flows' },
       { included: true, text: '8 poses per flow' },
       { included: true, text: 'Full pose library access' },
-      { included: true, text: 'Basic AI suggestions (3/day)', comingSoon: true },
+      { included: true, text: 'Up to 3 saved flows' },
       { included: true, text: 'Save and edit flows' },
       { included: false, text: 'PDF export' },
       { included: false, text: 'Shareable links' },
@@ -53,10 +51,9 @@ const plans = [
     period: '/month',
     description: '7-day free trial, cancel anytime',
     features: [
-      { included: true, text: 'Unlimited flows' },
       { included: true, text: 'Unlimited poses per flow' },
       { included: true, text: 'Full pose library access' },
-      { included: true, text: 'Unlimited AI suggestions', comingSoon: true },
+      { included: true, text: 'Unlimited flows' },
       { included: true, text: 'Save and edit flows' },
       { included: true, text: 'PDF export' },
       { included: true, text: 'Shareable links' },
@@ -122,11 +119,6 @@ export function PricingClient({ user, profile }: PricingClientProps) {
                   )}
                 >
                   {feature.text}
-                  {feature.comingSoon && (
-                    <span className="ml-1.5 px-1 py-0.5 text-[9px] font-medium bg-amber-100 text-amber-700 rounded">
-                      Coming Soon
-                    </span>
-                  )}
                 </span>
               </li>
             ))}
