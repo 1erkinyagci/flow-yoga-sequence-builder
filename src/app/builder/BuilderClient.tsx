@@ -49,6 +49,7 @@ import { createClient } from '@/lib/supabase/client';
 import { getProxiedImageUrl } from '@/lib/images';
 import { TIER_LIMITS } from '@/types';
 import type { FlowStyle, Difficulty, PoseType, PoseSide, Flow, Profile } from '@/types';
+import { useAppMode } from '@/hooks/useAppMode';
 
 const ZOOM_LEVELS = [50, 75, 100, 125, 150, 200] as const;
 type ZoomPercent = typeof ZOOM_LEVELS[number];
@@ -161,6 +162,7 @@ export default function BuilderClient({ initialUser, initialProfile, initialFlow
 
 function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderClientProps) {
   const searchParams = useSearchParams();
+  const isAppMode = useAppMode();
 
   // Auth state - initialized from server props
   const [user, setUser] = useState<{ id: string; email: string } | null>(initialUser);
@@ -193,6 +195,8 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   const [showShareModal, setShowShareModal] = useState(false);
   const [showSaveFirstWarning, setShowSaveFirstWarning] = useState(false);
   const [isCreatingShare, setIsCreatingShare] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteFlowConfirmId, setDeleteFlowConfirmId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -624,14 +628,23 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
   };
 
   const clearFlow = () => {
-    if (confirm('Are you sure you want to clear all poses?')) {
-      setItems([]);
-      setCurrentFlowId(null);
-      setFlowTitle('');
-      setFlowStyle('vinyasa');
-      setFlowLevel('beginner');
-      setIsDirty(false);
+    if (isAppMode) {
+      setShowDeleteConfirm(true);
+      return;
     }
+    if (confirm('Are you sure you want to clear all poses?')) {
+      performClearFlow();
+    }
+  };
+
+  const performClearFlow = () => {
+    setItems([]);
+    setCurrentFlowId(null);
+    setFlowTitle('');
+    setFlowStyle('vinyasa');
+    setFlowLevel('beginner');
+    setIsDirty(false);
+    setShowDeleteConfirm(false);
   };
 
   // Save flow
@@ -732,7 +745,11 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
       const data = await response.json();
       if (data.share_url) {
-        window.open(data.share_url, '_blank');
+        if (isAppMode) {
+          window.location.href = data.share_url;
+        } else {
+          window.open(data.share_url, '_blank');
+        }
       }
     } catch (error) {
       console.error('Error creating share link:', error);
@@ -740,11 +757,11 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
     } finally {
       setIsCreatingShare(false);
     }
-  }, [currentFlowId, isProUser]);
+  }, [currentFlowId, isProUser, isAppMode]);
 
   // Load flow
   const loadFlow = (flow: SavedFlow) => {
-    if (isDirty && !confirm('You have unsaved changes. Are you sure you want to load a different flow?')) {
+    if (isDirty && !isAppMode && !confirm('You have unsaved changes. Are you sure you want to load a different flow?')) {
       return;
     }
 
@@ -774,8 +791,16 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
 
   // Delete flow
   const deleteFlow = async (flowId: string) => {
+    if (isAppMode) {
+      setDeleteFlowConfirmId(flowId);
+      return;
+    }
     if (!confirm('Are you sure you want to delete this flow?')) return;
+    await performDeleteFlow(flowId);
+  };
 
+  const performDeleteFlow = async (flowId: string) => {
+    setDeleteFlowConfirmId(null);
     try {
       const response = await fetch(`/api/flows/${flowId}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
@@ -908,7 +933,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                   )}
                   <span>{currentFlowId ? 'Update' : 'Save'}</span>
                 </button>
-                {/* Create */}
+                {/* Share */}
                 <button
                   onClick={createAndOpenShare}
                   disabled={isCreatingShare}
@@ -919,7 +944,7 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                   ) : (
                     <Share2 className="w-4 h-4" />
                   )}
-                  <span>Create</span>
+                  <span>Share</span>
                 </button>
               </div>
             </div>
@@ -1026,11 +1051,12 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
                       >
                         {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                       </button>
-                      {/* Create */}
+                      {/* Share */}
                       <button
                         onClick={createAndOpenShare}
                         disabled={isCreatingShare}
                         className="w-8 h-8 flex items-center justify-center text-white bg-[#34C759] active:bg-[#2DB84D] rounded-lg disabled:opacity-50"
+                        title="Share"
                       >
                         {isCreatingShare ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
                       </button>
@@ -1866,6 +1892,52 @@ function BuilderContent({ initialUser, initialProfile, initialFlows }: BuilderCl
               >
                 Got it
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Flow Confirmation (app mode) */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-4">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Clear all poses?</h3>
+              <p className="text-sm text-neutral-600 mb-6">This will remove all poses from your current flow.</p>
+              <div className="flex gap-3">
+                <Button variant="outline" size="sm" onClick={() => setShowDeleteConfirm(false)} className="flex-1">
+                  Cancel
+                </Button>
+                <button onClick={performClearFlow} className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors">
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Flow Confirmation (app mode) */}
+      {deleteFlowConfirmId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-4">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Delete this flow?</h3>
+              <p className="text-sm text-neutral-600 mb-6">This action cannot be undone.</p>
+              <div className="flex gap-3">
+                <Button variant="outline" size="sm" onClick={() => setDeleteFlowConfirmId(null)} className="flex-1">
+                  Cancel
+                </Button>
+                <button onClick={() => performDeleteFlow(deleteFlowConfirmId)} className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors">
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
