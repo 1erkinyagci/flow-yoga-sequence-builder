@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import { ArrowRight, Layout, Download, Users, Check, Play, Sparkles } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { AppModeHomeWrapper } from '@/components/app/AppModeHomeWrapper';
+import { WelcomeModal } from '@/components/app/WelcomeModal';
 import { Button, Container, Card } from '@/components/ui';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getProxiedImageUrl } from '@/lib/images';
@@ -248,6 +250,8 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* App mode: tier cards | Web mode: full marketing sections */}
+        <AppModeHomeWrapper>
         {/* Features Section */}
         <section className="py-12 md:py-24 bg-gradient-to-b from-white to-neutral-50">
           <Container size="xl">
@@ -483,6 +487,10 @@ export default async function HomePage() {
             </div>
           </Container>
         </section>
+        </AppModeHomeWrapper>
+
+        {/* Welcome modal for iOS app users */}
+        <WelcomeModal />
       </main>
 
       <Footer />
