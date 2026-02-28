@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Check, Crown, ArrowRight, Sparkles, Zap } from 'lucide-react';
+import { Check, X, Crown, ArrowRight, Sparkles, Zap } from 'lucide-react';
 import { useAppMode } from '@/hooks/useAppMode';
 import { Container } from '@/components/ui';
 
@@ -19,9 +19,9 @@ const tiers = [
     iconColor: 'text-neutral-600',
     borderColor: 'border-neutral-200',
     features: [
-      '6 poses per flow',
-      'Full pose library',
-      'Try before signing up',
+      { text: '6 poses per flow', included: true },
+      { text: 'Full pose library', included: true },
+      { text: 'No saving or sharing', included: false },
     ],
     cta: { label: 'Try the Builder', href: '/builder', variant: 'outline' as const },
   },
@@ -34,10 +34,10 @@ const tiers = [
     iconColor: 'text-primary-600',
     borderColor: 'border-primary-200',
     features: [
-      '8 poses per flow',
-      'Up to 3 saved flows',
-      'Full pose library',
-      'Save & edit flows',
+      { text: '8 poses per flow', included: true },
+      { text: 'Save up to 3 flows', included: true },
+      { text: 'Full pose library', included: true },
+      { text: 'No sharing', included: false },
     ],
     cta: { label: 'Sign Up Free', href: '/signup', variant: 'outline' as const },
   },
@@ -50,10 +50,10 @@ const tiers = [
     iconColor: 'text-white',
     borderColor: 'border-primary-400',
     features: [
-      'Unlimited poses & flows',
-      'PDF export',
-      'Shareable links',
-      'Priority support',
+      { text: 'Unlimited poses & flows', included: true },
+      { text: 'PDF export', included: true },
+      { text: 'Shareable links', included: true },
+      { text: 'Priority support', included: true },
     ],
     cta: { label: 'Start Free Trial', href: '/pricing', variant: 'primary' as const },
     highlighted: true,
@@ -120,15 +120,21 @@ export function AppModeHomeWrapper({ children }: AppModeHomeWrapperProps) {
                     <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
                       {tier.features.map((f) => (
                         <span
-                          key={f}
+                          key={f.text}
                           className={`flex items-center gap-1 text-xs ${
-                            tier.highlighted ? 'text-primary-50' : 'text-neutral-600'
+                            !f.included
+                              ? 'text-neutral-400'
+                              : tier.highlighted ? 'text-primary-50' : 'text-neutral-600'
                           }`}
                         >
-                          <Check className={`w-3 h-3 flex-shrink-0 ${
-                            tier.highlighted ? 'text-white' : 'text-primary-500'
-                          }`} />
-                          {f}
+                          {f.included ? (
+                            <Check className={`w-3 h-3 flex-shrink-0 ${
+                              tier.highlighted ? 'text-white' : 'text-primary-500'
+                            }`} />
+                          ) : (
+                            <X className="w-3 h-3 flex-shrink-0 text-neutral-300" />
+                          )}
+                          {f.text}
                         </span>
                       ))}
                     </div>

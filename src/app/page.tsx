@@ -396,10 +396,9 @@ export default async function HomePage() {
                 </div>
                 <ul className="space-y-3 md:space-y-4 mb-5 md:mb-8">
                   {[
-                    'Up to 5 saved flows',
-                    '15 poses per flow',
+                    'Up to 3 saved flows',
+                    '8 poses per flow',
                     'Full pose library access',
-                    'Basic AI suggestions (3/day)',
                     'Save and edit flows',
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2 md:gap-3">
@@ -436,7 +435,6 @@ export default async function HomePage() {
                     'Unlimited flows',
                     'Unlimited poses per flow',
                     'Full pose library access',
-                    'Unlimited AI suggestions',
                     'PDF export',
                     'Shareable links',
                     'Priority support',
